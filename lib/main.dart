@@ -1,5 +1,13 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/default_platform_text.dart';
+import 'package:magic_app/profile_page.dart';
+import 'package:magic_app/settings_page.dart';
+
+import 'main_page.dart';
 
 void main() {
   runApp(const MagicApp());
@@ -11,26 +19,40 @@ class MagicApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Magic App',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        brightness: Brightness.light,
+    return Theme(
+      data: ThemeData(),
+      child: PlatformProvider(
+        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+        builder: (BuildContext context) => PlatformApp(
+          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+            DefaultMaterialLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+          ],
+          title: 'Magic App',
+          // theme: ThemeData(
+          //   // This is the theme of your application.
+          //   //
+          //   // Try running your application with "flutter run". You'll see the
+          //   // application has a blue toolbar. Then, without quitting the app, try
+          //   // changing the primarySwatch below to Colors.green and then invoke
+          //   // "hot reload" (press "r" in the console where you ran "flutter run",
+          //   // or simply save your changes to "hot reload" in a Flutter IDE).
+          //   // Notice that the counter didn't reset back to zero; the application
+          //   // is not restarted.
+          //   primarySwatch: Colors.blue,
+          //   brightness: Brightness.light,
+          // ),
+          home: const MagicHomePage(title: 'Magic App'),
+          material: (_, __) => MaterialAppData(
+            darkTheme: ThemeData(brightness: Brightness.dark),
+            themeMode: ThemeMode.system,
+          ),
+          cupertino: (_, __) => CupertinoAppData(
+            theme: const CupertinoThemeData(),
+          ),
+        ),
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.system,
-      home: const MagicHomePage(title: 'Magic App Homepage'),
     );
   }
 }
@@ -54,54 +76,17 @@ class MagicHomePage extends StatefulWidget {
 }
 
 class _MagicHomePageState extends State<MagicHomePage> {
-  // Bottom navigation
-  int _selectedNavigationIndex = 1;
-  static const List<Widget> _menuItemsContents = [
-    Text("Profilseite"),
-    Text("Mirroconfig"),
-    Text("Settings")
+  static int _selectedNavigationIndex = 0;
+
+  static final List<Widget> _menuItemsContents = [
+    const ProfilePage(),
+    const MainPage(),
+    const SettingsPage()
   ];
 
   void _onMenuItemTapped(int newIndex) {
     setState(() {
       _selectedNavigationIndex = newIndex;
-    });
-  }
-
-  // Bluetooth stuff
-  FlutterBlue bluetooth = FlutterBlue.instance;
-  Set<BluetoothDevice> bluetoothDevices = {};
-
-  void _listItemClick(BluetoothDevice device) {
-    print("List item has been clicked");
-    print(device);
-  }
-
-  void _refreshBluetoothDevices() {
-    // Clear device list
-    bluetoothDevices.clear();
-
-    // Start scanning for new devices
-    bluetooth.startScan(timeout: const Duration(seconds: 4));
-    bluetooth.scanResults.listen((results) {
-      for (ScanResult result in results) {
-        setState(() {
-          bluetoothDevices.add(result.device);
-        });
-      }
-    }).onError((err) {
-      print('Error => ' + err.toString());
-    });
-
-    bluetooth.stopScan();
-
-    // Also add connected devices to the list
-    bluetooth.connectedDevices.asStream().listen((connectedDevices) {
-      for (BluetoothDevice device in connectedDevices) {
-        setState(() {
-          bluetoothDevices.add(device);
-        });
-      }
     });
   }
 
@@ -113,79 +98,41 @@ class _MagicHomePageState extends State<MagicHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
+    // print(platform(context));
+
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        cupertino: (_, __) => CupertinoNavigationBarData(
+          // Issue with cupertino where a bar with no transparency
+          // will push the list down. Adding some alpha value fixes it (in a hacky way)
+          backgroundColor: Colors.blue.withAlpha(254),
+        ),
       ),
-      body: Column(
-        // Column is also a layout widget. It takes a list of children and
-        // arranges them vertically. By default, it sizes itself to fit its
-        // children horizontally, and tries to be as tall as its parent.
-        //
-        // Invoke "debug painting" (press "p" in the console, choose the
-        // "Toggle Debug Paint" action from the Flutter Inspector in Android
-        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-        // to see the wireframe for each widget.
-        //
-        // Column has various properties to control how it sizes itself and
-        // how it positions its children. Here we use mainAxisAlignment to
-        // center the children vertically; the main axis here is the vertical
-        // axis because Columns are vertical (the cross axis would be
-        // horizontal).
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Center(
-            child: Column(
-              children: [
-                _menuItemsContents[_selectedNavigationIndex],
-                const Text(
-                  "Bluetooth Devices:",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: bluetoothDevices.length,
-              itemBuilder: (context, index) {
-                BluetoothDevice device = bluetoothDevices.elementAt(index);
-                return ListTile(
-                  title: Text(device.name.isNotEmpty ? device.name : "No name"),
-                  subtitle: Text("Mac address: ${device.id}"),
-                  onTap: () => _listItemClick(device),
-                );
-              },
-            ),
-          ),
-        ],
+      body: Center(
+        child: _menuItemsContents[_selectedNavigationIndex],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _refreshBluetoothDevices,
-        child: const Icon(Icons.refresh),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+      bottomNavBar: PlatformNavBar(
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outlined),
-            activeIcon: Icon(Icons.person),
+            icon: Icon(PlatformIcons(context).accountCircle),
+            activeIcon: Icon(PlatformIcons(context).accountCircleSolid),
             label: "Profile",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.crop_portrait),
             label: "MagicMirror",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
+            icon: Icon(PlatformIcons(context).settings),
+            activeIcon: Icon(PlatformIcons(context).settingsSolid),
             label: "Settings",
           ),
         ],
         currentIndex: _selectedNavigationIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onMenuItemTapped,
+        itemChanged: _onMenuItemTapped,
       ),
     );
   }
