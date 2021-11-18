@@ -24,7 +24,12 @@ class MagicApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        brightness: Brightness.light,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.system,
       home: const MagicHomePage(title: 'Magic App Homepage'),
     );
   }
@@ -49,8 +54,21 @@ class MagicHomePage extends StatefulWidget {
 }
 
 class _MagicHomePageState extends State<MagicHomePage> {
-  int _counter = 0;
-  String devices = "";
+  // Bottom navigation
+  int _selectedNavigationIndex = 1;
+  static const List<Widget> _menuItemsContents = [
+    Text("Profilseite"),
+    Text("Mirroconfig"),
+    Text("Settings")
+  ];
+
+  void _onMenuItemTapped(int newIndex) {
+    setState(() {
+      _selectedNavigationIndex = newIndex;
+    });
+  }
+
+  // Bluetooth stuff
   FlutterBlue bluetooth = FlutterBlue.instance;
   Set<BluetoothDevice> bluetoothDevices = {};
 
@@ -59,7 +77,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
     print(device);
   }
 
-  void _floatingButtonClick() {
+  void _refreshBluetoothDevices() {
     // Clear device list
     bluetoothDevices.clear();
 
@@ -80,16 +98,10 @@ class _MagicHomePageState extends State<MagicHomePage> {
     // Also add connected devices to the list
     bluetooth.connectedDevices.asStream().listen((connectedDevices) {
       for (BluetoothDevice device in connectedDevices) {
-        bluetoothDevices.add(device);
+        setState(() {
+          bluetoothDevices.add(device);
+        });
       }
-    });
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
@@ -127,9 +139,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
           Center(
             child: Column(
               children: [
-                Text(
-                  'You have pushed the button $_counter times!',
-                ),
+                _menuItemsContents[_selectedNavigationIndex],
                 const Text(
                   "Bluetooth Devices:",
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -153,10 +163,30 @@ class _MagicHomePageState extends State<MagicHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _floatingButtonClick,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: _refreshBluetoothDevices,
+        child: const Icon(Icons.refresh),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outlined),
+            activeIcon: Icon(Icons.person),
+            label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.crop_portrait),
+            label: "MagicMirror",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
+            label: "Settings",
+          ),
+        ],
+        currentIndex: _selectedNavigationIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onMenuItemTapped,
+      ),
     );
   }
 }
