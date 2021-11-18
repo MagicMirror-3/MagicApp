@@ -3,6 +3,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/default_platform_text.dart';
 
+import 'main.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -70,7 +72,11 @@ class _MainPageState extends State<MainPage> {
                     device.name.isNotEmpty ? device.name : "No name",
                   ),
                   subtitle: DefaultPlatformText("Mac address: ${device.id}"),
-                  onTap: () => _listItemClick(device),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BluetoothInfo()),
+                  ),
                 );
               },
             ),
