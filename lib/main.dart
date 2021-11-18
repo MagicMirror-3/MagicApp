@@ -62,12 +62,11 @@ class _MagicHomePageState extends State<MagicHomePage> {
   void _floatingButtonClick() {
     bluetooth.startScan(timeout: const Duration(seconds: 4));
     bluetooth.scanResults.listen((results) {
+      foundDevices.clear();
       for (ScanResult result in results) {
-        if (!foundDevices.contains(result.device)) {
-          setState(() {
-            foundDevices.add(result.device);
-          });
-        }
+        setState(() {
+          foundDevices.add(result.device);
+        });
       }
     }).onError((err) {
       print('Error => ' + err.toString());
