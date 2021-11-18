@@ -35,6 +35,21 @@ class MagicApp extends StatelessWidget {
   }
 }
 
+class MagicStartPage extends StatefulWidget {
+  const MagicStartPage({Key? key}) : super(key: key);
+
+  @override
+  _MagicStartPageState createState() => _MagicStartPageState();
+}
+
+class _MagicStartPageState extends State<MagicStartPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+
 class MagicHomePage extends StatefulWidget {
   const MagicHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -71,11 +86,6 @@ class _MagicHomePageState extends State<MagicHomePage> {
   // Bluetooth stuff
   FlutterBlue bluetooth = FlutterBlue.instance;
   Set<BluetoothDevice> bluetoothDevices = {};
-
-  void _listItemClick(BluetoothDevice device) {
-    print("List item has been clicked");
-    print(device);
-  }
 
   void _refreshBluetoothDevices() {
     // Clear device list
@@ -155,7 +165,12 @@ class _MagicHomePageState extends State<MagicHomePage> {
                 return ListTile(
                   title: Text(device.name.isNotEmpty ? device.name : "No name"),
                   subtitle: Text("Mac address: ${device.id}"),
-                  onTap: () => _listItemClick(device),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const BluetoothInfo()),
+                    );
+                  },
                 );
               },
             ),
@@ -186,6 +201,27 @@ class _MagicHomePageState extends State<MagicHomePage> {
         currentIndex: _selectedNavigationIndex,
         selectedItemColor: Colors.blue,
         onTap: _onMenuItemTapped,
+      ),
+    );
+  }
+}
+
+class BluetoothInfo extends StatelessWidget {
+  const BluetoothInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Bluetooth Info"),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Back'),
+        ),
       ),
     );
   }
