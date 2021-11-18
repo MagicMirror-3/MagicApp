@@ -54,12 +54,19 @@ class _MagicHomePageState extends State<MagicHomePage> {
   FlutterBlue bluetooth = FlutterBlue.instance;
   List<BluetoothDevice> foundDevices = List.empty(growable: true);
 
+  void _listItemClick(BluetoothDevice device) {
+    print("List item has been clicked");
+    print(device);
+  }
+
   void _floatingButtonClick() {
     bluetooth.startScan(timeout: const Duration(seconds: 4));
     bluetooth.scanResults.listen((results) {
       for (ScanResult result in results) {
         if (!foundDevices.contains(result.device)) {
-          foundDevices.add(result.device);
+          setState(() {
+            foundDevices.add(result.device);
+          });
         }
       }
     }).onError((err) {
@@ -124,6 +131,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
                     title:
                         Text(device.name.isNotEmpty ? device.name : "No name"),
                     subtitle: Text("Mac address: ${device.id}"),
+                    onTap: () => _listItemClick(device),
                   );
                 },
               ),
