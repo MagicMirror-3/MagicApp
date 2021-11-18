@@ -52,7 +52,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
   int _counter = 0;
   String devices = "";
   FlutterBlue bluetooth = FlutterBlue.instance;
-  List<BluetoothDevice> foundDevices = List.empty(growable: true);
+  Set<BluetoothDevice> bluetoothDevices = {};
 
   void _listItemClick(BluetoothDevice device) {
     print("List item has been clicked");
@@ -60,12 +60,15 @@ class _MagicHomePageState extends State<MagicHomePage> {
   }
 
   void _floatingButtonClick() {
+    // Clear device list
+    bluetoothDevices.clear();
+
+    // Start scanning for new devices
     bluetooth.startScan(timeout: const Duration(seconds: 4));
     bluetooth.scanResults.listen((results) {
-      foundDevices.clear();
       for (ScanResult result in results) {
         setState(() {
-          foundDevices.add(result.device);
+          bluetoothDevices.add(result.device);
         });
       }
     }).onError((err) {
@@ -74,6 +77,12 @@ class _MagicHomePageState extends State<MagicHomePage> {
 
     bluetooth.stopScan();
 
+    // Also add connected devices to the list
+    bluetooth.connectedDevices.asStream().listen((connectedDevices) {
+      for (BluetoothDevice device in connectedDevices) {
+        bluetoothDevices.add(device);
+      }
+    });
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -98,45 +107,50 @@ class _MagicHomePageState extends State<MagicHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button $_counter times!',
+      body: Column(
+        // Column is also a layout widget. It takes a list of children and
+        // arranges them vertically. By default, it sizes itself to fit its
+        // children horizontally, and tries to be as tall as its parent.
+        //
+        // Invoke "debug painting" (press "p" in the console, choose the
+        // "Toggle Debug Paint" action from the Flutter Inspector in Android
+        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+        // to see the wireframe for each widget.
+        //
+        // Column has various properties to control how it sizes itself and
+        // how it positions its children. Here we use mainAxisAlignment to
+        // center the children vertically; the main axis here is the vertical
+        // axis because Columns are vertical (the cross axis would be
+        // horizontal).
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  'You have pushed the button $_counter times!',
+                ),
+                const Text(
+                  "Bluetooth Devices:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: foundDevices.length,
-                itemBuilder: (context, index) {
-                  BluetoothDevice device = foundDevices[index];
-                  return ListTile(
-                    title:
-                        Text(device.name.isNotEmpty ? device.name : "No name"),
-                    subtitle: Text("Mac address: ${device.id}"),
-                    onTap: () => _listItemClick(device),
-                  );
-                },
-              ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: bluetoothDevices.length,
+              itemBuilder: (context, index) {
+                BluetoothDevice device = bluetoothDevices.elementAt(index);
+                return ListTile(
+                  title: Text(device.name.isNotEmpty ? device.name : "No name"),
+                  subtitle: Text("Mac address: ${device.id}"),
+                  onTap: () => _listItemClick(device),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _floatingButtonClick,
