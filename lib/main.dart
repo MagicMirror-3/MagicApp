@@ -57,6 +57,21 @@ class MagicApp extends StatelessWidget {
   }
 }
 
+class MagicStartPage extends StatefulWidget {
+  const MagicStartPage({Key? key}) : super(key: key);
+
+  @override
+  _MagicStartPageState createState() => _MagicStartPageState();
+}
+
+class _MagicStartPageState extends State<MagicStartPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+
 class MagicHomePage extends StatefulWidget {
   const MagicHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -133,6 +148,27 @@ class _MagicHomePageState extends State<MagicHomePage> {
         ],
         currentIndex: _selectedNavigationIndex,
         itemChanged: _onMenuItemTapped,
+      ),
+    );
+  }
+}
+
+class BluetoothInfo extends StatelessWidget {
+  const BluetoothInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Bluetooth Info"),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Back'),
+        ),
       ),
     );
   }
