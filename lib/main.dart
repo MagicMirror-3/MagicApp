@@ -51,22 +51,22 @@ class MagicHomePage extends StatefulWidget {
 class _MagicHomePageState extends State<MagicHomePage> {
   int _counter = 0;
   String devices = "";
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+  FlutterBlue bluetooth = FlutterBlue.instance;
+  List<BluetoothDevice> foundDevices = List.empty(growable: true);
 
   void _floatingButtonClick() {
-    flutterBlue.startScan(timeout: const Duration(seconds: 4));
-
-    flutterBlue.scanResults.listen((results) {
-      if (results.isEmpty) {
-        devices = "No Bluetooth Devices found!";
-      } else {
-        for (ScanResult result in results) {
-          devices += "${result.device.name}: ${result.rssi}\n";
+    bluetooth.startScan(timeout: const Duration(seconds: 4));
+    bluetooth.scanResults.listen((results) {
+      for (ScanResult result in results) {
+        if (!foundDevices.contains(result.device)) {
+          foundDevices.add(result.device);
         }
       }
+    }).onError((err) {
+      print('Error => ' + err.toString());
     });
 
-    flutterBlue.stopScan();
+    bluetooth.stopScan();
 
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -115,7 +115,19 @@ class _MagicHomePageState extends State<MagicHomePage> {
             Text(
               'You have pushed the button $_counter times!',
             ),
-            Text(devices)
+            Expanded(
+              child: ListView.builder(
+                itemCount: foundDevices.length,
+                itemBuilder: (context, index) {
+                  BluetoothDevice device = foundDevices[index];
+                  return ListTile(
+                    title:
+                        Text(device.name.isNotEmpty ? device.name : "No name"),
+                    subtitle: Text("Mac address: ${device.id}"),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
