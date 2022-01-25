@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/default_platform_text.dart';
-
-import 'main.dart';
+import 'package:magic_app/text_types.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -13,83 +9,17 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // Bluetooth stuff
-  static FlutterBlue bluetooth = FlutterBlue.instance;
-  static Set<BluetoothDevice> bluetoothDevices = {};
-
-  void _listItemClick(BluetoothDevice device) {
-    print("List item has been clicked");
-    print(device);
-  }
-
-  void _refreshBluetoothDevices() {
-    // Clear device list
-    bluetoothDevices.clear();
-
-    // Start scanning for new devices
-    bluetooth.startScan(timeout: const Duration(seconds: 4));
-    bluetooth.scanResults.listen((results) {
-      for (ScanResult result in results) {
-        setState(() {
-          bluetoothDevices.add(result.device);
-        });
-      }
-    }).onError((err) {
-      // print('Error => ' + err.toString());
-    });
-
-    bluetooth.stopScan();
-
-    // Also add connected devices to the list
-    bluetooth.connectedDevices.asStream().listen((connectedDevices) {
-      for (BluetoothDevice device in connectedDevices) {
-        setState(() {
-          bluetoothDevices.add(device);
-        });
-      }
-    });
-  }
+  static const String userName = "Max Mustermann";
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 15),
-          child: const DefaultPlatformText("Bluetooth Devices"),
-        ),
-        PlatformWidget(
-          material: (_, __) => Expanded(
-            child: ListView.builder(
-              itemCount: bluetoothDevices.length,
-              itemBuilder: (context, index) {
-                BluetoothDevice device = bluetoothDevices.elementAt(index);
-
-                return ListTile(
-                  title: DefaultPlatformText(
-                    device.name.isNotEmpty ? device.name : "No name",
-                  ),
-                  subtitle: DefaultPlatformText("Mac address: ${device.id}"),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BluetoothInfo()),
-                  ),
-                );
-              },
-            ),
-          ),
-          // https://github.com/flutter/flutter/pull/78732
-          cupertino: (_, __) => DefaultPlatformText(
-            bluetoothDevices.toString(),
-          ),
-        ),
-        PlatformIconButton(
-          icon: Icon(PlatformIcons(context).refresh),
-          onPressed: _refreshBluetoothDevices,
-        ),
+      children: const [
+        HeaderPlatformText("Hallo $userName!"),
+        Expanded(
+            child: Center(
+          child: DefaultPlatformText("Hier Mirror Oberfläche"),
+        ))
       ],
     );
   }

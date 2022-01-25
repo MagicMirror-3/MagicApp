@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/default_platform_text.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings_page.dart';
 
@@ -45,11 +42,16 @@ class MagicApp extends StatelessWidget {
           // ),
           home: const MagicHomePage(title: 'Magic App'),
           material: (_, __) => MaterialAppData(
-            darkTheme: ThemeData(brightness: Brightness.dark),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+            ),
             themeMode: ThemeMode.system,
           ),
           cupertino: (_, __) => CupertinoAppData(
-            theme: const CupertinoThemeData(),
+            theme: const CupertinoThemeData(
+              scaffoldBackgroundColor: Colors.black38,
+              barBackgroundColor: Colors.black,
+            ),
           ),
         ),
       ),
@@ -70,7 +72,6 @@ class _MagicStartPageState extends State<MagicStartPage> {
     return Container();
   }
 }
-
 
 class MagicHomePage extends StatefulWidget {
   const MagicHomePage({Key? key, required this.title}) : super(key: key);
@@ -114,60 +115,50 @@ class _MagicHomePageState extends State<MagicHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     // print(platform(context));
+    final List<BottomNavigationBarItem> _bottomNavigationList = [
+      BottomNavigationBarItem(
+        icon: Icon(PlatformIcons(context).accountCircle),
+        activeIcon: Icon(PlatformIcons(context).accountCircleSolid),
+        label: "Profile",
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.crop_portrait),
+        label: "MagicMirror",
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(PlatformIcons(context).settings),
+        activeIcon: Icon(PlatformIcons(context).settingsSolid),
+        label: "Settings",
+      ),
+    ];
 
     return PlatformScaffold(
       appBar: PlatformAppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        material: (_, __) => MaterialAppBarData(),
         cupertino: (_, __) => CupertinoNavigationBarData(
-          // Issue with cupertino where a bar with no transparency
-          // will push the list down. Adding some alpha value fixes it (in a hacky way)
-          backgroundColor: Colors.blue.withAlpha(254),
+          border: const Border(
+            bottom: BorderSide(
+              color: Colors.white12,
+            ),
+          ),
         ),
       ),
       body: Center(
         child: _menuItemsContents[_selectedNavigationIndex],
       ),
       bottomNavBar: PlatformNavBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(PlatformIcons(context).accountCircle),
-            activeIcon: Icon(PlatformIcons(context).accountCircleSolid),
-            label: "Profile",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.crop_portrait),
-            label: "MagicMirror",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(PlatformIcons(context).settings),
-            activeIcon: Icon(PlatformIcons(context).settingsSolid),
-            label: "Settings",
-          ),
-        ],
+        items: _bottomNavigationList,
         currentIndex: _selectedNavigationIndex,
         itemChanged: _onMenuItemTapped,
-      ),
-    );
-  }
-}
-
-class BluetoothInfo extends StatelessWidget {
-  const BluetoothInfo({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Bluetooth Info"),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Back'),
+        material: (_, __) => MaterialNavBarData(),
+        cupertino: (_, __) => CupertinoTabBarData(
+          inactiveColor: Colors.white70,
+          border: const Border(
+            top: BorderSide(
+              color: Colors.white12,
+            ),
+          ),
         ),
       ),
     );
