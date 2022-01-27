@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magic_app/mirror_view.dart';
 import 'package:magic_app/text_types.dart';
 
 class MainPage extends StatefulWidget {
@@ -16,10 +17,7 @@ class _MainPageState extends State<MainPage> {
     return Column(
       children: const [
         HeaderPlatformText("Hallo $userName!"),
-        Expanded(
-            child: Center(
-          child: DefaultPlatformText("Hier Mirror Oberfläche"),
-        ))
+        MirrorView(),
       ],
     );
   }
