@@ -36,6 +36,7 @@ class MirrorBackground extends StatelessWidget {
   const MirrorBackground(
       {required this.color,
       required this.mirrorBorder,
+      // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
       this.pattern = "assets/patterns/wall.jpg",
       Key? key})
       : super(key: key);
@@ -52,7 +53,6 @@ class MirrorBackground extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         image: DecorationImage(
-          // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
           image: AssetImage(pattern),
           fit: BoxFit.fill,
         ),
@@ -65,6 +65,7 @@ class MirrorBorder extends StatelessWidget {
   const MirrorBorder(
       {required this.color,
       required this.mirrorView,
+      // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
       this.pattern = "assets/patterns/wood.png",
       Key? key})
       : super(key: key);
