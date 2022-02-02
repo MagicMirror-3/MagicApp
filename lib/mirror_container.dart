@@ -37,7 +37,7 @@ class MirrorBackground extends StatelessWidget {
       {required this.color,
       required this.mirrorBorder,
       // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
-      this.pattern = "assets/patterns/wall.jpg",
+      this.pattern = "assets/patterns/wall/wall.jpg",
       Key? key})
       : super(key: key);
 
@@ -87,6 +87,7 @@ class MirrorBorder extends StatelessWidget {
         ],
         image: DecorationImage(
           image: AssetImage(pattern),
+          fit: BoxFit.fill,
         ),
       ),
       child: mirrorView,
