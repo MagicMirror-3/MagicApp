@@ -17,10 +17,7 @@ class _MainPageState extends State<MainPage> {
     return Column(
       children: const [
         HeaderPlatformText("Hallo $userName!"),
-        MirrorContainer(
-          backgroundColor: Colors.white,
-          borderColor: Colors.brown,
-        )
+        MirrorContainer()
       ],
     );
   }

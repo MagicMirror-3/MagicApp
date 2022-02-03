@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings_page.dart';
 
 import 'main_page.dart';
 
+Future<void> initSettings() async {
+  await Settings.init();
+}
+
 void main() {
-  runApp(const MagicApp());
+  // Init Settings
+  initSettings().then((_) => runApp(const MagicApp()));
 }
 
 class MagicApp extends StatelessWidget {
@@ -45,7 +51,7 @@ class MagicApp extends StatelessWidget {
             darkTheme: ThemeData(
               brightness: Brightness.dark,
             ),
-            themeMode: ThemeMode.system,
+            themeMode: ThemeMode.dark,
           ),
           cupertino: (_, __) => CupertinoAppData(
             theme: const CupertinoThemeData(

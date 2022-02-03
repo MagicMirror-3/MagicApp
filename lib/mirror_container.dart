@@ -1,17 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:magic_app/mirror_view.dart';
 
 class MirrorContainer extends StatelessWidget {
-  const MirrorContainer(
-      {required this.backgroundColor,
-      required this.borderColor,
-      this.mirrorSize = 75,
-      Key? key})
-      : super(key: key);
+  const MirrorContainer({this.mirrorSize = 75, Key? key}) : super(key: key);
 
-  final Color backgroundColor;
-  final Color borderColor;
   final int mirrorSize;
 
   @override
@@ -19,9 +12,7 @@ class MirrorContainer extends StatelessWidget {
     return Expanded(
       child: LayoutBuilder(
         builder: (_, BoxConstraints constraints) => MirrorBackground(
-          color: backgroundColor,
           mirrorBorder: MirrorBorder(
-            color: borderColor,
             mirrorView: MirrorView(
               height: mirrorSize / 100 * constraints.maxHeight,
             ),
@@ -33,28 +24,30 @@ class MirrorContainer extends StatelessWidget {
 }
 
 class MirrorBackground extends StatelessWidget {
-  const MirrorBackground(
-      {required this.color,
-      required this.mirrorBorder,
-      // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
-      this.pattern = "assets/patterns/wall/wall.jpg",
-      Key? key})
+  const MirrorBackground({required this.mirrorBorder, Key? key})
       : super(key: key);
 
-  final Color color;
-  final String pattern;
   final MirrorBorder mirrorBorder;
 
   @override
   Widget build(BuildContext context) {
+    // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
+    AssetImage backgroundImage = AssetImage(
+        "assets/patterns/wall/${Settings.getValue("wallPattern", "wall.jpg")}");
+
+    String colorCode =
+        Settings.getValue("wallColor", "#ffffffff").replaceAll("#", "");
+
+    Color backgroundColor = Color(int.parse(colorCode, radix: 16));
+
     return Container(
       child: mirrorBorder,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: color,
+        color: backgroundColor,
         image: DecorationImage(
-          image: AssetImage(pattern),
-          fit: BoxFit.fill,
+          image: backgroundImage,
+          repeat: ImageRepeat.repeat,
         ),
       ),
     );
@@ -62,31 +55,25 @@ class MirrorBackground extends StatelessWidget {
 }
 
 class MirrorBorder extends StatelessWidget {
-  const MirrorBorder(
-      {required this.color,
-      required this.mirrorView,
-      // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
-      this.pattern = "assets/patterns/wood.png",
-      Key? key})
-      : super(key: key);
+  const MirrorBorder({required this.mirrorView, Key? key}) : super(key: key);
 
-  final Color color;
-  final String pattern;
   final MirrorView mirrorView;
-
   static const double borderWidth = 20;
 
   @override
   Widget build(BuildContext context) {
+    // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
+    AssetImage borderImage = AssetImage(
+        "assets/patterns/mirror_border/${Settings.getValue("borderImage", "default.png")}");
+
     return Container(
       padding: const EdgeInsets.all(borderWidth),
       decoration: BoxDecoration(
-        color: color,
         boxShadow: const [
           BoxShadow(spreadRadius: 0, blurRadius: 5, offset: Offset(3, 3))
         ],
         image: DecorationImage(
-          image: AssetImage(pattern),
+          image: borderImage,
           fit: BoxFit.fill,
         ),
       ),
