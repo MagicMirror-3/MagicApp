@@ -60,6 +60,9 @@ class MagicApp extends StatelessWidget {
             ),
           ),
         ),
+        initialPlatform: Settings.getValue("alternativeAppearance", false)
+            ? TargetPlatform.iOS
+            : TargetPlatform.android,
       ),
     );
   }
