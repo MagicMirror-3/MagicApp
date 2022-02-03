@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:magic_app/mirror_view.dart';
+
+import 'mirror_view.dart';
 
 class MirrorContainer extends StatelessWidget {
-  const MirrorContainer({this.mirrorSize = 75, Key? key}) : super(key: key);
+  const MirrorContainer(
+      {this.mirrorSize = 75, this.enableClick = true, Key? key})
+      : super(key: key);
 
   final int mirrorSize;
+  final bool enableClick;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +19,7 @@ class MirrorContainer extends StatelessWidget {
           mirrorBorder: MirrorBorder(
             mirrorView: MirrorView(
               height: mirrorSize / 100 * constraints.maxHeight,
+              enableClick: enableClick,
             ),
           ),
         ),

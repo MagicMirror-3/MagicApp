@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:magic_app/profile_page.dart';
@@ -25,7 +26,6 @@ class MagicApp extends StatelessWidget {
     return Theme(
       data: ThemeData(),
       child: PlatformProvider(
-        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
         builder: (BuildContext context) => PlatformApp(
           localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
             DefaultMaterialLocalizations.delegate,
@@ -68,20 +68,6 @@ class MagicApp extends StatelessWidget {
   }
 }
 
-class MagicStartPage extends StatefulWidget {
-  const MagicStartPage({Key? key}) : super(key: key);
-
-  @override
-  _MagicStartPageState createState() => _MagicStartPageState();
-}
-
-class _MagicStartPageState extends State<MagicStartPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
 class MagicHomePage extends StatefulWidget {
   const MagicHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -108,6 +94,17 @@ class _MagicHomePageState extends State<MagicHomePage> {
     const MainPage(),
     const SettingsPage()
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Force portrait
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
 
   void _onMenuItemTapped(int newIndex) {
     setState(() {

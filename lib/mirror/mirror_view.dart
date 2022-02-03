@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/text_types.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/mirror/mirror_edit.dart';
+import 'package:magic_app/util/text_types.dart';
 
 class MirrorView extends StatefulWidget {
-  const MirrorView({required this.height, Key? key}) : super(key: key);
+  const MirrorView({required this.height, this.enableClick = true, Key? key})
+      : super(key: key);
 
   final double height;
+  final bool enableClick;
 
   @override
   _MirrorViewState createState() => _MirrorViewState();
@@ -16,7 +20,7 @@ class _MirrorViewState extends State<MirrorView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    Container mirrorContainer = Container(
       constraints: BoxConstraints(
         maxHeight: widget.height,
         maxWidth: widget.height * mirrorRatio,
@@ -51,5 +55,18 @@ class _MirrorViewState extends State<MirrorView> {
         color: Colors.black,
       ),
     );
+
+    return widget.enableClick
+        ? GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              platformPageRoute(
+                context: context,
+                builder: (context) => const MirrorEdit(),
+              ),
+            ),
+            child: mirrorContainer,
+          )
+        : mirrorContainer;
   }
 }

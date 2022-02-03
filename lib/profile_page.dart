@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/text_types.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/util/text_types.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);

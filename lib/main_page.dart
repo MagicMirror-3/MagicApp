@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/mirror_container.dart';
-import 'package:magic_app/text_types.dart';
+import 'package:magic_app/mirror/mirror_container.dart';
+import 'package:magic_app/util/text_types.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
