@@ -5,11 +5,17 @@ import 'mirror_view.dart';
 
 class MirrorContainer extends StatelessWidget {
   const MirrorContainer(
-      {this.mirrorSize = 75, this.enableClick = true, Key? key})
+      {this.mirrorSize = 75,
+      this.enableClick = true,
+      this.selectedModule = "",
+      this.selectedModuleCallback,
+      Key? key})
       : super(key: key);
 
   final int mirrorSize;
   final bool enableClick;
+  final String selectedModule;
+  final Function? selectedModuleCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +26,8 @@ class MirrorContainer extends StatelessWidget {
             mirrorView: MirrorView(
               height: mirrorSize / 100 * constraints.maxHeight,
               enableClick: enableClick,
+              selectedModule: selectedModule,
+              selectedModuleCallback: selectedModuleCallback ?? print,
             ),
           ),
         ),

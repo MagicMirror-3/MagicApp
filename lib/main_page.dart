@@ -15,9 +15,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
-        HeaderPlatformText("Hallo $userName!"),
-        MirrorContainer()
+      children: [
+        const HeaderPlatformText("Hallo $userName!"),
+        MirrorContainer(
+          selectedModuleCallback: (module) => "this is a void module: $module",
+        )
       ],
     );
   }

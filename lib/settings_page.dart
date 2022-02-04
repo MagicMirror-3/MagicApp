@@ -11,8 +11,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   void updateAlternativeAppearance(sliderValue, BuildContext context) {
-    print("Alternative changed to: $sliderValue");
-
     if (sliderValue) {
       isMaterial(context)
           ? PlatformProvider.of(context)!.changeToCupertinoPlatform()
@@ -24,6 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Consider using Settings UI -> fancier but more manual work
     return SettingsScreen(
       title: "Settings",
       children: [
@@ -45,13 +44,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 "wall.jpg": "Standard",
                 "brick-wall.png": "Brick Wall",
                 "brick-wall-dark.png": "Dark Brick Wall",
-                "concrete-wall.png": "Concrete"
+                "dark-brick-wall.png": "Dark Brick Wall 2",
+                "concrete-wall.png": "Concrete",
+                "concrete-wall-2.png": "Concrete 2",
+                "concrete-wall-3.png": "Concrete 3",
+                "redox-01.png": "Redox",
+                "soft-wallpaper.png": "Soft",
+                "white-wall.png": "White wall",
+                "dark-wall.png": "Dark wall",
               },
             ),
             ColorPickerSettingsTile(
               title: "Wall color",
               settingKey: "wallColor",
               defaultValue: Colors.white,
+            ),
+            DropDownSettingsTile(
+              title: "Mirror Border",
+              settingKey: "borderImage",
+              selected: "default.png",
+              values: const <String, String>{
+                "default.png": "IKEA Standard",
+              },
             ),
           ],
         ),

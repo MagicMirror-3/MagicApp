@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -13,6 +14,8 @@ Future<void> initSettings() async {
 }
 
 void main() {
+  debugPrintGestureArenaDiagnostics = true;
+
   // Init Settings
   initSettings().then((_) => runApp(const MagicApp()));
 }
@@ -47,6 +50,10 @@ class MagicApp extends StatelessWidget {
           //   brightness: Brightness.light,
           // ),
           home: const MagicHomePage(title: 'Magic App'),
+          supportedLocales: const [
+            Locale.fromSubtags(languageCode: "de"),
+            Locale.fromSubtags(languageCode: "en")
+          ],
           material: (_, __) => MaterialAppData(
             darkTheme: ThemeData(
               brightness: Brightness.dark,
@@ -87,7 +94,7 @@ class MagicHomePage extends StatefulWidget {
 }
 
 class _MagicHomePageState extends State<MagicHomePage> {
-  static int _selectedNavigationIndex = 0;
+  static int _selectedNavigationIndex = 1;
 
   static final List<Widget> _menuItemsContents = [
     const ProfilePage(),
@@ -148,6 +155,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
               color: Colors.white12,
             ),
           ),
+          transitionBetweenRoutes: true,
         ),
       ),
       body: Center(
