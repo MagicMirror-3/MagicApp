@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHandler {
@@ -11,7 +12,12 @@ class SharedPreferencesHandler {
 
   static T getValue<T>(String key, T defaultValue) {
     if (_preferences.get(key) != null) {
-      return _preferences.get(key) as T;
+      if (defaultValue is Color) {
+        return (colorFromHex(_preferences.getString(key) ?? "ffffff") ??
+            defaultValue) as T;
+      } else {
+        return _preferences.get(key) as T;
+      }
     } else {
       saveValue(key, defaultValue);
       return defaultValue;
@@ -29,6 +35,8 @@ class SharedPreferencesHandler {
       _preferences.setDouble(key, value);
     } else if (value is List<String>) {
       _preferences.setStringList(key, value);
+    } else if (value is Color) {
+      _preferences.setString(key, value.value.toRadixString(16));
     } else {
       throw TypeError();
     }

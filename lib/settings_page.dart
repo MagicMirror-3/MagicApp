@@ -1,6 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/shared_preferences_handler.dart';
+import 'package:magic_app/settings/choices.dart';
+import 'package:magic_app/settings/custom_ring_picker.dart';
+import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/util/utility.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -11,6 +16,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  Color prevColor = SharedPreferencesHandler.getValue(
+    "wallColor",
+    Colors.white,
+  );
+
   void updateAlternativeAppearance(sliderValue, BuildContext context) {
     SharedPreferencesHandler.saveValue("alternativeAppearance", sliderValue);
 
@@ -25,11 +35,29 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    int wallPatternIndex = SettingChoices.wallBackgroundChoices.keys
+        .toList()
+        .indexOf(SharedPreferencesHandler.getValue("wallPattern", "wall.jpg"));
+
+    int mirrorBorderIndex = SettingChoices.mirrorBorderChoices.keys
+        .toList()
+        .indexOf(
+            SharedPreferencesHandler.getValue("mirrorBorder", "default.png"));
+
     return SettingsList(
       sections: [
         SettingsSection(
-          title: const Text("Appearance"),
+          title: const Text("App Appearance"),
           tiles: [
+            SettingsTile.switchTile(
+              initialValue: SharedPreferencesHandler.getValue(
+                "darkMode",
+                true,
+              ),
+              onToggle: (value) => print,
+              title: const Text("Dark Mode"),
+              leading: Icon(PlatformIcons(context).brightness),
+            ),
             SettingsTile.switchTile(
               initialValue: SharedPreferencesHandler.getValue(
                 "alternativeAppearance",
@@ -37,59 +65,109 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               onToggle: (value) => updateAlternativeAppearance(value, context),
               title: const Text("Alternative Appearance"),
-            )
+            ),
           ],
-        )
+        ),
+        SettingsSection(
+          title: const Text("Mirror Appearance"),
+          tiles: [
+            SettingsTile.navigation(
+              title: const Text("Wall pattern"),
+              value: Text(
+                SettingChoices.wallBackgroundChoices.values
+                    .toList()[wallPatternIndex],
+              ),
+              onPressed: (context) => isMaterial(context)
+                  ? print("Open new window")
+                  : showCupertinoDropdownPopup(
+                      context: context,
+                      items: SettingChoices.wallBackgroundChoices.values
+                          .map((e) => Text(e))
+                          .toList(),
+                      initialItem: wallPatternIndex,
+                      onIndexSelected: (index) => setState(() {
+                        SharedPreferencesHandler.saveValue(
+                            "wallPattern",
+                            SettingChoices.wallBackgroundChoices.keys
+                                .toList()[index]);
+                      }),
+                    ),
+            ),
+            SettingsTile(
+              title: const Text("Wall color"),
+              trailing: ColorIndicator(
+                HSVColor.fromColor(prevColor),
+                width: 25,
+                height: 25,
+              ),
+              onPressed: (context) {
+                Color tempColor = prevColor;
+
+                showPlatformDialog(
+                  context: context,
+                  builder: (context) => PlatformAlertDialog(
+                    title: const Text("Wall color"),
+                    content: SingleChildScrollView(
+                      child: CustomRingPicker(
+                        pickerColor: SharedPreferencesHandler.getValue(
+                          "wallColor",
+                          prevColor,
+                        ),
+                        onColorChanged: (color) {
+                          tempColor = color;
+                        },
+                        portraitOnly: true,
+                      ),
+                    ),
+                    actions: [
+                      PlatformDialogAction(
+                        child: const Text("Cancel"),
+                        onPressed: () => Navigator.pop(context, prevColor),
+                      ),
+                      PlatformDialogAction(
+                        child: const Text("Save"),
+                        onPressed: () {
+                          SharedPreferencesHandler.saveValue(
+                            "wallColor",
+                            tempColor,
+                          );
+                          Navigator.pop(context, tempColor);
+                        },
+                      ),
+                    ],
+                  ),
+                ).then(
+                  (value) => setState(() {
+                    prevColor = value ?? prevColor;
+                  }),
+                );
+              },
+            ),
+            SettingsTile.navigation(
+              title: const Text("Mirror Border"),
+              value: Text(
+                SettingChoices.mirrorBorderChoices.values
+                    .toList()[mirrorBorderIndex],
+              ),
+              onPressed: (context) => isMaterial(context)
+                  ? print("Open new window")
+                  : showCupertinoDropdownPopup(
+                      context: context,
+                      items: SettingChoices.mirrorBorderChoices.values
+                          .map((e) => Text(e))
+                          .toList(),
+                      initialItem: mirrorBorderIndex,
+                      onIndexSelected: (index) => setState(() {
+                        SharedPreferencesHandler.saveValue(
+                            "mirrorBorder",
+                            SettingChoices.mirrorBorderChoices.keys
+                                .toList()[index]);
+                      }),
+                    ),
+            ),
+          ],
+        ),
       ],
     );
-
-    // return SettingsScreen(
-    //   title: "Settings",
-    //   children: [
-    //     SettingsGroup(
-    //       title: "Appearance",
-    //       children: [
-    //         SwitchSettingsTile(
-    //           title: "Alternative Appearance",
-    //           settingKey: "alternativeAppearance",
-    //           subtitle:
-    //               "Enable the alternative Appearance (iOS on Android and vice versa)",
-    //           onChange: (value) => updateAlternativeAppearance(value, context),
-    //         ),
-    //         DropDownSettingsTile(
-    //           title: "Wall pattern",
-    //           settingKey: "wallPattern",
-    //           selected: "wall.jpg",
-    //           values: const <String, String>{
-    //             "wall.jpg": "Standard",
-    //             "brick-wall.png": "Brick Wall",
-    //             "brick-wall-dark.png": "Dark Brick Wall",
-    //             "dark-brick-wall.png": "Dark Brick Wall 2",
-    //             "concrete-wall.png": "Concrete",
-    //             "concrete-wall-2.png": "Concrete 2",
-    //             "concrete-wall-3.png": "Concrete 3",
-    //             "redox-01.png": "Redox",
-    //             "soft-wallpaper.png": "Soft",
-    //             "white-wall.png": "White wall",
-    //             "dark-wall.png": "Dark wall",
-    //           },
-    //         ),
-    //         ColorPickerSettingsTile(
-    //           title: "Wall color",
-    //           settingKey: "wallColor",
-    //           defaultValue: Colors.white,
-    //         ),
-    //         DropDownSettingsTile(
-    //           title: "Mirror Border",
-    //           settingKey: "borderImage",
-    //           selected: "default.png",
-    //           values: const <String, String>{
-    //             "default.png": "IKEA Standard",
-    //           },
-    //         ),
-    //       ],
-    //     ),
-    //   ],
-    // );
   }
 }

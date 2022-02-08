@@ -58,7 +58,7 @@ class _MirrorEditState extends State<MirrorEdit> {
           mirrorSize: 80,
           enableClick: false,
           selectedModule: selectedModule,
-          selectedModuleCallback: setSelectedModule,
+          onModuleChanged: setSelectedModule,
         ),
         Expanded(
           child: PlatformTextButton(

@@ -38,6 +38,7 @@ dependencies:
   flutter_platform_widgets: ^1.12.1
   settings_ui: ^2.0.2
   shared_preferences: ^2.0.13
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

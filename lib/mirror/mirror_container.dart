@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/shared_preferences_handler.dart';
+import 'package:magic_app/util/shared_preferences_handler.dart';
 
 import 'mirror_view.dart';
 
@@ -8,14 +8,14 @@ class MirrorContainer extends StatelessWidget {
       {this.mirrorSize = 75,
       this.enableClick = true,
       this.selectedModule = "",
-      this.selectedModuleCallback,
+      this.onModuleChanged,
       Key? key})
       : super(key: key);
 
   final int mirrorSize;
   final bool enableClick;
   final String selectedModule;
-  final Function? selectedModuleCallback;
+  final ValueChanged<String>? onModuleChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class MirrorContainer extends StatelessWidget {
                 height: mirrorSize / 100 * constraints.maxHeight,
                 enableClick: enableClick,
                 selectedModule: selectedModule,
-                selectedModuleCallback: selectedModuleCallback ?? print,
+                onModuleChanged: onModuleChanged ?? print,
               ),
             ),
           ),
@@ -51,17 +51,11 @@ class MirrorBackground extends StatelessWidget {
     AssetImage backgroundImage = AssetImage(
         "assets/patterns/wall/${SharedPreferencesHandler.getValue("wallPattern", "wall.jpg")}");
 
-    String colorCode =
-        SharedPreferencesHandler.getValue("wallColor", "#ffffffff")
-            .replaceAll("#", "");
-
-    Color backgroundColor = Color(int.parse(colorCode, radix: 16));
-
     return Container(
       child: mirrorBorder,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: SharedPreferencesHandler.getValue("wallColor", Colors.white),
         image: DecorationImage(
           image: backgroundImage,
           repeat: ImageRepeat.repeat,
@@ -81,7 +75,7 @@ class MirrorBorder extends StatelessWidget {
   Widget build(BuildContext context) {
     // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
     AssetImage borderImage = AssetImage(
-        "assets/patterns/mirror_border/${SharedPreferencesHandler.getValue("borderImage", "default.png")}");
+        "assets/patterns/mirror_border/${SharedPreferencesHandler.getValue("mirrorBorder", "default.png")}");
 
     return Container(
       padding: const EdgeInsets.all(borderWidth),

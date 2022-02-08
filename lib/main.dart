@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings_page.dart';
-import 'package:magic_app/shared_preferences_handler.dart';
+import 'package:magic_app/util/shared_preferences_handler.dart';
 
 import 'main_page.dart';
 

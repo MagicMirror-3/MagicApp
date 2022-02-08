@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> {
       children: [
         const HeaderPlatformText("Hallo $userName!"),
         MirrorContainer(
-          selectedModuleCallback: (module) => "this is a void module: $module",
+          onModuleChanged: (module) => "this is a void callback: $module",
         )
       ],
     );

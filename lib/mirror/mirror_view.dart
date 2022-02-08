@@ -10,14 +10,14 @@ class MirrorView extends StatefulWidget {
       {required this.height,
       this.enableClick = true,
       this.selectedModule = "",
-      this.selectedModuleCallback = print,
+      this.onModuleChanged = print,
       Key? key})
       : super(key: key);
 
   final double height;
   final bool enableClick;
   final String selectedModule;
-  final Function selectedModuleCallback;
+  final ValueChanged<String> onModuleChanged;
 
   @override
   _MirrorViewState createState() => _MirrorViewState();
@@ -59,7 +59,7 @@ class _MirrorViewState extends State<MirrorView> {
       selectedModule = moduleName;
     });
 
-    widget.selectedModuleCallback(moduleName);
+    widget.onModuleChanged(moduleName);
   }
 
   @override
