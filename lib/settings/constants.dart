@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../generated/l10n.dart';
 
 class SettingChoices {
-  static Map<String, String> wallBackgroundChoices(BuildContext context) {
+  static Map<String, String> wallPatternChoices(BuildContext context) {
     return LinkedHashMap.from({
       "wall.jpg": S.of(context).defaultString,
       "brick-wall.png": S.of(context).settings_brickWall,

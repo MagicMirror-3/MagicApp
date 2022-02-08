@@ -7,6 +7,7 @@ import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/util/themes.dart';
 
 import 'generated/l10n.dart';
 import 'mirror_page.dart';
@@ -53,31 +54,18 @@ class _MagicAppState extends State<MagicApp> {
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
-          // theme: ThemeData(
-          //   // This is the theme of your application.
-          //   //
-          //   // Try running your application with "flutter run". You'll see the
-          //   // application has a blue toolbar. Then, without quitting the app, try
-          //   // changing the primarySwatch below to Colors.green and then invoke
-          //   // "hot reload" (press "r" in the console where you ran "flutter run",
-          //   // or simply save your changes to "hot reload" in a Flutter IDE).
-          //   // Notice that the counter didn't reset back to zero; the application
-          //   // is not restarted.
-          //   primarySwatch: Colors.blue,
-          //   brightness: Brightness.light,
-          // ),
           home: const MagicHomePage(),
           material: (_, __) => MaterialAppData(
+            theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
             themeMode: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
                 ? ThemeMode.dark
                 : ThemeMode.light,
           ),
           cupertino: (_, __) => CupertinoAppData(
-            theme: const CupertinoThemeData(
-              scaffoldBackgroundColor: Colors.black38,
-              barBackgroundColor: Colors.black,
-            ),
+            theme: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
+                ? darkCupertinoTheme
+                : lightCupertinoTheme,
           ),
         ),
         initialPlatform: SharedPreferencesHandler.getValue(

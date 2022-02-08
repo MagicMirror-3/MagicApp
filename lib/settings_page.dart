@@ -6,6 +6,7 @@ import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/util/themes.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -93,17 +94,116 @@ class _SettingsPageState extends State<SettingsPage> {
       leading: const Icon(Icons.language_sharp),
     );
 
-    final wallBackgroundChoices = SettingChoices.wallBackgroundChoices(context);
-    int wallPatternIndex = wallBackgroundChoices.keys
+    // Wall pattern tile
+    final wallPatternChoices = SettingChoices.wallPatternChoices(context);
+    int wallPatternIndex = wallPatternChoices.keys
         .toList()
         .indexOf(SharedPreferencesHandler.getValue(SettingKeys.wallPattern));
 
+    SettingsTile wallPatternTile = SettingsTile.navigation(
+      title: Text(S.of(context).settings_wallPattern),
+      value: Text(
+        wallPatternChoices.values.toList()[wallPatternIndex],
+      ),
+      onPressed: (context) => isMaterial(context)
+          ? print("Open new window")
+          : showCupertinoDropdownPopup(
+              context: context,
+              items: wallPatternChoices.values.map((e) => Text(e)).toList(),
+              initialItem: wallPatternIndex,
+              onIndexSelected: (index) => setState(() {
+                SharedPreferencesHandler.saveValue(SettingKeys.wallPattern,
+                    wallPatternChoices.keys.toList()[index]);
+              }),
+            ),
+    );
+
+    // Wall color tile
+    SettingsTile wallColorTile = SettingsTile(
+      title: Text(S.of(context).settings_wallColor),
+      trailing: ColorIndicator(
+        HSVColor.fromColor(prevColor),
+        width: 25,
+        height: 25,
+      ),
+      onPressed: (context) {
+        Color tempColor = prevColor;
+
+        showPlatformDialog(
+          context: context,
+          builder: (context) => PlatformAlertDialog(
+            title: Text(S.of(context).settings_wallColor),
+            content: SingleChildScrollView(
+              child: CustomRingPicker(
+                pickerColor:
+                    SharedPreferencesHandler.getValue(SettingKeys.wallColor),
+                onColorChanged: (color) {
+                  tempColor = color;
+                },
+                portraitOnly: true,
+              ),
+            ),
+            actions: [
+              PlatformDialogAction(
+                child: Text(S.of(context).cancel),
+                onPressed: () => Navigator.pop(context, prevColor),
+              ),
+              PlatformDialogAction(
+                child: Text(S.of(context).save),
+                onPressed: () {
+                  SharedPreferencesHandler.saveValue(
+                    SettingKeys.wallColor,
+                    tempColor,
+                  );
+                  Navigator.pop(context, tempColor);
+                },
+              ),
+            ],
+          ),
+        ).then(
+          (value) => setState(() {
+            prevColor = value ?? prevColor;
+          }),
+        );
+      },
+    );
+
+    // Mirror border tile
     final mirrorBorderChoices = SettingChoices.mirrorBorderChoices(context);
     int mirrorBorderIndex = mirrorBorderChoices.keys
         .toList()
         .indexOf(SharedPreferencesHandler.getValue(SettingKeys.mirrorBorder));
 
+    SettingsTile mirrorBorderTile = SettingsTile.navigation(
+      title: Text(S.of(context).settings_mirrorBorder),
+      value: Text(
+        mirrorBorderChoices.values.toList()[mirrorBorderIndex],
+      ),
+      onPressed: (context) => isMaterial(context)
+          ? print("Open new window")
+          : showCupertinoDropdownPopup(
+              context: context,
+              items: mirrorBorderChoices.values.map((e) => Text(e)).toList(),
+              initialItem: mirrorBorderIndex,
+              onIndexSelected: (index) => setState(() {
+                SharedPreferencesHandler.saveValue(SettingKeys.mirrorBorder,
+                    mirrorBorderChoices.keys.toList()[index]);
+              }),
+            ),
+    );
+
+    // Construct the layout
     return SettingsList(
+      darkTheme: isMaterial(context)
+          ? darkMaterialSettingsTheme
+          : darkCupertinoSettingsTheme,
+      lightTheme: isMaterial(context)
+          ? lightMaterialSettingsTheme
+          : lightCupertinoSettingsTheme,
+      brightness: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
+          ? Brightness.dark
+          : Brightness.light,
+      applicationType: ApplicationType.both,
       sections: [
         SettingsSection(
           title: Text(S.of(context).settings_appAppearance),
@@ -116,94 +216,9 @@ class _SettingsPageState extends State<SettingsPage> {
         SettingsSection(
           title: Text(S.of(context).settings_mirrorAppearance),
           tiles: [
-            SettingsTile.navigation(
-              title: Text(S.of(context).settings_wallPattern),
-              value: Text(
-                wallBackgroundChoices.values.toList()[wallPatternIndex],
-              ),
-              onPressed: (context) => isMaterial(context)
-                  ? print("Open new window")
-                  : showCupertinoDropdownPopup(
-                      context: context,
-                      items: wallBackgroundChoices.values
-                          .map((e) => Text(e))
-                          .toList(),
-                      initialItem: wallPatternIndex,
-                      onIndexSelected: (index) => setState(() {
-                        SharedPreferencesHandler.saveValue(
-                            SettingKeys.wallPattern,
-                            wallBackgroundChoices.keys.toList()[index]);
-                      }),
-                    ),
-            ),
-            SettingsTile(
-              title: Text(S.of(context).settings_wallColor),
-              trailing: ColorIndicator(
-                HSVColor.fromColor(prevColor),
-                width: 25,
-                height: 25,
-              ),
-              onPressed: (context) {
-                Color tempColor = prevColor;
-
-                showPlatformDialog(
-                  context: context,
-                  builder: (context) => PlatformAlertDialog(
-                    title: Text(S.of(context).settings_wallColor),
-                    content: SingleChildScrollView(
-                      child: CustomRingPicker(
-                        pickerColor: SharedPreferencesHandler.getValue(
-                            SettingKeys.wallColor),
-                        onColorChanged: (color) {
-                          tempColor = color;
-                        },
-                        portraitOnly: true,
-                      ),
-                    ),
-                    actions: [
-                      PlatformDialogAction(
-                        child: Text(S.of(context).cancel),
-                        onPressed: () => Navigator.pop(context, prevColor),
-                      ),
-                      PlatformDialogAction(
-                        child: Text(S.of(context).save),
-                        onPressed: () {
-                          SharedPreferencesHandler.saveValue(
-                            SettingKeys.wallColor,
-                            tempColor,
-                          );
-                          Navigator.pop(context, tempColor);
-                        },
-                      ),
-                    ],
-                  ),
-                ).then(
-                  (value) => setState(() {
-                    prevColor = value ?? prevColor;
-                  }),
-                );
-              },
-            ),
-            SettingsTile.navigation(
-              title: Text(S.of(context).settings_mirrorBorder),
-              value: Text(
-                mirrorBorderChoices.values.toList()[mirrorBorderIndex],
-              ),
-              onPressed: (context) => isMaterial(context)
-                  ? print("Open new window")
-                  : showCupertinoDropdownPopup(
-                      context: context,
-                      items: mirrorBorderChoices.values
-                          .map((e) => Text(e))
-                          .toList(),
-                      initialItem: mirrorBorderIndex,
-                      onIndexSelected: (index) => setState(() {
-                        SharedPreferencesHandler.saveValue(
-                            SettingKeys.mirrorBorder,
-                            mirrorBorderChoices.keys.toList()[index]);
-                      }),
-                    ),
-            ),
+            wallPatternTile,
+            wallColorTile,
+            mirrorBorderTile,
           ],
         ),
       ],

@@ -13,7 +13,7 @@ showCupertinoDropdownPopup(
     builder: (context) => SizedBox(
       height: 200,
       child: CupertinoPicker(
-        itemExtent: 25,
+        itemExtent: 24,
         onSelectedItemChanged: (index) {
           tempIndex = index;
         },
