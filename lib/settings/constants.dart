@@ -38,6 +38,8 @@ class SettingChoices {
 class SettingKeys {
   static const String darkMode = "darkMode";
   static const String alternativeAppearance = "alternativeAppearance";
+  static const String language = "language";
+
   static const String wallPattern = "wallPattern";
   static const String wallColor = "wallColor";
   static const String mirrorBorder = "mirrorBorder";
@@ -46,6 +48,7 @@ class SettingKeys {
 const defaultValues = {
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
+  SettingKeys.language: "en",
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
   SettingKeys.mirrorBorder: "default.png"

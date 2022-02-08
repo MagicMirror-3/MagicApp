@@ -9,7 +9,7 @@ import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 
 import 'generated/l10n.dart';
-import 'main_page.dart';
+import 'mirror_page.dart';
 
 void main() {
   // debugPrintGestureArenaDiagnostics = true;
@@ -18,10 +18,21 @@ void main() {
   SharedPreferencesHandler.init().then((_) => runApp(const MagicApp()));
 }
 
-class MagicApp extends StatelessWidget {
+class MagicApp extends StatefulWidget {
   const MagicApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<StatefulWidget> createState() => _MagicAppState();
+
+  static _MagicAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MagicAppState>();
+}
+
+class _MagicAppState extends State<MagicApp> {
+  void refreshApp() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -38,6 +49,9 @@ class MagicApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: S.delegate.supportedLocales,
+          locale: Locale(
+            SharedPreferencesHandler.getValue(SettingKeys.language),
+          ),
           title: "Magic App",
           // theme: ThemeData(
           //   // This is the theme of your application.
@@ -54,10 +68,10 @@ class MagicApp extends StatelessWidget {
           // ),
           home: const MagicHomePage(),
           material: (_, __) => MaterialAppData(
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-            ),
-            themeMode: ThemeMode.dark,
+            darkTheme: ThemeData.dark(),
+            themeMode: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
+                ? ThemeMode.dark
+                : ThemeMode.light,
           ),
           cupertino: (_, __) => CupertinoAppData(
             theme: const CupertinoThemeData(
