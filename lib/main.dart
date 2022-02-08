@@ -1,23 +1,18 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings_page.dart';
+import 'package:magic_app/shared_preferences_handler.dart';
 
 import 'main_page.dart';
 
-Future<void> initSettings() async {
-  await Settings.init();
-}
-
 void main() {
-  debugPrintGestureArenaDiagnostics = true;
+  // debugPrintGestureArenaDiagnostics = true;
 
   // Init Settings
-  initSettings().then((_) => runApp(const MagicApp()));
+  SharedPreferencesHandler.init().then((_) => runApp(const MagicApp()));
 }
 
 class MagicApp extends StatelessWidget {
@@ -67,9 +62,10 @@ class MagicApp extends StatelessWidget {
             ),
           ),
         ),
-        initialPlatform: Settings.getValue("alternativeAppearance", false)
-            ? TargetPlatform.iOS
-            : TargetPlatform.android,
+        initialPlatform:
+            SharedPreferencesHandler.getValue("alternativeAppearance", false)
+                ? TargetPlatform.iOS
+                : TargetPlatform.android,
       ),
     );
   }

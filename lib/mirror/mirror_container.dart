@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:magic_app/shared_preferences_handler.dart';
 
 import 'mirror_view.dart';
 
@@ -21,13 +21,16 @@ class MirrorContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: LayoutBuilder(
-        builder: (_, BoxConstraints constraints) => MirrorBackground(
-          mirrorBorder: MirrorBorder(
-            mirrorView: MirrorView(
-              height: mirrorSize / 100 * constraints.maxHeight,
-              enableClick: enableClick,
-              selectedModule: selectedModule,
-              selectedModuleCallback: selectedModuleCallback ?? print,
+        builder: (_, BoxConstraints constraints) => Hero(
+          tag: "mirror",
+          child: MirrorBackground(
+            mirrorBorder: MirrorBorder(
+              mirrorView: MirrorView(
+                height: mirrorSize / 100 * constraints.maxHeight,
+                enableClick: enableClick,
+                selectedModule: selectedModule,
+                selectedModuleCallback: selectedModuleCallback ?? print,
+              ),
             ),
           ),
         ),
@@ -46,10 +49,11 @@ class MirrorBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
     AssetImage backgroundImage = AssetImage(
-        "assets/patterns/wall/${Settings.getValue("wallPattern", "wall.jpg")}");
+        "assets/patterns/wall/${SharedPreferencesHandler.getValue("wallPattern", "wall.jpg")}");
 
     String colorCode =
-        Settings.getValue("wallColor", "#ffffffff").replaceAll("#", "");
+        SharedPreferencesHandler.getValue("wallColor", "#ffffffff")
+            .replaceAll("#", "");
 
     Color backgroundColor = Color(int.parse(colorCode, radix: 16));
 
@@ -77,7 +81,7 @@ class MirrorBorder extends StatelessWidget {
   Widget build(BuildContext context) {
     // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
     AssetImage borderImage = AssetImage(
-        "assets/patterns/mirror_border/${Settings.getValue("borderImage", "default.png")}");
+        "assets/patterns/mirror_border/${SharedPreferencesHandler.getValue("borderImage", "default.png")}");
 
     return Container(
       padding: const EdgeInsets.all(borderWidth),

@@ -114,7 +114,7 @@ class _MirrorViewState extends State<MirrorView> {
 
     return widget.enableClick
         ? Listener(
-            behavior: HitTestBehavior.deferToChild,
+            behavior: HitTestBehavior.translucent,
             onPointerDown: (_) => Navigator.push(
               context,
               platformPageRoute(

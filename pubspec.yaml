@@ -36,7 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.4
   flutter_blue: ^0.8.0
   flutter_platform_widgets: ^1.12.1
-  flutter_settings_screens: ^0.3.2-null-safety
+  settings_ui: ^2.0.2
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

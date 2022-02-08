@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/util/text_types.dart';
 
 import 'module.dart';
 
@@ -17,17 +16,28 @@ class ModuleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
+    return Listener(
+      behavior: HitTestBehavior.deferToChild,
+      onPointerDown: (_) {
         print("Module ${module.name} clicked");
         selectedCallback(module.name);
       },
-      child: Container(
-        child: DefaultPlatformText(module.name),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? Colors.blueAccent : Colors.redAccent,
+      // onTapCancel: () {
+      //   print("Tap cancelled");
+      // },
+      child: GestureDetector(
+        onHorizontalDragStart: (_) {
+          print("dragged horizontally");
+        },
+        onVerticalDragStart: (_) {
+          print("dragged vertically");
+        },
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isSelected ? Colors.blueAccent : Colors.redAccent,
+            ),
           ),
         ),
       ),
