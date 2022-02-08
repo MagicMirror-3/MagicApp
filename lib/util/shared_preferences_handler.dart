@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:magic_app/settings/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHandler {
@@ -10,7 +11,9 @@ class SharedPreferencesHandler {
     _preferences = await SharedPreferences.getInstance();
   }
 
-  static T getValue<T>(String key, T defaultValue) {
+  static T getValue<T>(String key, [T? defaultValue]) {
+    defaultValue = defaultValue ?? defaultValues[key] as T;
+
     if (_preferences.get(key) != null) {
       if (defaultValue is Color) {
         return (colorFromHex(_preferences.getString(key) ?? "ffffff") ??
@@ -20,7 +23,7 @@ class SharedPreferencesHandler {
       }
     } else {
       saveValue(key, defaultValue);
-      return defaultValue;
+      return defaultValue as T;
     }
   }
 

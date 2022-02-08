@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
+import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 
@@ -62,10 +63,11 @@ class MagicApp extends StatelessWidget {
             ),
           ),
         ),
-        initialPlatform:
-            SharedPreferencesHandler.getValue("alternativeAppearance", false)
-                ? TargetPlatform.iOS
-                : TargetPlatform.android,
+        initialPlatform: SharedPreferencesHandler.getValue(
+                    SettingKeys.alternativeAppearance) ||
+                !isMaterial(context)
+            ? TargetPlatform.iOS
+            : TargetPlatform.android,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 
 import 'mirror_view.dart';
@@ -20,10 +21,10 @@ class MirrorContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: LayoutBuilder(
-        builder: (_, BoxConstraints constraints) => Hero(
-          tag: "mirror",
-          child: MirrorBackground(
+      child: Hero(
+        tag: "mirror",
+        child: LayoutBuilder(
+          builder: (_, BoxConstraints constraints) => MirrorBackground(
             mirrorBorder: MirrorBorder(
               mirrorView: MirrorView(
                 height: mirrorSize / 100 * constraints.maxHeight,
@@ -49,13 +50,13 @@ class MirrorBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
     AssetImage backgroundImage = AssetImage(
-        "assets/patterns/wall/${SharedPreferencesHandler.getValue("wallPattern", "wall.jpg")}");
+        "assets/patterns/wall/${SharedPreferencesHandler.getValue(SettingKeys.wallPattern)}");
 
     return Container(
       child: mirrorBorder,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: SharedPreferencesHandler.getValue("wallColor", Colors.white),
+        color: SharedPreferencesHandler.getValue(SettingKeys.wallColor),
         image: DecorationImage(
           image: backgroundImage,
           repeat: ImageRepeat.repeat,
@@ -75,7 +76,7 @@ class MirrorBorder extends StatelessWidget {
   Widget build(BuildContext context) {
     // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
     AssetImage borderImage = AssetImage(
-        "assets/patterns/mirror_border/${SharedPreferencesHandler.getValue("mirrorBorder", "default.png")}");
+        "assets/patterns/mirror_border/${SharedPreferencesHandler.getValue(SettingKeys.mirrorBorder)}");
 
     return Container(
       padding: const EdgeInsets.all(borderWidth),

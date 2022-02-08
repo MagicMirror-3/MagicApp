@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
+
 class SettingChoices {
   static final Map<String, String> wallBackgroundChoices = LinkedHashMap.from({
     "wall.jpg": "Standard",
@@ -19,3 +21,19 @@ class SettingChoices {
     "default.png": "IKEA Standard",
   });
 }
+
+class SettingKeys {
+  static const String darkMode = "darkMode";
+  static const String alternativeAppearance = "alternativeAppearance";
+  static const String wallPattern = "wallPattern";
+  static const String wallColor = "wallColor";
+  static const String mirrorBorder = "mirrorBorder";
+}
+
+const defaultValues = {
+  SettingKeys.darkMode: true,
+  SettingKeys.alternativeAppearance: false,
+  SettingKeys.wallPattern: "wall.jpg",
+  SettingKeys.wallColor: Colors.white,
+  SettingKeys.mirrorBorder: "default.png"
+};

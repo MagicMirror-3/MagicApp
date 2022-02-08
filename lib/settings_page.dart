@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/settings/choices.dart';
+import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/utility.dart';
@@ -16,13 +16,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Color prevColor = SharedPreferencesHandler.getValue(
-    "wallColor",
-    Colors.white,
-  );
+  Color prevColor = SharedPreferencesHandler.getValue(SettingKeys.wallColor);
 
   void updateAlternativeAppearance(sliderValue, BuildContext context) {
-    SharedPreferencesHandler.saveValue("alternativeAppearance", sliderValue);
+    SharedPreferencesHandler.saveValue(
+      SettingKeys.alternativeAppearance,
+      sliderValue,
+    );
 
     if (sliderValue) {
       isMaterial(context)
@@ -37,12 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     int wallPatternIndex = SettingChoices.wallBackgroundChoices.keys
         .toList()
-        .indexOf(SharedPreferencesHandler.getValue("wallPattern", "wall.jpg"));
+        .indexOf(SharedPreferencesHandler.getValue(SettingKeys.wallPattern));
 
     int mirrorBorderIndex = SettingChoices.mirrorBorderChoices.keys
         .toList()
-        .indexOf(
-            SharedPreferencesHandler.getValue("mirrorBorder", "default.png"));
+        .indexOf(SharedPreferencesHandler.getValue(SettingKeys.mirrorBorder));
 
     return SettingsList(
       sections: [
@@ -50,19 +49,15 @@ class _SettingsPageState extends State<SettingsPage> {
           title: const Text("App Appearance"),
           tiles: [
             SettingsTile.switchTile(
-              initialValue: SharedPreferencesHandler.getValue(
-                "darkMode",
-                true,
-              ),
+              initialValue:
+                  SharedPreferencesHandler.getValue(SettingKeys.darkMode),
               onToggle: (value) => print,
               title: const Text("Dark Mode"),
               leading: Icon(PlatformIcons(context).brightness),
             ),
             SettingsTile.switchTile(
               initialValue: SharedPreferencesHandler.getValue(
-                "alternativeAppearance",
-                false,
-              ),
+                  SettingKeys.alternativeAppearance),
               onToggle: (value) => updateAlternativeAppearance(value, context),
               title: const Text("Alternative Appearance"),
             ),
@@ -87,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       initialItem: wallPatternIndex,
                       onIndexSelected: (index) => setState(() {
                         SharedPreferencesHandler.saveValue(
-                            "wallPattern",
+                            SettingKeys.wallPattern,
                             SettingChoices.wallBackgroundChoices.keys
                                 .toList()[index]);
                       }),
@@ -110,9 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     content: SingleChildScrollView(
                       child: CustomRingPicker(
                         pickerColor: SharedPreferencesHandler.getValue(
-                          "wallColor",
-                          prevColor,
-                        ),
+                            SettingKeys.wallColor),
                         onColorChanged: (color) {
                           tempColor = color;
                         },
@@ -128,7 +121,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: const Text("Save"),
                         onPressed: () {
                           SharedPreferencesHandler.saveValue(
-                            "wallColor",
+                            SettingKeys.wallColor,
                             tempColor,
                           );
                           Navigator.pop(context, tempColor);
@@ -159,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       initialItem: mirrorBorderIndex,
                       onIndexSelected: (index) => setState(() {
                         SharedPreferencesHandler.saveValue(
-                            "mirrorBorder",
+                            SettingKeys.mirrorBorder,
                             SettingChoices.mirrorBorderChoices.keys
                                 .toList()[index]);
                       }),
