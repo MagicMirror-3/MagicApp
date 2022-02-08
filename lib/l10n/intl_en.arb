@@ -1,0 +1,38 @@
+{
+    "@@locale": "en",
+
+    "appName": "Magic App",
+
+    "profile": "Profile",
+    "magicMirror": "MagicMirror",
+    "settings": "Settings",
+
+    "cancel": "Cancel",
+    "save": "Save",
+    "defaultString": "Default",
+
+    "greetings": "Hello {name}!",
+
+    "settings_appAppearance": "App Appearance",
+    "settings_darkMode": "Dark Mode",
+    "settings_alternativeAppearance": "Alternative Appearance",
+    "settings_language": "Language",
+    "settings_langEn": "English",
+    "settings_langDe": "German",
+
+    "settings_mirrorAppearance": "Mirror Appearance",
+    "settings_wallPattern": "Wall Pattern",
+    "settings_brickWall": "Brick Wall",
+    "settings_darkBrickWall": "Dark Brick Wall",
+    "settings_darkBrickWall2": "Dark Brick Wall 2",
+    "settings_concrete": "Concrete",
+    "settings_concrete2": "Concrete 2",
+    "settings_concrete3": "Concrete 3",
+    "settings_redox": "Redox",
+    "settings_soft": "Soft",
+    "settings_whiteWall": "White Wall",
+    "settings_darkWall": "Dark Wall",
+
+    "settings_wallColor": "Wall Color",
+    "settings_mirrorBorder": "Mirror Border"
+}

@@ -2,24 +2,37 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 
-class SettingChoices {
-  static final Map<String, String> wallBackgroundChoices = LinkedHashMap.from({
-    "wall.jpg": "Standard",
-    "brick-wall.png": "Brick Wall",
-    "brick-wall-dark.png": "Dark Brick Wall",
-    "dark-brick-wall.png": "Dark Brick Wall 2",
-    "concrete-wall.png": "Concrete",
-    "concrete-wall-2.png": "Concrete 2",
-    "concrete-wall-3.png": "Concrete 3",
-    "redox-01.png": "Redox",
-    "soft-wallpaper.png": "Soft",
-    "white-wall.png": "White wall",
-    "dark-wall.png": "Dark wall",
-  });
+import '../generated/l10n.dart';
 
-  static final Map<String, String> mirrorBorderChoices = LinkedHashMap.from({
-    "default.png": "IKEA Standard",
-  });
+class SettingChoices {
+  static Map<String, String> wallBackgroundChoices(BuildContext context) {
+    return LinkedHashMap.from({
+      "wall.jpg": S.of(context).defaultString,
+      "brick-wall.png": S.of(context).settings_brickWall,
+      "brick-wall-dark.png": S.of(context).settings_darkBrickWall,
+      "dark-brick-wall.png": S.of(context).settings_darkBrickWall2,
+      "concrete-wall.png": S.of(context).settings_concrete,
+      "concrete-wall-2.png": S.of(context).settings_concrete2,
+      "concrete-wall-3.png": S.of(context).settings_concrete3,
+      "redox-01.png": S.of(context).settings_redox,
+      "soft-wallpaper.png": S.of(context).settings_soft,
+      "white-wall.png": S.of(context).settings_whiteWall,
+      "dark-wall.png": S.of(context).settings_darkWall,
+    });
+  }
+
+  static Map<String, String> mirrorBorderChoices(BuildContext context) {
+    return LinkedHashMap.from({
+      "default.png": S.of(context).defaultString,
+    });
+  }
+
+  static Map<String, String> languageChoices(BuildContext context) {
+    return LinkedHashMap.from({
+      "en": S.of(context).settings_langEn,
+      "de": S.of(context).settings_langDe
+    });
+  }
 }
 
 class SettingKeys {

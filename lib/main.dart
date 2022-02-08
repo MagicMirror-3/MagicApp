@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 
+import 'generated/l10n.dart';
 import 'main_page.dart';
 
 void main() {
@@ -25,13 +27,18 @@ class MagicApp extends StatelessWidget {
     return Theme(
       data: ThemeData(),
       child: PlatformProvider(
-        builder: (BuildContext context) => PlatformApp(
-          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+        builder: (_) => PlatformApp(
+          localizationsDelegates: const [
+            S.delegate,
             DefaultMaterialLocalizations.delegate,
             DefaultWidgetsLocalizations.delegate,
             DefaultCupertinoLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
           ],
-          title: 'Magic App',
+          supportedLocales: S.delegate.supportedLocales,
+          title: "Magic App",
           // theme: ThemeData(
           //   // This is the theme of your application.
           //   //
@@ -45,11 +52,7 @@ class MagicApp extends StatelessWidget {
           //   primarySwatch: Colors.blue,
           //   brightness: Brightness.light,
           // ),
-          home: const MagicHomePage(title: 'Magic App'),
-          supportedLocales: const [
-            Locale.fromSubtags(languageCode: "de"),
-            Locale.fromSubtags(languageCode: "en")
-          ],
+          home: const MagicHomePage(),
           material: (_, __) => MaterialAppData(
             darkTheme: ThemeData(
               brightness: Brightness.dark,
@@ -74,18 +77,7 @@ class MagicApp extends StatelessWidget {
 }
 
 class MagicHomePage extends StatefulWidget {
-  const MagicHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MagicHomePage({Key? key}) : super(key: key);
 
   @override
   State<MagicHomePage> createState() => _MagicHomePageState();
@@ -130,22 +122,22 @@ class _MagicHomePageState extends State<MagicHomePage> {
       BottomNavigationBarItem(
         icon: Icon(PlatformIcons(context).accountCircle),
         activeIcon: Icon(PlatformIcons(context).accountCircleSolid),
-        label: "Profile",
+        label: S.of(context).profile,
       ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.crop_portrait),
-        label: "MagicMirror",
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.crop_portrait),
+        label: S.of(context).magicMirror,
       ),
       BottomNavigationBarItem(
         icon: Icon(PlatformIcons(context).settings),
         activeIcon: Icon(PlatformIcons(context).settingsSolid),
-        label: "Settings",
+        label: S.of(context).settings,
       ),
     ];
 
     return PlatformScaffold(
       appBar: PlatformAppBar(
-        title: Text(widget.title),
+        title: Text(S.of(context).appName),
         material: (_, __) => MaterialAppBarData(),
         cupertino: (_, __) => CupertinoNavigationBarData(
           border: const Border(
