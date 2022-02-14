@@ -26,18 +26,18 @@ class MirrorView extends StatefulWidget {
 class _MirrorViewState extends State<MirrorView> {
   // TODO: Convert this to a setting
   static const double mirrorRatio = 50 / 70;
-  static const List<String> moduleNames = [
-    "t_bar",
-    "t_l",
-    "t_m",
-    "t_rt",
-    "upper",
-    "middle",
-    "lower",
-    "b_l",
-    "b_m",
-    "b_r",
-    "bottom_bar",
+  static List<Module> modules = [
+    Module(name: "t_bar"),
+    Module(name: "t_l"),
+    Module(name: "t_m"),
+    Module(name: "t_rt"),
+    Module(name: "upper"),
+    Module(name: "middle"),
+    Module(name: "lower"),
+    Module(name: "b_l"),
+    Module(name: "b_m"),
+    Module(name: "b_r"),
+    Module(name: "bottom_bar"),
   ];
 
   @override
@@ -64,14 +64,26 @@ class _MirrorViewState extends State<MirrorView> {
 
   @override
   Widget build(BuildContext context) {
-    List<ModuleWidget> modules = [];
+    List<DragTarget> modulesWidgets = [];
 
-    for (String s in moduleNames) {
-      modules.add(
-        ModuleWidget(
-          module: Module(name: s),
-          selectedCallback: setSelectedModule,
-          isSelected: s == selectedModule && !widget.enableClick,
+    for (Module m in modules) {
+      ModuleWidget moduleWidget = ModuleWidget(
+        module: m,
+        selectedCallback: setSelectedModule,
+        isSelected: m.name == selectedModule && !widget.enableClick,
+      );
+
+      modulesWidgets.add(
+        DragTarget(
+          onAccept: (data) => print("accepted $data"),
+          onMove: (data) => print("move $data"),
+          onLeave: (data) => print("leave $data"),
+          builder: (_, __, ___) => Draggable(
+            data: m,
+            maxSimultaneousDrags: 1,
+            child: moduleWidget,
+            feedback: moduleWidget,
+          ),
         ),
       );
     }
@@ -84,27 +96,27 @@ class _MirrorViewState extends State<MirrorView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          modules[0],
+          modulesWidgets[0],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              modules[1],
-              modules[2],
-              modules[3],
+              modulesWidgets[1],
+              modulesWidgets[2],
+              modulesWidgets[3],
             ],
           ),
-          modules[4],
-          modules[5],
-          modules[6],
+          modulesWidgets[4],
+          modulesWidgets[5],
+          modulesWidgets[6],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              modules[7],
-              modules[8],
-              modules[9],
+              modulesWidgets[7],
+              modulesWidgets[8],
+              modulesWidgets[9],
             ],
           ),
-          modules[10],
+          modulesWidgets[10],
         ],
       ),
       decoration: const BoxDecoration(

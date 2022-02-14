@@ -16,8 +16,9 @@ class ModuleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Draggable and Drag Target
     return Listener(
-      behavior: HitTestBehavior.deferToChild,
+      // behavior: HitTestBehavior.deferToChild,
       onPointerDown: (_) {
         print("Module ${module.name} clicked");
         selectedCallback(module.name);
@@ -25,21 +26,14 @@ class ModuleWidget extends StatelessWidget {
       // onTapCancel: () {
       //   print("Tap cancelled");
       // },
-      child: GestureDetector(
-        onHorizontalDragStart: (_) {
-          print("dragged horizontally");
-        },
-        onVerticalDragStart: (_) {
-          print("dragged vertically");
-        },
-        child: Container(
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: isSelected ? Colors.blueAccent : Colors.redAccent,
-            ),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? Colors.blueAccent : Colors.redAccent,
           ),
         ),
+        child: const Text("abc"),
       ),
     );
   }
