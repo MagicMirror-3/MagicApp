@@ -27,32 +27,32 @@ class MirrorView extends StatefulWidget {
   final ValueChanged<String> onModuleChanged;
 
   @override
-  _MirrorViewState createState() => _MirrorViewState();
+  MirrorViewState createState() => MirrorViewState();
 }
 
-class _MirrorViewState extends State<MirrorView> {
+class MirrorViewState extends State<MirrorView> {
   // TODO: Convert this to a setting
   static const double mirrorRatio = 50 / 70;
+  static final Iterable<ModulePosition> validModulePositions =
+      ModulePosition.values.getRange(0, ModulePosition.values.length - 2);
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      selectedModule = widget.selectedModule;
-    });
+    selectedModule = widget.selectedModule;
+    layout = SharedPreferencesHandler.getValue(SettingKeys.mirrorLayout);
 
+    print("Loaded layout: $layout");
     // print(
     //     "MirrorView built with selected module $selectedModule (${widget.selectedModule}), enableClick: ${widget.enableClick}");
   }
 
   String selectedModule = "";
-  Iterable<ModulePosition> validModulePositions =
-      ModulePosition.values.getRange(0, ModulePosition.values.length - 2);
-  MirrorLayout layout =
-      SharedPreferencesHandler.getValue(SettingKeys.mirrorLayout);
+  late MirrorLayout layout;
+
+  Module? tempMovedModule;
 
   void setSelectedModule(String moduleName) {
-    print("MirrorView: $moduleName is selected");
     setState(() {
       selectedModule = moduleName;
     });
@@ -62,8 +62,6 @@ class _MirrorViewState extends State<MirrorView> {
 
   @override
   Widget build(BuildContext context) {
-    print("Display loading screen: ${widget.displayLoading}");
-
     List<DragTarget> modulesWidgets = [];
 
     for (ModulePosition modulePosition in validModulePositions) {
@@ -90,22 +88,49 @@ class _MirrorViewState extends State<MirrorView> {
 
       modulesWidgets.add(
         DragTarget(
-          onAccept: (data) {
-            if (data is Module) {
-              // SharedPreferencesHandler.saveValue(
-              //     SettingKeys.mirrorLayout, layout);
+          onAccept: (newModule) {
+            if (newModule is Module) {
+              if (tempMovedModule != null) {
+                tempMovedModule!.originalPosition = newModule.originalPosition;
+              }
+              newModule.originalPosition = modulePosition;
+
               setState(() {
-                layout.changeModulePosition(data, modulePosition);
+                layout.changeModulePosition(newModule, modulePosition);
               });
             }
           },
-          // onMove: (data) {
-          //   Module m = data.data as Module;
-          //   layout.changeModulePosition(m, modulePosition);
-          // },
-          // onLeave: (data) {
-          //   layout.changeModulePosition(newModule, newPosition)
-          // },
+          onMove: (data) {
+            Module newModule = data.data as Module;
+            Module? currentModule = layout.modules[modulePosition];
+            if (newModule.name != currentModule?.name) {
+              tempMovedModule = currentModule;
+
+              setState(() {
+                layout.changeModulePosition(newModule, modulePosition);
+
+                if (tempMovedModule != null) {
+                  layout.changeModulePosition(
+                      tempMovedModule!, newModule.originalPosition);
+                }
+              });
+            }
+          },
+          onLeave: (data) {
+            if (tempMovedModule != null) {
+              print(
+                  "Moving ${tempMovedModule!.name} back to ${tempMovedModule!.originalPosition}");
+
+              layout.changeModulePosition(
+                tempMovedModule!,
+                tempMovedModule!.originalPosition,
+              );
+
+              setState(() {
+                tempMovedModule = null;
+              });
+            }
+          },
           builder: (_, __, ___) => targetChild,
         ),
       );
@@ -167,8 +192,8 @@ class _MirrorViewState extends State<MirrorView> {
                 children: [
                   ImageFiltered(
                     imageFilter: ImageFilter.blur(
-                      sigmaX: 0.6,
-                      sigmaY: 0.6,
+                      sigmaX: 0.55,
+                      sigmaY: 0.55,
                     ),
                     child: mirrorContainer,
                   ),

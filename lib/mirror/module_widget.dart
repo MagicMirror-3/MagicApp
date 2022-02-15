@@ -18,17 +18,14 @@ class ModuleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Listener(
-      onPointerDown: (_) {
-        print("Module ${module.name} clicked");
-        selectedCallback(module.name);
-      },
+      onPointerDown: (_) => selectedCallback(module.name),
       child: Container(
         padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? Colors.blueAccent : Colors.redAccent,
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   border: Border.all(
+        //     color: isSelected ? Colors.blueAccent : Colors.redAccent,
+        //   ),
+        // ),
         child: DefaultPlatformText(module.name),
       ),
     );

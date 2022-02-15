@@ -11,6 +11,7 @@ class MirrorContainer extends StatelessWidget {
       this.displayLoading = true,
       this.selectedModule = "",
       this.onModuleChanged,
+      this.mirrorViewKey,
       Key? key})
       : super(key: key);
 
@@ -19,6 +20,7 @@ class MirrorContainer extends StatelessWidget {
   final bool displayLoading;
   final String selectedModule;
   final ValueChanged<String>? onModuleChanged;
+  final GlobalKey<MirrorViewState>? mirrorViewKey;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class MirrorContainer extends StatelessWidget {
           builder: (_, BoxConstraints constraints) => MirrorBackground(
             mirrorBorder: MirrorBorder(
               mirrorView: MirrorView(
+                key: mirrorViewKey,
                 height: mirrorSize / 100 * constraints.maxHeight,
                 enableClick: enableClick,
                 displayLoading: displayLoading,

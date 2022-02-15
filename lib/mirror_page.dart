@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
-import 'package:magic_app/settings/constants.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
 import 'generated/l10n.dart';
-import 'mirror/mirror_data.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -29,19 +26,19 @@ class _MainPageState extends State<MainPage> {
   void requestModules() {
     Future.delayed(const Duration(seconds: 3)).then((_) {
       // Save the layout to local shared preferences
-      MirrorLayout mirrorLayout = MirrorLayout.fromString("""[
-  {
-    "module": "clock",
-    "position": "top_right"
-  },
-  {
-    "module": "weather",
-    "position": "middle_center"
-  }
-      ]""");
-
-      SharedPreferencesHandler.saveValue(
-          SettingKeys.mirrorLayout, mirrorLayout);
+      //     MirrorLayout mirrorLayout = MirrorLayout.fromString("""[
+      // {
+      //   "module": "clock",
+      //   "position": "top_right"
+      // },
+      // {
+      //   "module": "weather",
+      //   "position": "middle_center"
+      // }
+      //     ]""");
+      //
+      //     SharedPreferencesHandler.saveValue(
+      //         SettingKeys.mirrorLayout, mirrorLayout);
 
       // Dont display loading screen
       if (mounted) {

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
+import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/util/shared_preferences_handler.dart';
 
 import '../util/text_types.dart';
+import 'mirror_view.dart';
 
 class MirrorEdit extends StatefulWidget {
   const MirrorEdit({this.selectedModule = "", Key? key}) : super(key: key);
@@ -16,6 +19,9 @@ class MirrorEdit extends StatefulWidget {
 
 class _MirrorEditState extends State<MirrorEdit> {
   String selectedModule = "";
+
+  final GlobalKey<MirrorViewState> mirrorViewKey =
+      GlobalKey<MirrorViewState>(debugLabel: "MirrorView");
 
   @override
   void initState() {
@@ -43,7 +49,6 @@ class _MirrorEditState extends State<MirrorEdit> {
   }
 
   void setSelectedModule(String moduleName) {
-    print("MirrorEdit: $moduleName is selected");
     setState(() {
       selectedModule = moduleName;
     });
@@ -60,6 +65,7 @@ class _MirrorEditState extends State<MirrorEdit> {
           displayLoading: false,
           selectedModule: selectedModule,
           onModuleChanged: setSelectedModule,
+          mirrorViewKey: mirrorViewKey,
         ),
         Expanded(
           child: Row(
@@ -67,7 +73,10 @@ class _MirrorEditState extends State<MirrorEdit> {
             children: [
               PlatformTextButton(
                 child: const DefaultPlatformText("save"),
-                onPressed: () => print("Save layout somehow"),
+                onPressed: () => SharedPreferencesHandler.saveValue(
+                  SettingKeys.mirrorLayout,
+                  mirrorViewKey.currentState?.layout,
+                ),
               ),
               PlatformTextButton(
                 child: const DefaultPlatformText("back"),

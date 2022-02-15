@@ -29,13 +29,16 @@ class Module {
       required this.position,
       this.description,
       this.image = "no_image.png",
-      this.config});
+      this.config}) {
+    originalPosition = position;
+  }
 
   final String name;
   ModulePosition position;
   final String? description;
   final String image;
   Map<String, String>? config;
+  late ModulePosition originalPosition;
 }
 
 class MirrorLayout {
@@ -55,7 +58,7 @@ class MirrorLayout {
       layout.changeModulePosition(
         Module(
           name: moduleName,
-          position: ModulePosition.from_menu,
+          position: position,
         ),
         position,
       );
@@ -86,11 +89,11 @@ class MirrorLayout {
   }
 
   void changeModulePosition(Module newModule, ModulePosition newPosition) {
-    print("Moving module '${newModule.name}' to '$newPosition'");
+    // print("Moving module '${newModule.name}' to '$newPosition'");
     modules.update(
       newPosition,
       (oldModule) {
-        print("Previous Module was '${oldModule.name}'");
+        // print("Previous Module was '${oldModule.name}'");
         if (newModule.position != ModulePosition.from_menu) {
           modules.update(
             newModule.position,
@@ -104,7 +107,7 @@ class MirrorLayout {
         return newModule;
       },
       ifAbsent: () {
-        print("No previous module!");
+        // print("No previous module!");
 
         modules.remove(newModule.position);
         return newModule;
