@@ -219,6 +219,10 @@ class _SettingsPageState extends State<SettingsPage> {
             wallPatternTile,
             wallColorTile,
             mirrorBorderTile,
+            SettingsTile(
+              title: const Text("Reset Layout"),
+              onPressed: (_) => SharedPreferencesHandler.resetLayout(),
+            )
           ],
         ),
       ],

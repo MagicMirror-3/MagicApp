@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -60,7 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Container(
           margin: const EdgeInsets.only(top: 15),
-          child: const DefaultPlatformText("Bluetooth Devices"),
+          child: DefaultPlatformText(
+            "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.userName)}",
+          ),
         ),
         PlatformWidget(
           material: (_, __) => Expanded(

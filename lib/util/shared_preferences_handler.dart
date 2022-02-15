@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,10 @@ class SharedPreferencesHandler {
       if (defaultValue is Color) {
         return (colorFromHex(_preferences.getString(key) ?? "ffffff") ??
             defaultValue) as T;
+      } else if (defaultValue is MirrorLayout) {
+        return MirrorLayout.fromString(
+            _preferences.getString(SettingKeys.mirrorLayout) ??
+                defaultMirrorLayout) as T;
       } else {
         return _preferences.get(key) as T;
       }
@@ -40,8 +45,15 @@ class SharedPreferencesHandler {
       _preferences.setStringList(key, value);
     } else if (value is Color) {
       _preferences.setString(key, value.value.toRadixString(16));
+    } else if (value is MirrorLayout) {
+      // print("Saving mirror layout as ${value.toString()}");
+      _preferences.setString(key, value.toString());
     } else {
       throw TypeError();
     }
+  }
+
+  static void resetLayout() {
+    _preferences.remove(SettingKeys.mirrorLayout);
   }
 }

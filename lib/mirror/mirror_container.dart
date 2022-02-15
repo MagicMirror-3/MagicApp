@@ -8,6 +8,7 @@ class MirrorContainer extends StatelessWidget {
   const MirrorContainer(
       {this.mirrorSize = 75,
       this.enableClick = true,
+      this.displayLoading = true,
       this.selectedModule = "",
       this.onModuleChanged,
       Key? key})
@@ -15,6 +16,7 @@ class MirrorContainer extends StatelessWidget {
 
   final int mirrorSize;
   final bool enableClick;
+  final bool displayLoading;
   final String selectedModule;
   final ValueChanged<String>? onModuleChanged;
 
@@ -29,6 +31,7 @@ class MirrorContainer extends StatelessWidget {
               mirrorView: MirrorView(
                 height: mirrorSize / 100 * constraints.maxHeight,
                 enableClick: enableClick,
+                displayLoading: displayLoading,
                 selectedModule: selectedModule,
                 onModuleChanged: onModuleChanged ?? print,
               ),

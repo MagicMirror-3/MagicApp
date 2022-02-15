@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:magic_app/util/text_types.dart';
 
-import 'module.dart';
+import 'mirror_data.dart';
 
 class ModuleWidget extends StatelessWidget {
   const ModuleWidget(
@@ -16,16 +17,11 @@ class ModuleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Draggable and Drag Target
     return Listener(
-      // behavior: HitTestBehavior.deferToChild,
       onPointerDown: (_) {
         print("Module ${module.name} clicked");
         selectedCallback(module.name);
       },
-      // onTapCancel: () {
-      //   print("Tap cancelled");
-      // },
       child: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
@@ -33,7 +29,7 @@ class ModuleWidget extends StatelessWidget {
             color: isSelected ? Colors.blueAccent : Colors.redAccent,
           ),
         ),
-        child: const Text("abc"),
+        child: DefaultPlatformText(module.name),
       ),
     );
   }

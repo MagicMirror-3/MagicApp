@@ -57,13 +57,23 @@ class _MirrorEditState extends State<MirrorEdit> {
         MirrorContainer(
           mirrorSize: 80,
           enableClick: false,
+          displayLoading: false,
           selectedModule: selectedModule,
           onModuleChanged: setSelectedModule,
         ),
         Expanded(
-          child: PlatformTextButton(
-            child: const DefaultPlatformText("back"),
-            onPressed: () => Navigator.pop(context),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              PlatformTextButton(
+                child: const DefaultPlatformText("save"),
+                onPressed: () => print("Save layout somehow"),
+              ),
+              PlatformTextButton(
+                child: const DefaultPlatformText("back"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
           ),
         ),
       ],

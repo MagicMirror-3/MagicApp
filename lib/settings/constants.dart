@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:magic_app/mirror/mirror_data.dart';
 
 import '../generated/l10n.dart';
 
@@ -36,20 +37,36 @@ class SettingChoices {
 }
 
 class SettingKeys {
+  static const String userName = "userName";
+
   static const String darkMode = "darkMode";
   static const String alternativeAppearance = "alternativeAppearance";
   static const String language = "language";
 
+  static const String mirrorLayout = "mirrorLayout";
   static const String wallPattern = "wallPattern";
   static const String wallColor = "wallColor";
   static const String mirrorBorder = "mirrorBorder";
 }
 
-const defaultValues = {
+var defaultValues = {
+  SettingKeys.userName: "Default",
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
   SettingKeys.language: "en",
+  SettingKeys.mirrorLayout: MirrorLayout.fromString(defaultMirrorLayout),
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
   SettingKeys.mirrorBorder: "default.png"
 };
+
+String defaultMirrorLayout = """[
+  {
+    "module": "clock",
+    "position": "top_left"
+  },
+  {
+    "module": "weather",
+    "position": "middle_center"
+  }
+]""";
