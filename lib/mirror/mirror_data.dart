@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:magic_app/util/utility.dart';
 
 enum ModulePosition {
   top_bar,
@@ -37,7 +37,7 @@ class Module {
   ModulePosition position;
   final String? description;
   final String image;
-  Map<String, String>? config;
+  Map<String, dynamic>? config;
   late ModulePosition originalPosition;
 }
 
@@ -46,21 +46,11 @@ class MirrorLayout {
 
   /// The String has to follow this format: https://docs.magicmirror.builders/modules/configuration.html#example
   static MirrorLayout fromString(String string) {
-    List<dynamic> moduleList = jsonDecode(string);
-
     MirrorLayout layout = MirrorLayout();
-    for (Map<String, dynamic> moduleEntry in moduleList) {
-      String moduleName = moduleEntry["module"];
-      ModulePosition position = ModulePosition.values
-          .firstWhere((pos) => pos.toShortString() == moduleEntry["position"]);
-
-      // TODO: support config
+    for (Module module in modulesFromJSON(string)) {
       layout.changeModulePosition(
-        Module(
-          name: moduleName,
-          position: position,
-        ),
-        position,
+        module,
+        module.originalPosition,
       );
     }
 
@@ -69,23 +59,7 @@ class MirrorLayout {
 
   @override
   String toString() {
-    List<Map<String, dynamic>> moduleList = [];
-
-    for (MapEntry<ModulePosition, Module> entry in modules.entries) {
-      Module m = entry.value;
-
-      Map<String, dynamic> moduleMap = {
-        "module": m.name,
-        "position": entry.key.toShortString(),
-      };
-
-      if (m.config != null) {
-        moduleMap.putIfAbsent("config", () => m.config);
-      }
-      moduleList.add(moduleMap);
-    }
-
-    return jsonEncode(moduleList);
+    return modulesToJSON(modules.values.toList());
   }
 
   void changeModulePosition(Module newModule, ModulePosition newPosition) {
