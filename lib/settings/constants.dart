@@ -47,6 +47,7 @@ class SettingKeys {
   static const String wallPattern = "wallPattern";
   static const String wallColor = "wallColor";
   static const String mirrorBorder = "mirrorBorder";
+  static const String mirrorRefresh = "mirrorRefresh";
 }
 
 var defaultValues = {
@@ -57,16 +58,8 @@ var defaultValues = {
   SettingKeys.mirrorLayout: MirrorLayout.fromString(defaultMirrorLayout),
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
-  SettingKeys.mirrorBorder: "default.png"
+  SettingKeys.mirrorBorder: "default.png",
+  SettingKeys.mirrorRefresh: false,
 };
 
-String defaultMirrorLayout = """[
-  {
-    "module": "clock",
-    "position": "top_left"
-  },
-  {
-    "module": "weather",
-    "position": "middle_center"
-  }
-]""";
+String defaultMirrorLayout = "";

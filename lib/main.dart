@@ -10,13 +10,23 @@ import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/themes.dart';
 
 import 'generated/l10n.dart';
+import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
 void main() {
   // debugPrintGestureArenaDiagnostics = true;
 
   // Init Settings
-  SharedPreferencesHandler.init().then((_) => runApp(const MagicApp()));
+  SharedPreferencesHandler.init().then((_) {
+    // Retrieve the default layout
+    rootBundle.loadString("assets/default_layout.json").then((value) {
+      defaultMirrorLayout = value;
+      defaultValues[SettingKeys.mirrorLayout] = MirrorLayout.fromString(value);
+
+      // Start the app
+      runApp(const MagicApp());
+    });
+  });
 }
 
 class MagicApp extends StatefulWidget {

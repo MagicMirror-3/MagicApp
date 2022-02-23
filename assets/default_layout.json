@@ -1,0 +1,10 @@
+[
+  {
+    "module": "clock",
+    "position": "top_left"
+  },
+  {
+    "module": "weather",
+    "position": "middle_center"
+  }
+]
