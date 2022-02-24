@@ -52,18 +52,35 @@ class MirrorViewState extends State<MirrorView> {
 
   Module? tempMovedModule;
 
-  void setSelectedModule(String moduleName) {
-    setState(() {
-      selectedModule = moduleName;
-    });
+  void openMirrorEdit(BuildContext context) {
+    Navigator.push(
+      context,
+      platformPageRoute(
+        context: context,
+        builder: (_) => MirrorEdit(
+          selectedModule: selectedModule,
+        ),
+      ),
+    );
+  }
 
-    widget.onModuleChanged(moduleName);
+  void setSelectedModule(String moduleName, BuildContext context) {
+    if (moduleName != selectedModule) {
+      setState(() {
+        selectedModule = moduleName;
+      });
+
+      widget.onModuleChanged(moduleName);
+    }
+
+    if (widget.enableClick) {
+      openMirrorEdit(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DragTarget> modulesWidgets = [];
-
+    List<Widget> modulesWidgets = [];
     for (ModulePosition modulePosition in validModulePositions) {
       Module? m = layout.modules[modulePosition];
       dynamic targetChild;
@@ -83,86 +100,92 @@ class MirrorViewState extends State<MirrorView> {
         );
       } else {
         // print("No module for position $modulePosition");
-        targetChild = const Padding(padding: EdgeInsets.all(10));
+        targetChild = Container();
       }
 
       modulesWidgets.add(
-        DragTarget(
-          onAccept: (newModule) {
-            if (newModule is Module) {
-              if (tempMovedModule != null) {
-                tempMovedModule!.originalPosition = newModule.originalPosition;
-              }
-              newModule.originalPosition = modulePosition;
-
-              setState(() {
-                layout.changeModulePosition(newModule, modulePosition);
-              });
-            }
-          },
-          onMove: (data) {
-            Module newModule = data.data as Module;
-            Module? currentModule = layout.modules[modulePosition];
-            if (newModule.name != currentModule?.name) {
-              tempMovedModule = currentModule;
-
-              setState(() {
-                layout.changeModulePosition(newModule, modulePosition);
-
+        Flexible(
+          fit: FlexFit.tight,
+          child: DragTarget(
+            onAccept: (newModule) {
+              if (newModule is Module) {
                 if (tempMovedModule != null) {
-                  layout.changeModulePosition(
-                      tempMovedModule!, newModule.originalPosition);
+                  tempMovedModule!.originalPosition =
+                      newModule.originalPosition;
                 }
-              });
-            }
-          },
-          onLeave: (data) {
-            if (tempMovedModule != null) {
-              print(
-                  "Moving ${tempMovedModule!.name} back to ${tempMovedModule!.originalPosition}");
+                newModule.originalPosition = modulePosition;
 
-              layout.changeModulePosition(
-                tempMovedModule!,
-                tempMovedModule!.originalPosition,
-              );
+                setState(() {
+                  layout.changeModulePosition(newModule, modulePosition);
+                });
+              }
+            },
+            onMove: (data) {
+              Module newModule = data.data as Module;
+              Module? currentModule = layout.modules[modulePosition];
+              if (newModule.name != currentModule?.name) {
+                tempMovedModule = currentModule;
 
-              setState(() {
-                tempMovedModule = null;
-              });
-            }
-          },
-          builder: (_, __, ___) => targetChild,
+                setState(() {
+                  layout.changeModulePosition(newModule, modulePosition);
+
+                  if (tempMovedModule != null) {
+                    layout.changeModulePosition(
+                        tempMovedModule!, newModule.originalPosition);
+                  }
+                });
+              }
+            },
+            onLeave: (data) {
+              if (tempMovedModule != null) {
+                layout.changeModulePosition(
+                  tempMovedModule!,
+                  tempMovedModule!.originalPosition,
+                );
+
+                setState(() {
+                  tempMovedModule = null;
+                });
+              }
+            },
+            builder: (_, __, ___) => targetChild,
+          ),
         ),
       );
     }
 
-    Container mirrorContainer = Container(
+    Container moduleContainer = Container(
       constraints: BoxConstraints(
         maxHeight: widget.height,
         maxWidth: widget.height * mirrorRatio,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           modulesWidgets[0],
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              modulesWidgets[1],
-              modulesWidgets[2],
-              modulesWidgets[3],
-            ],
+          Flexible(
+            fit: FlexFit.tight,
+            child: Row(
+              children: [
+                modulesWidgets[1],
+                modulesWidgets[2],
+                modulesWidgets[3],
+              ],
+            ),
           ),
           modulesWidgets[4],
           modulesWidgets[5],
           modulesWidgets[6],
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              modulesWidgets[7],
-              modulesWidgets[8],
-              modulesWidgets[9],
-            ],
+          Flexible(
+            fit: FlexFit.tight,
+            child: Row(
+              children: [
+                modulesWidgets[7],
+                modulesWidgets[8],
+                modulesWidgets[9],
+              ],
+            ),
           ),
           modulesWidgets[10],
         ],
@@ -173,18 +196,10 @@ class MirrorViewState extends State<MirrorView> {
     );
 
     return widget.enableClick && !widget.displayLoading
-        ? Listener(
+        ? GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onPointerDown: (_) => Navigator.push(
-              context,
-              platformPageRoute(
-                context: context,
-                builder: (_) => MirrorEdit(
-                  selectedModule: selectedModule,
-                ),
-              ),
-            ),
-            child: mirrorContainer,
+            onTap: () => openMirrorEdit(context),
+            child: moduleContainer,
           )
         : widget.displayLoading
             ? Stack(
@@ -195,7 +210,7 @@ class MirrorViewState extends State<MirrorView> {
                       sigmaX: 0.55,
                       sigmaY: 0.55,
                     ),
-                    child: mirrorContainer,
+                    child: moduleContainer,
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
@@ -209,6 +224,6 @@ class MirrorViewState extends State<MirrorView> {
                   )
                 ],
               )
-            : mirrorContainer;
+            : moduleContainer;
   }
 }

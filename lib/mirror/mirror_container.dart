@@ -28,15 +28,19 @@ class MirrorContainer extends StatelessWidget {
       child: Hero(
         tag: "mirror",
         child: LayoutBuilder(
-          builder: (_, BoxConstraints constraints) => MirrorBackground(
-            mirrorBorder: MirrorBorder(
-              mirrorView: MirrorView(
-                key: mirrorViewKey,
-                height: mirrorSize / 100 * constraints.maxHeight,
-                enableClick: enableClick,
-                displayLoading: displayLoading,
-                selectedModule: selectedModule,
-                onModuleChanged: onModuleChanged ?? print,
+          builder: (_, BoxConstraints constraints) => GestureDetector(
+            // behavior: HitTestBehavior.translucent,
+            onTap: () => onModuleChanged!(""),
+            child: MirrorBackground(
+              mirrorBorder: MirrorBorder(
+                mirrorView: MirrorView(
+                  key: mirrorViewKey,
+                  height: mirrorSize / 100 * constraints.maxHeight,
+                  enableClick: enableClick,
+                  displayLoading: displayLoading,
+                  selectedModule: selectedModule,
+                  onModuleChanged: onModuleChanged ?? print,
+                ),
               ),
             ),
           ),

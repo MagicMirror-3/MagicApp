@@ -192,6 +192,17 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
     );
 
+    // Quit on Save
+    SettingsTile quitOnSaveTile = SettingsTile.switchTile(
+      initialValue: SharedPreferencesHandler.getValue(SettingKeys.quitOnSave),
+      onToggle: (value) => setState(
+        () => SharedPreferencesHandler.saveValue(SettingKeys.quitOnSave, value),
+      ),
+      leading: Icon(PlatformIcons(context).checkMarkCircledOutline),
+      title: Text(S.of(context).settings_quitOnSave),
+      description: Text(S.of(context).settings_quitOnSaveDescription),
+    );
+
     // Construct the layout
     return SettingsList(
       darkTheme: isMaterial(context)
@@ -219,12 +230,12 @@ class _SettingsPageState extends State<SettingsPage> {
             wallPatternTile,
             wallColorTile,
             mirrorBorderTile,
-            SettingsTile(
-              title: const Text("Reset Layout"),
-              onPressed: (_) => SharedPreferencesHandler.resetLayout(),
-            )
           ],
         ),
+        SettingsSection(
+          title: Text(S.of(context).settings_general),
+          tiles: [quitOnSaveTile],
+        )
       ],
     );
   }

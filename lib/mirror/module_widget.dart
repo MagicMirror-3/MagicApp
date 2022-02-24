@@ -12,21 +12,22 @@ class ModuleWidget extends StatelessWidget {
       : super(key: key);
 
   final Module module;
-  final Function selectedCallback;
+  final Function(String, BuildContext) selectedCallback;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      onPointerDown: (_) => selectedCallback(module.name),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => selectedCallback(module.name, context),
       child: Container(
         padding: const EdgeInsets.all(5),
-        // decoration: BoxDecoration(
-        //   border: Border.all(
-        //     color: isSelected ? Colors.blueAccent : Colors.redAccent,
-        //   ),
-        // ),
-        child: DefaultPlatformText(module.name),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? Colors.blueAccent : Colors.redAccent,
+          ),
+        ),
+        child: Center(child: DefaultPlatformText(module.name)),
       ),
     );
   }

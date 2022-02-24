@@ -34,5 +34,9 @@
     "settings_darkWall": "Dark Wall",
 
     "settings_wallColor": "Wall Color",
-    "settings_mirrorBorder": "Mirror Border"
+    "settings_mirrorBorder": "Mirror Border",
+
+    "settings_general": "General",
+    "settings_quitOnSave": "Quit on save",
+    "settings_quitOnSaveDescription": "Automatically close the layout editor upon saving"
 }

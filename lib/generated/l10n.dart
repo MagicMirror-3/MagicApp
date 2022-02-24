@@ -329,6 +329,36 @@ class S {
       args: [],
     );
   }
+
+  /// `General`
+  String get settings_general {
+    return Intl.message(
+      'General',
+      name: 'settings_general',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quit on save`
+  String get settings_quitOnSave {
+    return Intl.message(
+      'Quit on save',
+      name: 'settings_quitOnSave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatically close the layout editor upon saving`
+  String get settings_quitOnSaveDescription {
+    return Intl.message(
+      'Automatically close the layout editor upon saving',
+      name: 'settings_quitOnSaveDescription',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

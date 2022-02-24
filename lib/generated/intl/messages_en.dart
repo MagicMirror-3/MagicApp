@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Dark Brick Wall 2"),
         "settings_darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
         "settings_darkWall": MessageLookupByLibrary.simpleMessage("Dark Wall"),
+        "settings_general": MessageLookupByLibrary.simpleMessage("General"),
         "settings_langDe": MessageLookupByLibrary.simpleMessage("German"),
         "settings_langEn": MessageLookupByLibrary.simpleMessage("English"),
         "settings_language": MessageLookupByLibrary.simpleMessage("Language"),
@@ -56,6 +57,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Mirror Appearance"),
         "settings_mirrorBorder":
             MessageLookupByLibrary.simpleMessage("Mirror Border"),
+        "settings_quitOnSave":
+            MessageLookupByLibrary.simpleMessage("Quit on save"),
+        "settings_quitOnSaveDescription": MessageLookupByLibrary.simpleMessage(
+            "Automatically close the layout editor upon saving"),
         "settings_redox": MessageLookupByLibrary.simpleMessage("Redox"),
         "settings_soft": MessageLookupByLibrary.simpleMessage("Soft"),
         "settings_wallColor":

@@ -48,6 +48,8 @@ class SettingKeys {
   static const String wallColor = "wallColor";
   static const String mirrorBorder = "mirrorBorder";
   static const String mirrorRefresh = "mirrorRefresh";
+
+  static const String quitOnSave = "quitOnSave";
 }
 
 var defaultValues = {
@@ -60,6 +62,7 @@ var defaultValues = {
   SettingKeys.wallColor: Colors.white,
   SettingKeys.mirrorBorder: "default.png",
   SettingKeys.mirrorRefresh: false,
+  SettingKeys.quitOnSave: true,
 };
 
 String defaultMirrorLayout = "";

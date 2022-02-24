@@ -4,8 +4,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/util/text_types.dart';
+import 'package:magic_app/util/themes.dart';
 
-import '../util/text_types.dart';
 import 'mirror_view.dart';
 
 class MirrorEdit extends StatefulWidget {
@@ -49,41 +50,117 @@ class _MirrorEditState extends State<MirrorEdit> {
   }
 
   void setSelectedModule(String moduleName) {
-    setState(() {
-      selectedModule = moduleName;
-    });
+    if (moduleName != selectedModule) {
+      mirrorViewKey.currentState?.selectedModule = moduleName;
+      setState(() {
+        selectedModule = moduleName;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    MirrorContainer mirrorContainer = MirrorContainer(
+      mirrorSize: 80,
+      enableClick: false,
+      displayLoading: false,
+      selectedModule: selectedModule,
+      onModuleChanged: setSelectedModule,
+      mirrorViewKey: mirrorViewKey,
+    );
+
+    List<Widget> controlIcons = [
+      PlatformIconButton(
+          icon: Icon(
+            PlatformIcons(context).checkMarkCircledSolid,
+            color: Colors.green,
+            semanticLabel: "Save changes",
+          ),
+          padding: const EdgeInsets.all(0),
+          onPressed: () {
+            SharedPreferencesHandler.saveValue(
+              SettingKeys.mirrorLayout,
+              mirrorViewKey.currentState?.layout,
+            );
+
+            if (SharedPreferencesHandler.getValue(SettingKeys.quitOnSave)) {
+              Navigator.pop(context);
+            }
+          }),
+      PlatformIconButton(
+        icon: Icon(
+          PlatformIcons(context).clearThickCircled,
+          color: Colors.red,
+          semanticLabel: "Exit configuration",
+        ),
+        padding: const EdgeInsets.all(0),
+        // TODO: Prompt unsaved changes
+        onPressed: () => Navigator.pop(context),
+      ),
+    ];
+
+    if (isMaterial(context)) {
+      controlIcons = controlIcons
+          .map(
+            (icon) => Material(
+              child: icon,
+              type: MaterialType.transparency,
+              borderOnForeground: false,
+            ),
+          )
+          .toList();
+    }
+
+    Widget secondWidget =
+        selectedModule == "" ? _ModuleCatalog() : const Placeholder();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        MirrorContainer(
-          mirrorSize: 80,
-          enableClick: false,
-          displayLoading: false,
-          selectedModule: selectedModule,
-          onModuleChanged: setSelectedModule,
-          mirrorViewKey: mirrorViewKey,
-        ),
+        mirrorContainer,
         Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Stack(
             children: [
-              PlatformTextButton(
-                child: const DefaultPlatformText("save"),
-                onPressed: () => SharedPreferencesHandler.saveValue(
-                  SettingKeys.mirrorLayout,
-                  mirrorViewKey.currentState?.layout,
+              secondWidget,
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 28, 5, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: controlIcons,
+                  ),
                 ),
-              ),
-              PlatformTextButton(
-                child: const DefaultPlatformText("back"),
-                onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModuleCatalog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          title: const Text("Module catalog"),
+          floating: true,
+          automaticallyImplyLeading: false,
+          backgroundColor: isMaterial(context)
+              ? ThemeData.dark().appBarTheme.backgroundColor
+              : darkCupertinoTheme.barBackgroundColor,
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate([
+            const DefaultPlatformText("Module1"),
+            const DefaultPlatformText("Module2"),
+            const DefaultPlatformText("Module3"),
+            const DefaultPlatformText("Module4"),
+            const DefaultPlatformText("Module5"),
+          ]),
         ),
       ],
     );

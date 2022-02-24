@@ -49,6 +49,7 @@ class _MagicAppState extends State<MagicApp> {
     return Theme(
       data: ThemeData(),
       child: PlatformProvider(
+        settings: PlatformSettingsData(),
         builder: (_) => PlatformApp(
           localizationsDelegates: const [
             S.delegate,
