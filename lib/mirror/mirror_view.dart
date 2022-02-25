@@ -15,7 +15,7 @@ class MirrorView extends StatefulWidget {
       {required this.height,
       this.enableClick = true,
       this.displayLoading = true,
-      this.selectedModule = "",
+      this.selectedModule,
       this.onModuleChanged = print,
       Key? key})
       : super(key: key);
@@ -23,8 +23,8 @@ class MirrorView extends StatefulWidget {
   final double height;
   final bool enableClick;
   final bool displayLoading;
-  final String selectedModule;
-  final ValueChanged<String> onModuleChanged;
+  final Module? selectedModule;
+  final ValueChanged<Module?> onModuleChanged;
 
   @override
   MirrorViewState createState() => MirrorViewState();
@@ -47,7 +47,7 @@ class MirrorViewState extends State<MirrorView> {
     //     "MirrorView built with selected module $selectedModule (${widget.selectedModule}), enableClick: ${widget.enableClick}");
   }
 
-  String selectedModule = "";
+  Module? selectedModule;
   late MirrorLayout layout;
 
   Module? tempMovedModule;
@@ -64,13 +64,13 @@ class MirrorViewState extends State<MirrorView> {
     );
   }
 
-  void setSelectedModule(String moduleName, BuildContext context) {
-    if (moduleName != selectedModule) {
+  void setSelectedModule(Module? module, BuildContext context) {
+    if (module != selectedModule) {
       setState(() {
-        selectedModule = moduleName;
+        selectedModule = module;
       });
 
-      widget.onModuleChanged(moduleName);
+      widget.onModuleChanged(module);
     }
 
     if (widget.enableClick) {
@@ -89,7 +89,9 @@ class MirrorViewState extends State<MirrorView> {
         ModuleWidget moduleWidget = ModuleWidget(
           module: m,
           selectedCallback: setSelectedModule,
-          isSelected: m.name == selectedModule && !widget.enableClick,
+          isSelected: selectedModule != null &&
+              m.name == selectedModule!.name &&
+              !widget.enableClick,
         );
 
         targetChild = Draggable(

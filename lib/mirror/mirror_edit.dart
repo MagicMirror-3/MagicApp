@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 
+import 'mirror_data.dart';
 import 'mirror_view.dart';
 
 class MirrorEdit extends StatefulWidget {
-  const MirrorEdit({this.selectedModule = "", Key? key}) : super(key: key);
+  const MirrorEdit({this.selectedModule, Key? key}) : super(key: key);
 
-  final String selectedModule;
+  final Module? selectedModule;
 
   @override
   _MirrorEditState createState() => _MirrorEditState();
 }
 
 class _MirrorEditState extends State<MirrorEdit> {
-  String selectedModule = "";
+  Module? selectedModule;
 
   final GlobalKey<MirrorViewState> mirrorViewKey =
       GlobalKey<MirrorViewState>(debugLabel: "MirrorView");
@@ -27,7 +29,6 @@ class _MirrorEditState extends State<MirrorEdit> {
   @override
   void initState() {
     selectedModule = widget.selectedModule;
-    print("Edit opened with $selectedModule");
 
     super.initState();
 
@@ -36,6 +37,9 @@ class _MirrorEditState extends State<MirrorEdit> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
+    // Go fullscreen
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
   @override
@@ -46,14 +50,18 @@ class _MirrorEditState extends State<MirrorEdit> {
       DeviceOrientation.portraitDown,
     ]);
 
-    super.deactivate();
+    // Deactivate fullscreen
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+    ).then((_) => super.deactivate());
   }
 
-  void setSelectedModule(String moduleName) {
-    if (moduleName != selectedModule) {
-      mirrorViewKey.currentState?.selectedModule = moduleName;
+  void setSelectedModule(Module? module) {
+    if (module != selectedModule) {
+      mirrorViewKey.currentState?.selectedModule = module;
       setState(() {
-        selectedModule = moduleName;
+        selectedModule = module;
       });
     }
   }
@@ -111,54 +119,43 @@ class _MirrorEditState extends State<MirrorEdit> {
           .toList();
     }
 
-    Widget secondWidget =
-        selectedModule == "" ? _ModuleCatalog() : _ModuleConfiguration();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        mirrorContainer,
-        Expanded(
-          child: Stack(
-            children: [
-              secondWidget,
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 28, 5, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: controlIcons,
-                  ),
-                ),
-              ),
-            ],
+    Widget secondWidget = Flexible(
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+              title: Text(selectedModule == null
+                  ? S.of(context).module_catalog
+                  : S.of(context).module_configuration),
+              floating: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: isMaterial(context)
+                  ? ThemeData.dark().appBarTheme.backgroundColor
+                  : darkCupertinoTheme.barBackgroundColor),
+          SliverList(
+            delegate: SliverChildListDelegate.fixed(
+              selectedModule == null
+                  ? [
+                      const DefaultPlatformText("Module1"),
+                      const DefaultPlatformText("Module2"),
+                      const DefaultPlatformText("Module3"),
+                      const DefaultPlatformText("Module4"),
+                      const DefaultPlatformText("Module5"),
+                    ]
+                  : [
+                      const DefaultPlatformText("Configuration goes here"),
+                    ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
-  }
-}
 
-class _ModuleConfiguration extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _ModuleConfigurationState();
-}
+    List<Widget> columnChildren = [secondWidget];
 
-class _ModuleConfigurationState extends State<_ModuleConfiguration> {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PlatformScaffold(
-          appBar: PlatformAppBar(
-            automaticallyImplyLeading: false,
-            title: const Text("Module configuration"),
-          ),
-          body: const Text("Configuration goes here"),
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
+    if (selectedModule != null) {
+      columnChildren.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -177,38 +174,38 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
               PlatformElevatedButton(
                 child: const Text("Cancel"),
                 color: Colors.red,
-                onPressed: () => print("cancel"),
+                onPressed: () => setSelectedModule(null),
                 padding: const EdgeInsets.all(8),
               ),
             ],
           ),
-        )
-      ],
-    );
-  }
-}
-
-class _ModuleCatalog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          title: const Text("Module catalog"),
-          floating: true,
-          automaticallyImplyLeading: false,
-          backgroundColor: isMaterial(context)
-              ? ThemeData.dark().appBarTheme.backgroundColor
-              : darkCupertinoTheme.barBackgroundColor,
         ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            const DefaultPlatformText("Module1"),
-            const DefaultPlatformText("Module2"),
-            const DefaultPlatformText("Module3"),
-            const DefaultPlatformText("Module4"),
-            const DefaultPlatformText("Module5"),
-          ]),
+      );
+    }
+
+    return Row(
+      children: [
+        // Container on the left
+        mirrorContainer,
+        // Other widget on the right with button overlay
+        Expanded(
+          child: Stack(
+            children: [
+              Column(
+                children: columnChildren,
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 8, 5, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: controlIcons,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ],
     );

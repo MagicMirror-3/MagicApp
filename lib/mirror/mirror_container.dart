@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 
+import 'mirror_data.dart';
 import 'mirror_view.dart';
 
 class MirrorContainer extends StatelessWidget {
@@ -9,7 +10,7 @@ class MirrorContainer extends StatelessWidget {
       {this.mirrorSize = 75,
       this.enableClick = true,
       this.displayLoading = true,
-      this.selectedModule = "",
+      this.selectedModule,
       this.onModuleChanged,
       this.mirrorViewKey,
       Key? key})
@@ -18,8 +19,8 @@ class MirrorContainer extends StatelessWidget {
   final int mirrorSize;
   final bool enableClick;
   final bool displayLoading;
-  final String selectedModule;
-  final ValueChanged<String>? onModuleChanged;
+  final Module? selectedModule;
+  final ValueChanged<Module?>? onModuleChanged;
   final GlobalKey<MirrorViewState>? mirrorViewKey;
 
   @override
@@ -30,7 +31,7 @@ class MirrorContainer extends StatelessWidget {
         child: LayoutBuilder(
           builder: (_, BoxConstraints constraints) => GestureDetector(
             // behavior: HitTestBehavior.translucent,
-            onTap: () => onModuleChanged!(""),
+            onTap: () => onModuleChanged!(null),
             child: MirrorBackground(
               mirrorBorder: MirrorBorder(
                 mirrorView: MirrorView(

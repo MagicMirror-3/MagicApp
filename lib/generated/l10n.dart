@@ -130,6 +130,26 @@ class S {
     );
   }
 
+  /// `Module configuration`
+  String get module_configuration {
+    return Intl.message(
+      'Module configuration',
+      name: 'module_configuration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Module catalog`
+  String get module_catalog {
+    return Intl.message(
+      'Module catalog',
+      name: 'module_catalog',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `App Appearance`
   String get settings_appAppearance {
     return Intl.message(

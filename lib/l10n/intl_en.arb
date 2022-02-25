@@ -13,6 +13,9 @@
 
     "greetings": "Hello {name}!",
 
+    "module_configuration": "Module configuration",
+    "module_catalog": "Module catalog",
+
     "settings_appAppearance": "App Appearance",
     "settings_darkMode": "Dark Mode",
     "settings_alternativeAppearance": "Alternative Appearance",

@@ -29,6 +29,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
         "greetings": m0,
         "magicMirror": MessageLookupByLibrary.simpleMessage("MagicMirror"),
+        "module_catalog":
+            MessageLookupByLibrary.simpleMessage("Module catalog"),
+        "module_configuration":
+            MessageLookupByLibrary.simpleMessage("Module configuration"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
