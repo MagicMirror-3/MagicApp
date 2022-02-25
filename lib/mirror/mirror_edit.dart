@@ -112,7 +112,7 @@ class _MirrorEditState extends State<MirrorEdit> {
     }
 
     Widget secondWidget =
-        selectedModule == "" ? _ModuleCatalog() : const Placeholder();
+        selectedModule == "" ? _ModuleCatalog() : _ModuleConfiguration();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -135,6 +135,51 @@ class _MirrorEditState extends State<MirrorEdit> {
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _ModuleConfiguration extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ModuleConfigurationState();
+}
+
+class _ModuleConfigurationState extends State<_ModuleConfiguration> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        PlatformScaffold(
+          appBar: PlatformAppBar(
+            automaticallyImplyLeading: false,
+            title: const Text("Module configuration"),
+          ),
+          body: const Text("Configuration goes here"),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              PlatformElevatedButton(
+                child: const Text("Save changes"),
+                color: Colors.green,
+                onPressed: () => print("save"),
+              ),
+              PlatformElevatedButton(
+                child: const Text("Reset Defaults"),
+                color: Colors.grey,
+                onPressed: () => print("reset"),
+              ),
+              PlatformElevatedButton(
+                child: const Text("Cancel"),
+                color: Colors.red,
+                onPressed: () => print("cancel"),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
