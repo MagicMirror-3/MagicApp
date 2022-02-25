@@ -1,10 +1,16 @@
 [
   {
     "module": "clock",
-    "position": "top_left"
+    "position": "top_left",
+    "config": {
+      "timezone": "Berlin"
+    }
   },
   {
     "module": "weather",
-    "position": "middle_center"
+    "position": "middle_center",
+    "config": {
+      "location": "Stuttgart, Germany"
+    }
   }
 ]

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -22,6 +24,14 @@ class MirrorEdit extends StatefulWidget {
 
 class _MirrorEditState extends State<MirrorEdit> {
   Module? selectedModule;
+
+  List<Module> moduleCatalog = [
+    Module(name: "dummy_module_1", position: ModulePosition.from_menu),
+    Module(name: "dummy_module_2", position: ModulePosition.from_menu),
+    Module(name: "dummy_module_3", position: ModulePosition.from_menu),
+    Module(name: "dummy_module_4", position: ModulePosition.from_menu),
+    Module(name: "dummy_module_5", position: ModulePosition.from_menu),
+  ];
 
   final GlobalKey<MirrorViewState> mirrorViewKey =
       GlobalKey<MirrorViewState>(debugLabel: "MirrorView");
@@ -107,7 +117,10 @@ class _MirrorEditState extends State<MirrorEdit> {
       ),
     ];
 
+    Color? sliverBackgroundColor;
     if (isMaterial(context)) {
+      sliverBackgroundColor = ThemeData.dark().appBarTheme.backgroundColor;
+
       controlIcons = controlIcons
           .map(
             (icon) => Material(
@@ -117,34 +130,47 @@ class _MirrorEditState extends State<MirrorEdit> {
             ),
           )
           .toList();
+    } else {
+      sliverBackgroundColor = darkCupertinoTheme.barBackgroundColor;
+    }
+
+    List<Widget> sliverChildren = [];
+    String sliverTitle;
+    bool hasConfig = false;
+
+    if (selectedModule == null) {
+      sliverTitle = S.of(context).module_catalog;
+      sliverChildren = moduleCatalog
+          .map((module) => DefaultPlatformText(module.name))
+          .toList();
+    } else {
+      sliverTitle = S.of(context).module_configuration;
+      Map<String, dynamic> moduleConfig = selectedModule!.config!;
+      if (moduleConfig.isEmpty) {
+        sliverChildren = [
+          const DefaultPlatformText(
+              "No configuration available for this module!")
+        ];
+      } else {
+        hasConfig = true;
+        for (MapEntry<String, dynamic> entry in moduleConfig.entries) {
+          sliverChildren.add(DefaultPlatformText("$entry"));
+        }
+      }
     }
 
     Widget secondWidget = Flexible(
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
-              title: Text(selectedModule == null
-                  ? S.of(context).module_catalog
-                  : S.of(context).module_configuration),
-              floating: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: isMaterial(context)
-                  ? ThemeData.dark().appBarTheme.backgroundColor
-                  : darkCupertinoTheme.barBackgroundColor),
+            primary: false,
+            title: Text(sliverTitle),
+            floating: true,
+            automaticallyImplyLeading: false,
+            backgroundColor: sliverBackgroundColor,
+          ),
           SliverList(
-            delegate: SliverChildListDelegate.fixed(
-              selectedModule == null
-                  ? [
-                      const DefaultPlatformText("Module1"),
-                      const DefaultPlatformText("Module2"),
-                      const DefaultPlatformText("Module3"),
-                      const DefaultPlatformText("Module4"),
-                      const DefaultPlatformText("Module5"),
-                    ]
-                  : [
-                      const DefaultPlatformText("Configuration goes here"),
-                    ],
-            ),
+            delegate: SliverChildListDelegate.fixed(sliverChildren),
           ),
         ],
       ),
@@ -152,7 +178,7 @@ class _MirrorEditState extends State<MirrorEdit> {
 
     List<Widget> columnChildren = [secondWidget];
 
-    if (selectedModule != null) {
+    if (selectedModule != null && hasConfig) {
       columnChildren.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
