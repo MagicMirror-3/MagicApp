@@ -160,22 +160,25 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         Align(
           alignment: Alignment.bottomRight,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               PlatformElevatedButton(
                 child: const Text("Save changes"),
                 color: Colors.green,
                 onPressed: () => print("save"),
+                padding: const EdgeInsets.all(8),
               ),
               PlatformElevatedButton(
-                child: const Text("Reset Defaults"),
+                child: const Text("Restore Defaults"),
                 color: Colors.grey,
-                onPressed: () => print("reset"),
+                onPressed: () => print("restore"),
+                padding: const EdgeInsets.all(8),
               ),
               PlatformElevatedButton(
                 child: const Text("Cancel"),
                 color: Colors.red,
                 onPressed: () => print("cancel"),
+                padding: const EdgeInsets.all(8),
               ),
             ],
           ),
