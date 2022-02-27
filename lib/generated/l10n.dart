@@ -110,11 +110,31 @@ class S {
     );
   }
 
+  /// `Save changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Default`
   String get defaultString {
     return Intl.message(
       'Default',
       name: 'defaultString',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please fill out this field`
+  String get fillOutField {
+    return Intl.message(
+      'Please fill out this field',
+      name: 'fillOutField',
       desc: '',
       args: [],
     );
@@ -127,6 +147,16 @@ class S {
       name: 'greetings',
       desc: '',
       args: [name],
+    );
+  }
+
+  /// `Refreshing layout...`
+  String get mirror_refresh {
+    return Intl.message(
+      'Refreshing layout...',
+      name: 'mirror_refresh',
+      desc: '',
+      args: [],
     );
   }
 

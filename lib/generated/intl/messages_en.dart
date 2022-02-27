@@ -27,14 +27,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "appName": MessageLookupByLibrary.simpleMessage("Magic App"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
+        "fillOutField":
+            MessageLookupByLibrary.simpleMessage("Please fill out this field"),
         "greetings": m0,
         "magicMirror": MessageLookupByLibrary.simpleMessage("MagicMirror"),
+        "mirror_refresh":
+            MessageLookupByLibrary.simpleMessage("Refreshing layout..."),
         "module_catalog":
             MessageLookupByLibrary.simpleMessage("Module catalog"),
         "module_configuration":
             MessageLookupByLibrary.simpleMessage("Module configuration"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "settings_alternativeAppearance":
             MessageLookupByLibrary.simpleMessage("Alternative Appearance"),

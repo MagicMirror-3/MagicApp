@@ -3,7 +3,8 @@
     "module": "clock",
     "position": "top_left",
     "config": {
-      "timezone": "Berlin"
+      "timezone": "Berlin",
+      "style": "extended"
     }
   },
   {

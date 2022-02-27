@@ -31,6 +31,7 @@ class Module {
       this.image = "no_image.png",
       this.config}) {
     originalPosition = position;
+    hasConfig = config != null && config!.isNotEmpty;
   }
 
   final String name;
@@ -39,12 +40,13 @@ class Module {
   final String image;
   Map<String, dynamic>? config;
   late ModulePosition originalPosition;
+  late final bool hasConfig;
 }
 
 class MirrorLayout {
   Map<ModulePosition, Module> modules = {};
 
-  /// The String has to follow this format: https://docs.magicmirror.builders/modules/configuration.html#example
+  /// The String has to follow this format: <https://docs.magicmirror.builders/modules/configuration.html#example>
   static MirrorLayout fromString(String string) {
     MirrorLayout layout = MirrorLayout();
     for (Module module in modulesFromJSON(string)) {
@@ -90,5 +92,11 @@ class MirrorLayout {
 
     // Update the position of the module internally
     newModule.position = newPosition;
+  }
+
+  void saveModuleConfiguration(
+      ModulePosition modulePosition, Map<String, dynamic> newConfiguration) {
+    print("configuration changed to $newConfiguration");
+    modules[modulePosition]?.config = newConfiguration;
   }
 }

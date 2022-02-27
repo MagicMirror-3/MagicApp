@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -24,6 +22,7 @@ class MirrorEdit extends StatefulWidget {
 
 class _MirrorEditState extends State<MirrorEdit> {
   Module? selectedModule;
+  Map<String, dynamic> tempModuleConfig = {};
 
   List<Module> moduleCatalog = [
     Module(name: "dummy_module_1", position: ModulePosition.from_menu),
@@ -34,13 +33,14 @@ class _MirrorEditState extends State<MirrorEdit> {
   ];
 
   final GlobalKey<MirrorViewState> mirrorViewKey =
-      GlobalKey<MirrorViewState>(debugLabel: "MirrorView");
+      GlobalKey(debugLabel: "MirrorView");
+  final GlobalKey<FormState> formKey = GlobalKey(debugLabel: "FormKey");
 
   @override
   void initState() {
-    selectedModule = widget.selectedModule;
-
     super.initState();
+
+    setSelectedModule(widget.selectedModule);
 
     // Force landscape
     SystemChrome.setPreferredOrientations([
@@ -71,9 +71,18 @@ class _MirrorEditState extends State<MirrorEdit> {
     if (module != selectedModule) {
       mirrorViewKey.currentState?.selectedModule = module;
       setState(() {
+        if (module != null) {
+          tempModuleConfig = Map.from(module.config ?? {});
+        }
         selectedModule = module;
       });
     }
+  }
+
+  void saveConfigurationChange(String key, dynamic value) {
+    setState(() {
+      tempModuleConfig[key] = value;
+    });
   }
 
   @override
@@ -117,26 +126,8 @@ class _MirrorEditState extends State<MirrorEdit> {
       ),
     ];
 
-    Color? sliverBackgroundColor;
-    if (isMaterial(context)) {
-      sliverBackgroundColor = ThemeData.dark().appBarTheme.backgroundColor;
-
-      controlIcons = controlIcons
-          .map(
-            (icon) => Material(
-              child: icon,
-              type: MaterialType.transparency,
-              borderOnForeground: false,
-            ),
-          )
-          .toList();
-    } else {
-      sliverBackgroundColor = darkCupertinoTheme.barBackgroundColor;
-    }
-
     List<Widget> sliverChildren = [];
     String sliverTitle;
-    bool hasConfig = false;
 
     if (selectedModule == null) {
       sliverTitle = S.of(context).module_catalog;
@@ -145,60 +136,80 @@ class _MirrorEditState extends State<MirrorEdit> {
           .toList();
     } else {
       sliverTitle = S.of(context).module_configuration;
-      Map<String, dynamic> moduleConfig = selectedModule!.config!;
-      if (moduleConfig.isEmpty) {
+      if (tempModuleConfig.isEmpty) {
         sliverChildren = [
           const DefaultPlatformText(
               "No configuration available for this module!")
         ];
       } else {
-        hasConfig = true;
-        for (MapEntry<String, dynamic> entry in moduleConfig.entries) {
-          sliverChildren.add(DefaultPlatformText("$entry"));
+        for (MapEntry<String, dynamic> entry in tempModuleConfig.entries) {
+          String key = entry.key;
+          var value = entry.value;
+          sliverChildren.add(DefaultPlatformText(key));
+          sliverChildren.add(PlatformTextFormField(
+            // Use a custom key because this is somehow cached wrong
+            key: Key("${selectedModule?.name}:$key"),
+            initialValue: value,
+            hintText: value,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return S.of(context).fillOutField;
+              }
+              return null;
+            },
+            autovalidateMode: AutovalidateMode.always,
+            onChanged: (value) => saveConfigurationChange(key, value),
+          ));
         }
       }
     }
 
-    Widget secondWidget = Flexible(
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            primary: false,
-            title: Text(sliverTitle),
-            floating: true,
-            automaticallyImplyLeading: false,
-            backgroundColor: sliverBackgroundColor,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed(sliverChildren),
-          ),
-        ],
+    Widget secondWidget = Form(
+      key: formKey,
+      child: Flexible(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: Text(sliverTitle),
+              floating: true,
+              automaticallyImplyLeading: false,
+              backgroundColor: isMaterial(context)
+                  ? ThemeData.dark().appBarTheme.backgroundColor
+                  : darkCupertinoTheme.barBackgroundColor,
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate.fixed(sliverChildren),
+            ),
+          ],
+        ),
       ),
     );
 
     List<Widget> columnChildren = [secondWidget];
 
-    if (selectedModule != null && hasConfig) {
+    if (selectedModule != null && selectedModule!.hasConfig) {
       columnChildren.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               PlatformElevatedButton(
-                child: const Text("Save changes"),
+                child: Text(S.of(context).saveChanges),
                 color: Colors.green,
-                onPressed: () => print("save"),
+                onPressed: formKey.currentState != null &&
+                            formKey.currentState!.validate() ||
+                        formKey.currentState == null
+                    ? () => mirrorViewKey.currentState!.layout
+                            .saveModuleConfiguration(
+                          selectedModule!.position,
+                          tempModuleConfig,
+                        )
+                    : null,
                 padding: const EdgeInsets.all(8),
               ),
               PlatformElevatedButton(
-                child: const Text("Restore Defaults"),
-                color: Colors.grey,
-                onPressed: () => print("restore"),
-                padding: const EdgeInsets.all(8),
-              ),
-              PlatformElevatedButton(
-                child: const Text("Cancel"),
+                child: Text(S.of(context).cancel),
                 color: Colors.red,
                 onPressed: () => setSelectedModule(null),
                 padding: const EdgeInsets.all(8),
@@ -209,7 +220,7 @@ class _MirrorEditState extends State<MirrorEdit> {
       );
     }
 
-    return Row(
+    Row finalWidget = Row(
       children: [
         // Container on the left
         mirrorContainer,
@@ -235,5 +246,12 @@ class _MirrorEditState extends State<MirrorEdit> {
         ),
       ],
     );
+
+    return isMaterial(context)
+        ? Material(
+            child: finalWidget,
+            borderOnForeground: false,
+            type: MaterialType.transparency)
+        : finalWidget;
   }
 }

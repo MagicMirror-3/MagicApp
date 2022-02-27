@@ -7,6 +7,7 @@ import 'package:magic_app/mirror/module_widget.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
+import '../generated/l10n.dart';
 import '../settings/constants.dart';
 import 'mirror_data.dart';
 
@@ -42,7 +43,7 @@ class MirrorViewState extends State<MirrorView> {
     selectedModule = widget.selectedModule;
     layout = SharedPreferencesHandler.getValue(SettingKeys.mirrorLayout);
 
-    print("Loaded layout: $layout");
+    // print("Loaded layout: $layout");
     // print(
     //     "MirrorView built with selected module $selectedModule (${widget.selectedModule}), enableClick: ${widget.enableClick}");
   }
@@ -53,15 +54,17 @@ class MirrorViewState extends State<MirrorView> {
   Module? tempMovedModule;
 
   void openMirrorEdit(BuildContext context) {
-    Navigator.push(
-      context,
-      platformPageRoute(
-        context: context,
-        builder: (_) => MirrorEdit(
-          selectedModule: selectedModule,
+    if (widget.enableClick && !widget.displayLoading) {
+      Navigator.push(
+        context,
+        platformPageRoute(
+          context: context,
+          builder: (_) => MirrorEdit(
+            selectedModule: selectedModule,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void setSelectedModule(Module? module, BuildContext context) {
@@ -73,9 +76,7 @@ class MirrorViewState extends State<MirrorView> {
       widget.onModuleChanged(module);
     }
 
-    if (widget.enableClick) {
-      openMirrorEdit(context);
-    }
+    openMirrorEdit(context);
   }
 
   @override
@@ -221,7 +222,7 @@ class MirrorViewState extends State<MirrorView> {
                         padding: const EdgeInsetsDirectional.only(bottom: 25),
                         child: PlatformCircularProgressIndicator(),
                       ),
-                      const DefaultPlatformText("Refreshing Layout...")
+                      DefaultPlatformText(S.of(context).mirror_refresh)
                     ],
                   )
                 ],

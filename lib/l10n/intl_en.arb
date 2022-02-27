@@ -9,9 +9,14 @@
 
     "cancel": "Cancel",
     "save": "Save",
+    "saveChanges": "Save changes",
     "defaultString": "Default",
 
+    "fillOutField": "Please fill out this field",
+
     "greetings": "Hello {name}!",
+
+    "mirror_refresh": "Refreshing layout...",
 
     "module_configuration": "Module configuration",
     "module_catalog": "Module catalog",
