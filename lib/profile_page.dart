@@ -20,10 +20,14 @@ class _ProfilePageState extends State<ProfilePage> {
   void _listItemClick(BluetoothDevice device) {
     print("List item has been clicked");
     print(device);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const BluetoothInfo()),
-    );
+    device.discoverServices().then((services) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BluetoothInfo(services: services),
+        ),
+      );
+    });
   }
 
   void _refreshBluetoothDevices() {
@@ -98,22 +102,26 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class BluetoothInfo extends StatelessWidget {
-  const BluetoothInfo({Key? key}) : super(key: key);
+  const BluetoothInfo({Key? key, required this.services}) : super(key: key);
+
+  final List<BluetoothService> services;
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> columnChildren = [];
+    for (BluetoothService service in services) {
+      columnChildren.add(Text("Service: $service"));
+      for (BluetoothCharacteristic c in service.characteristics) {
+        columnChildren.add(Text("Characteristic: $c"));
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Bluetooth Info"),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Back'),
+        appBar: AppBar(
+          title: const Text("Bluetooth Info"),
         ),
-      ),
-    );
+        body: Column(
+          children: columnChildren,
+        ));
   }
 }
