@@ -18,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   static Set<BluetoothDevice> bluetoothDevices = {};
 
   void _discoverServices(BluetoothDevice device) {
+    print("discovering...");
     device.discoverServices().then((services) {
       Navigator.push(
         context,
@@ -31,10 +32,15 @@ class _ProfilePageState extends State<ProfilePage> {
   void _listItemClick(BluetoothDevice device) {
     print("List item has been clicked");
     print(device);
-    device.connect().then(
-          (_) => _discoverServices(device),
-          onError: (_) => _discoverServices(device),
-        );
+    device.state.first.then((value) {
+      if (value == BluetoothDeviceState.connected) {
+        print("This device is already conncted");
+        _discoverServices(device);
+      } else {
+        print("This device is not connected!");
+        device.connect().then((_) => _discoverServices(device));
+      }
+    });
   }
 
   void _refreshBluetoothDevices() {
