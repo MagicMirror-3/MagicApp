@@ -20,14 +20,15 @@ class _ProfilePageState extends State<ProfilePage> {
   void _listItemClick(BluetoothDevice device) {
     print("List item has been clicked");
     print(device);
-    device.discoverServices().then((services) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BluetoothInfo(services: services),
-        ),
-      );
-    });
+    device.connect().then((value) => device.discoverServices().then((services) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BluetoothInfo(services: services),
+          ),
+        );
+      })
+    );
   }
 
   void _refreshBluetoothDevices() {
@@ -120,8 +121,8 @@ class BluetoothInfo extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Bluetooth Info"),
         ),
-        body: Column(
-          children: columnChildren,
+        body: SingleChildScrollView(
+          child: Column(children: columnChildren,),
         ));
   }
 }
