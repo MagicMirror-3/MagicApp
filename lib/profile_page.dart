@@ -17,18 +17,24 @@ class _ProfilePageState extends State<ProfilePage> {
   static FlutterBlue bluetooth = FlutterBlue.instance;
   static Set<BluetoothDevice> bluetoothDevices = {};
 
+  void _discoverServices(BluetoothDevice device) {
+    device.discoverServices().then((services) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BluetoothInfo(services: services),
+        ),
+      );
+    });
+  }
+
   void _listItemClick(BluetoothDevice device) {
     print("List item has been clicked");
     print(device);
-    device.connect().then((value) => device.discoverServices().then((services) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BluetoothInfo(services: services),
-          ),
+    device.connect().then(
+          (_) => _discoverServices(device),
+          onError: (_) => _discoverServices(device),
         );
-      })
-    );
   }
 
   void _refreshBluetoothDevices() {
