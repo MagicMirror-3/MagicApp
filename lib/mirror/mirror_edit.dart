@@ -90,13 +90,12 @@ class _MirrorEditState extends State<MirrorEdit> {
       mirrorViewKey: mirrorViewKey,
     );
 
-    // TODO: display these as actions in the app bars
-    List<Widget> controlIcons = [
+    List<PlatformIconButton> controlIcons = [
       PlatformIconButton(
           icon: Icon(
             PlatformIcons(context).checkMarkCircledSolid,
             color: Colors.green,
-            semanticLabel: "Save changes",
+            semanticLabel: S.of(context).saveChanges,
           ),
           padding: const EdgeInsets.all(0),
           onPressed: () {
@@ -113,7 +112,7 @@ class _MirrorEditState extends State<MirrorEdit> {
         icon: Icon(
           PlatformIcons(context).clearThickCircled,
           color: Colors.red,
-          semanticLabel: "Exit configuration",
+          semanticLabel: S.of(context).cancel,
         ),
         padding: const EdgeInsets.all(0),
         // TODO: Prompt unsaved changes
@@ -122,39 +121,30 @@ class _MirrorEditState extends State<MirrorEdit> {
     ];
 
     Key secondWidgetKey = Key("MirrorEdit:$keyUpdateFlag");
+
     Row finalWidget = Row(
       children: [
         // Container on the left
         mirrorContainer,
         // Other widget on the right with button overlay
         Flexible(
-          child: Stack(
-            children: [
-              selectedModule == null
-                  ? _ModuleCatalog(key: secondWidgetKey, modules: moduleCatalog)
-                  : _ModuleConfiguration(
-                      key: secondWidgetKey,
-                      selectedModule: selectedModule!,
-                      saveCallback: (config) => mirrorViewKey
-                          .currentState!.layout
-                          .saveModuleConfiguration(
-                        selectedModule!.position,
-                        config,
-                      ),
-                      cancelCallback: () => setSelectedModule(null),
-                    ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 5, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: controlIcons,
+          child: selectedModule == null
+              ? _ModuleCatalog(
+                  key: secondWidgetKey,
+                  modules: moduleCatalog,
+                  actions: controlIcons,
+                )
+              : _ModuleConfiguration(
+                  actions: controlIcons,
+                  key: secondWidgetKey,
+                  selectedModule: selectedModule!,
+                  saveCallback: (config) => mirrorViewKey.currentState!.layout
+                      .saveModuleConfiguration(
+                    selectedModule!.position,
+                    config,
                   ),
+                  cancelCallback: () => setSelectedModule(null),
                 ),
-              )
-            ],
-          ),
         ),
       ],
     );
@@ -169,12 +159,15 @@ class _MirrorEditState extends State<MirrorEdit> {
 }
 
 class _ModuleCatalog extends StatelessWidget {
-  const _ModuleCatalog({Key? key, required this.modules}) : super(key: key);
+  const _ModuleCatalog({Key? key, required this.modules, required this.actions})
+      : super(key: key);
 
   final List<Module> modules;
+  final List<PlatformIconButton> actions;
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Background color
     return CustomScrollView(
       slivers: [
         SliverAppBar(
@@ -184,6 +177,7 @@ class _ModuleCatalog extends StatelessWidget {
           backgroundColor: isMaterial(context)
               ? ThemeData.dark().appBarTheme.backgroundColor
               : darkCupertinoTheme.barBackgroundColor,
+          actions: actions,
         ),
         SliverList(
           delegate: SliverChildListDelegate.fixed(
@@ -199,11 +193,13 @@ class _ModuleConfiguration extends StatefulWidget {
   const _ModuleConfiguration(
       {Key? key,
       required this.selectedModule,
+      required this.actions,
       required this.saveCallback,
       required this.cancelCallback})
       : super(key: key);
 
   final Module selectedModule;
+  final List<PlatformIconButton> actions;
   final Function(Map<String, dynamic>) saveCallback;
   final Function() cancelCallback;
 
@@ -256,22 +252,26 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     if (displayValue is String) {
       return SettingsTile(
         title: Text(subKey ?? key),
-        trailing: Flexible(
-          child: PlatformTextFormField(
-            // Use a custom key because this is somehow cached wrong
-            key: widgetKey,
-            initialValue: displayValue,
-            hintText: displayValue,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).fillOutField;
-              }
-              return null;
-            },
-            autovalidateMode: AutovalidateMode.always,
-            onChanged: (value) => saveConfigurationChange(
-                key, value, fullValue, subKey, listIndex),
+        trailing: PlatformWidget(
+          cupertino: (_, __) => Flexible(
+            child: PlatformTextFormField(
+              // Use a custom key because this is somehow cached wrong
+              key: widgetKey,
+              initialValue: displayValue,
+              hintText: displayValue,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return S.of(context).fillOutField;
+                }
+                return null;
+              },
+              autovalidateMode: AutovalidateMode.always,
+              onChanged: (value) => saveConfigurationChange(
+                  key, value, fullValue, subKey, listIndex),
+            ),
           ),
+          // TODO: Fix this
+          material: (_, __) => const Text("Not yet supported"),
         ),
       );
     } else if (displayValue is bool) {
@@ -289,8 +289,9 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    Widget bodyWidget =
-        DefaultPlatformText(S.of(context).noModuleConfiguration);
+    Widget bodyWidget = Center(
+      child: DefaultPlatformText(S.of(context).noModuleConfiguration),
+    );
 
     if (moduleConfiguration.isNotEmpty) {
       List<SettingsSection> sections = [];
@@ -301,8 +302,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         var value = entry.value;
 
         List<AbstractSettingsTile> tiles = [];
-        // TODO: Support maps and lists as config entries
-        // TODO: Support booleans -> Switch Tile
 
         if (value is List) {
           dynamic fullValue = value;
@@ -321,7 +320,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
             if (fullValue.length > 1) {
               tiles.add(SettingsTile(
-                title: const Text("Remove this item"),
+                title: Text(S.of(context).removeListItem),
                 leading: Icon(PlatformIcons(context).removeCircledOutline,
                     color: Colors.red),
                 description: const Text(
@@ -343,7 +342,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
           // Always give the user the possibility to add an item to the list
           tiles.add(SettingsTile(
-            title: const Text("Add item to list"),
+            title: Text(S.of(context).removeListItem),
             leading: Icon(PlatformIcons(context).addCircledOutline,
                 color: Colors.green),
             onPressed: (_) => setState(() {
@@ -388,7 +387,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     FormState? formState = formKey.currentState;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
           fit: FlexFit.tight,
@@ -396,6 +394,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             appBar: PlatformAppBar(
               title: Text(S.of(context).module_configuration),
               automaticallyImplyLeading: false,
+              trailingActions: widget.actions,
             ),
             body: Form(
               key: formKey,
@@ -404,8 +403,12 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+              color: isMaterial(context)
+                  ? ThemeData.dark().bottomAppBarColor
+                  : darkCupertinoTheme.barBackgroundColor),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

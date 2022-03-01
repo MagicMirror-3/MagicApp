@@ -21,6 +21,8 @@
     "module_configuration": "Module configuration",
     "module_catalog": "Module catalog",
     "noModuleConfiguration": "No configuration available for this module!",
+    "removeListItem": "Remove item",
+    "addListItem": "Add item",
 
     "settings_appAppearance": "App Appearance",
     "settings_darkMode": "Dark Mode",

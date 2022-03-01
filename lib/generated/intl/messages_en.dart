@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "addListItem": MessageLookupByLibrary.simpleMessage("Add item"),
         "appName": MessageLookupByLibrary.simpleMessage("Magic App"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
@@ -40,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noModuleConfiguration": MessageLookupByLibrary.simpleMessage(
             "No configuration available for this module!"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
+        "removeListItem": MessageLookupByLibrary.simpleMessage("Remove item"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),

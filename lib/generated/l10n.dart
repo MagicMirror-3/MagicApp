@@ -190,6 +190,26 @@ class S {
     );
   }
 
+  /// `Remove item`
+  String get removeListItem {
+    return Intl.message(
+      'Remove item',
+      name: 'removeListItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add item`
+  String get addListItem {
+    return Intl.message(
+      'Add item',
+      name: 'addListItem',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `App Appearance`
   String get settings_appAppearance {
     return Intl.message(
