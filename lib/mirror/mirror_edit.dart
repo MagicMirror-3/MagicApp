@@ -342,7 +342,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
           // Always give the user the possibility to add an item to the list
           tiles.add(SettingsTile(
-            title: Text(S.of(context).removeListItem),
+            title: Text(S.of(context).addListItem),
             leading: Icon(PlatformIcons(context).addCircledOutline,
                 color: Colors.green),
             onPressed: (_) => setState(() {
