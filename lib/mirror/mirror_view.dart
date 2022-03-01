@@ -97,7 +97,7 @@ class MirrorViewState extends State<MirrorView> {
 
         targetChild = Draggable(
           data: m,
-          maxSimultaneousDrags: 1,
+          maxSimultaneousDrags: widget.enableClick ? 0 : 1,
           child: moduleWidget,
           feedback: moduleWidget,
         );

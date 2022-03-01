@@ -37,6 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Module catalog"),
         "module_configuration":
             MessageLookupByLibrary.simpleMessage("Module configuration"),
+        "noModuleConfiguration": MessageLookupByLibrary.simpleMessage(
+            "No configuration available for this module!"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),

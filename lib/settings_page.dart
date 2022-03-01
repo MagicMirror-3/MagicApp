@@ -5,8 +5,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
+import 'package:magic_app/util/settings_widgets.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
-import 'package:magic_app/util/themes.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -204,17 +204,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     // Construct the layout
-    return SettingsList(
-      darkTheme: isMaterial(context)
-          ? darkMaterialSettingsTheme
-          : darkCupertinoSettingsTheme,
-      lightTheme: isMaterial(context)
-          ? lightMaterialSettingsTheme
-          : lightCupertinoSettingsTheme,
-      brightness: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
-          ? Brightness.dark
-          : Brightness.light,
-      applicationType: ApplicationType.both,
+    return MagicSettingsList(
       sections: [
         SettingsSection(
           title: Text(S.of(context).settings_appAppearance),

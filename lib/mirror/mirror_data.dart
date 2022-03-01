@@ -27,6 +27,7 @@ class Module {
   Module(
       {required this.name,
       required this.position,
+      this.header,
       this.description,
       this.image = "no_image.png",
       this.config}) {
@@ -36,6 +37,7 @@ class Module {
 
   final String name;
   ModulePosition position;
+  final String? header;
   final String? description;
   final String image;
   Map<String, dynamic>? config;

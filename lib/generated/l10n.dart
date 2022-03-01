@@ -180,6 +180,16 @@ class S {
     );
   }
 
+  /// `No configuration available for this module!`
+  String get noModuleConfiguration {
+    return Intl.message(
+      'No configuration available for this module!',
+      name: 'noModuleConfiguration',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `App Appearance`
   String get settings_appAppearance {
     return Intl.message(

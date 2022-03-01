@@ -54,6 +54,7 @@ List<Module> modulesFromJSON(String jsonString) {
           Module(
             name: moduleName,
             position: modulePosition,
+            header: listEntry["header"],
             config: moduleConfig,
           ),
         );

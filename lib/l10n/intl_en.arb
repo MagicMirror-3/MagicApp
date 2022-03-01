@@ -20,6 +20,7 @@
 
     "module_configuration": "Module configuration",
     "module_catalog": "Module catalog",
+    "noModuleConfiguration": "No configuration available for this module!",
 
     "settings_appAppearance": "App Appearance",
     "settings_darkMode": "Dark Mode",
