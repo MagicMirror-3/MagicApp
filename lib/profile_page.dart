@@ -124,11 +124,14 @@ class BluetoothInfo extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Bluetooth Info"),
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: const Text("Bluetooth Info"),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: columnChildren,
-        ));
+        ),
+      ),
+    );
   }
 }
