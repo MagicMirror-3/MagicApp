@@ -393,27 +393,28 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
     return Column(
       children: [
+        PlatformAppBar(
+          title: Text(S.of(context).module_configuration),
+          automaticallyImplyLeading: false,
+          trailingActions: widget.actions,
+        ),
         Flexible(
-          fit: FlexFit.tight,
-          child: PlatformScaffold(
-            appBar: PlatformAppBar(
-              title: Text(S.of(context).module_configuration),
-              automaticallyImplyLeading: false,
-              trailingActions: widget.actions,
-            ),
-            body: Form(
-              key: formKey,
-              autovalidateMode: AutovalidateMode.always,
-              child: bodyWidget,
-            ),
+          child: Form(
+            key: formKey,
+            autovalidateMode: AutovalidateMode.always,
+            child: bodyWidget,
           ),
         ),
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-              color: isMaterial(context)
-                  ? ThemeData.dark().bottomAppBarColor
-                  : darkCupertinoTheme.barBackgroundColor),
+            color: isMaterial(context)
+                ? ThemeData.dark().scaffoldBackgroundColor
+                : darkCupertinoTheme.barBackgroundColor,
+            border: const Border(
+              top: BorderSide(color: Colors.white12),
+            ),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
