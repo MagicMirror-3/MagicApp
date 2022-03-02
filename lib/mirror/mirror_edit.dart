@@ -236,7 +236,8 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     }
   }
 
-  SettingsTile createSettingsTile(String key, dynamic displayValue,
+  SettingsTile createSettingsTile(
+      String key, dynamic displayValue, BuildContext context,
       {dynamic fullValue, String? subKey, int? listIndex}) {
     if (displayValue == null) {
       throw Exception("Display value can not be null!");
@@ -252,26 +253,28 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     if (displayValue is String) {
       return SettingsTile(
         title: Text(subKey ?? key),
-        trailing: PlatformWidget(
-          cupertino: (_, __) => Flexible(
-            child: PlatformTextFormField(
-              // Use a custom key because this is somehow cached wrong
-              key: widgetKey,
-              initialValue: displayValue,
-              hintText: displayValue,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return S.of(context).fillOutField;
-                }
-                return null;
-              },
-              autovalidateMode: AutovalidateMode.always,
-              onChanged: (value) => saveConfigurationChange(
-                  key, value, fullValue, subKey, listIndex),
+        trailing: SizedBox(
+          // Make this input field the size of a quarter of the screen
+          width: MediaQuery.of(context).size.width / 4,
+          child: PlatformTextFormField(
+            key: widgetKey,
+            initialValue: displayValue,
+            hintText: displayValue,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return S.of(context).fillOutField;
+              }
+              return null;
+            },
+            autovalidateMode: AutovalidateMode.always,
+            onChanged: (value) => saveConfigurationChange(
+              key,
+              value,
+              fullValue,
+              subKey,
+              listIndex,
             ),
           ),
-          // TODO: Fix this
-          material: (_, __) => const Text("Not yet supported"),
         ),
       );
     } else if (displayValue is bool) {
@@ -312,6 +315,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
               tiles.add(createSettingsTile(
                 key,
                 entry.value,
+                context,
                 fullValue: fullValue,
                 subKey: entry.key,
                 listIndex: listIndex,
@@ -356,12 +360,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             tiles.add(createSettingsTile(
               key,
               entry.value,
+              context,
               fullValue: fullValue,
               subKey: entry.key,
             ));
           }
         } else {
-          generalTiles.add(createSettingsTile(key, value));
+          generalTiles.add(createSettingsTile(key, value, context));
         }
 
         if (tiles.isNotEmpty) {
