@@ -7,7 +7,6 @@ import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/util/settings_widgets.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
-import 'package:magic_app/util/utility.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'generated/l10n.dart';
@@ -70,52 +69,22 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     // Language tile
-    final languageChoices = SettingChoices.languageChoices(context);
-    int languageIndex = languageChoices.keys
-        .toList()
-        .indexOf(SharedPreferencesHandler.getValue(SettingKeys.language));
-
-    SettingsTile languageTile = SettingsTile.navigation(
-      title: Text(S.of(context).settings_language),
-      value: Text(
-        languageChoices.values.toList()[languageIndex],
-      ),
-      onPressed: (context) => isMaterial(context)
-          ? print("Open new window")
-          : showCupertinoDropdownPopup(
-              context: context,
-              items: languageChoices.values.map((e) => Text(e)).toList(),
-              initialItem: languageIndex,
-              onIndexSelected: (index) => updateLanguage(
-                languageChoices.keys.toList()[index],
-                context,
-              ),
-            ),
+    LinkedMagicChoiceTile languageTile = LinkedMagicChoiceTile(
+      title: S.of(context).settings_language,
+      settingKey: SettingKeys.language,
+      settingChoices: SettingChoices.languageChoices(context),
+      selectCallback: (value) => updateLanguage(value, context),
       leading: const Icon(Icons.language_sharp),
     );
 
     // Wall pattern tile
-    final wallPatternChoices = SettingChoices.wallPatternChoices(context);
-    int wallPatternIndex = wallPatternChoices.keys
-        .toList()
-        .indexOf(SharedPreferencesHandler.getValue(SettingKeys.wallPattern));
-
-    SettingsTile wallPatternTile = SettingsTile.navigation(
-      title: Text(S.of(context).settings_wallPattern),
-      value: Text(
-        wallPatternChoices.values.toList()[wallPatternIndex],
-      ),
-      onPressed: (context) => isMaterial(context)
-          ? print("Open new window")
-          : showCupertinoDropdownPopup(
-              context: context,
-              items: wallPatternChoices.values.map((e) => Text(e)).toList(),
-              initialItem: wallPatternIndex,
-              onIndexSelected: (index) => setState(() {
-                SharedPreferencesHandler.saveValue(SettingKeys.wallPattern,
-                    wallPatternChoices.keys.toList()[index]);
-              }),
-            ),
+    LinkedMagicChoiceTile wallPatternTile = LinkedMagicChoiceTile(
+      title: S.of(context).settings_wallPattern,
+      settingKey: SettingKeys.wallPattern,
+      settingChoices: SettingChoices.wallPatternChoices(context),
+      selectCallback: (value) => setState(() {
+        SharedPreferencesHandler.saveValue(SettingKeys.wallPattern, value);
+      }),
     );
 
     // Wall color tile
@@ -169,27 +138,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     // Mirror border tile
-    final mirrorBorderChoices = SettingChoices.mirrorBorderChoices(context);
-    int mirrorBorderIndex = mirrorBorderChoices.keys
-        .toList()
-        .indexOf(SharedPreferencesHandler.getValue(SettingKeys.mirrorBorder));
-
-    SettingsTile mirrorBorderTile = SettingsTile.navigation(
-      title: Text(S.of(context).settings_mirrorBorder),
-      value: Text(
-        mirrorBorderChoices.values.toList()[mirrorBorderIndex],
-      ),
-      onPressed: (context) => isMaterial(context)
-          ? print("Open new window")
-          : showCupertinoDropdownPopup(
-              context: context,
-              items: mirrorBorderChoices.values.map((e) => Text(e)).toList(),
-              initialItem: mirrorBorderIndex,
-              onIndexSelected: (index) => setState(() {
-                SharedPreferencesHandler.saveValue(SettingKeys.mirrorBorder,
-                    mirrorBorderChoices.keys.toList()[index]);
-              }),
-            ),
+    LinkedMagicChoiceTile mirrorBorderTile = LinkedMagicChoiceTile(
+      title: S.of(context).settings_mirrorBorder,
+      settingKey: SettingKeys.mirrorBorder,
+      settingChoices: SettingChoices.mirrorBorderChoices(context),
+      selectCallback: (value) => setState(() {
+        SharedPreferencesHandler.saveValue(SettingKeys.mirrorBorder, value);
+      }),
     );
 
     // Quit on Save
