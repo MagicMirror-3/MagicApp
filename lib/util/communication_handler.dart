@@ -14,6 +14,7 @@ class CommunicationHandler {
   static bool get isConnected => _connected;
   static InternetAddress? _address;
   static String? _macAddress;
+  static late http.Client _mirrorClient;
 
   static Future<List<String>> findLocalMirrors() async {
     final String? wifiIP = await NetworkInfo().getWifiIP();
@@ -61,6 +62,7 @@ class CommunicationHandler {
 
       if (foundDevices.length == 1) {
         print("Thankfully, only one mirror found: ");
+        _mirrorClient = http.Client();
       }
     }
 
@@ -92,9 +94,9 @@ class _MagicRoutes {
   static const _MagicRoute isMagicMirror = _MagicRoute(route: "isMagicMirror");
   static const _MagicRoute createUser = _MagicRoute(
     route: "createUser",
-    params: {
-      "name": String,
-    },
+    params: [
+      "name",
+    ],
   );
 }
 
@@ -102,5 +104,5 @@ class _MagicRoute {
   const _MagicRoute({required this.route, this.params});
 
   final String route;
-  final Map<String, dynamic>? params;
+  final List<String>? params;
 }
