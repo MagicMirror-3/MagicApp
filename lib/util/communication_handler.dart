@@ -72,7 +72,10 @@ class CommunicationHandler {
   ///
   /// It calls the route '/isMagicMirror' with a http get request.
   static Future<bool> isMagicMirror(String host) async {
-    _MagicResponse response = await _makeRequest(_MagicRoutes.isMagicMirror);
+    _MagicResponse response = await _makeRequest(
+      _MagicRoutes.isMagicMirror,
+      host: host,
+    );
 
     return response.responseCode == 200;
   }
@@ -210,6 +213,8 @@ class CommunicationHandler {
     return Uri.parse(uriString);
   }
 
+  // ---------- [Custom Route methods] ---------- //
+
   /// Closes the persistent connection to the mirror.
   static void closeConnection() {
     _mirrorClient?.close();
@@ -261,7 +266,13 @@ enum _RouteType { GET, POST }
 class _MagicResponse {
   _MagicResponse(this._response) {
     if (_response.body.isNotEmpty) {
-      _jsonBody = jsonDecode(_response.body);
+      try {
+        _jsonBody = jsonDecode(_response.body);
+      } catch (e) {
+        print("Error while parsing JSON: $e");
+        print("The string was: ${_response.body}");
+        _jsonBody = {};
+      }
     } else {
       _jsonBody = {};
     }

@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       } else {
         setState(() {
-          mirrorFound = "I dont know: $value";
+          mirrorFound = "Successfully connected to last known mirror";
         });
       }
     });
