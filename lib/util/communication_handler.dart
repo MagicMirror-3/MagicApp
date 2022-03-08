@@ -223,9 +223,10 @@ class CommunicationHandler {
 
   // ---------- [Implementations for predefined routes] ---------- //
   static Future<MirrorLayout> getMirrorLayout(String username) async {
-    return MirrorLayout.fromString(
-      (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": 1})).body,
-    );
+    String response =
+        (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": 1})).body;
+    print("The response was: $response");
+    return MirrorLayout.fromString(response);
   }
 }
 
