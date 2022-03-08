@@ -88,7 +88,7 @@ class CommunicationHandler {
     }
 
     if (host is InternetAddress) {
-      return Uri.parse(host.address + "/" + route.route);
+      return Uri.parse("http://${host.address}:$_port/${route.route}");
     } else {
       throw TypeError();
     }
