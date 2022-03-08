@@ -140,10 +140,10 @@ class _SettingsPageState extends State<SettingsPage> {
     // Mirror border tile
     LinkedMagicChoiceTile mirrorBorderTile = LinkedMagicChoiceTile(
       title: S.of(context).settings_mirrorBorder,
-      settingKey: SettingKeys.mirrorBorder,
+      settingKey: SettingKeys.mirrorFrame,
       settingChoices: SettingChoices.mirrorBorderChoices(context),
       selectCallback: (value) => setState(() {
-        SharedPreferencesHandler.saveValue(SettingKeys.mirrorBorder, value);
+        SharedPreferencesHandler.saveValue(SettingKeys.mirrorFrame, value);
       }),
     );
 

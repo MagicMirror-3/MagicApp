@@ -46,7 +46,7 @@ class SettingKeys {
   static const String mirrorLayout = "mirrorLayout";
   static const String wallPattern = "wallPattern";
   static const String wallColor = "wallColor";
-  static const String mirrorBorder = "mirrorBorder";
+  static const String mirrorFrame = "mirrorBorder";
   static const String mirrorRefresh = "mirrorRefresh";
 
   static const String quitOnSave = "quitOnSave";
@@ -60,7 +60,7 @@ var defaultValues = {
   SettingKeys.mirrorLayout: MirrorLayout.fromString(defaultMirrorLayout),
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
-  SettingKeys.mirrorBorder: "default.png",
+  SettingKeys.mirrorFrame: "default.png",
   SettingKeys.mirrorRefresh: false,
   SettingKeys.quitOnSave: true,
 };

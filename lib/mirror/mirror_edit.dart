@@ -13,9 +13,16 @@ import '../util/settings_widgets.dart';
 import 'mirror_data.dart';
 import 'mirror_view.dart';
 
+/// This widget support the configuration of the [MirrorLayout] and [Module.config].
+///
+/// If a [selectedModule] is provided, the configuration options ([_ModuleConfiguration]) are shown,
+/// if [selectedModule] is [null], the [_ModuleCatalog] is shown on the right hand side.
 class MirrorEdit extends StatefulWidget {
   const MirrorEdit({this.selectedModule, Key? key}) : super(key: key);
 
+  /// The currently selectedModule.
+  ///
+  /// [null] means that no module is selected
   final Module? selectedModule;
 
   @override
@@ -25,6 +32,7 @@ class MirrorEdit extends StatefulWidget {
 class _MirrorEditState extends State<MirrorEdit> {
   Module? selectedModule;
 
+  /// A list of modules containing every available module
   List<Module> moduleCatalog = [
     Module(name: "dummy_module_1", position: ModulePosition.from_menu),
     Module(name: "dummy_module_2", position: ModulePosition.from_menu),
@@ -33,9 +41,11 @@ class _MirrorEditState extends State<MirrorEdit> {
     Module(name: "dummy_module_5", position: ModulePosition.from_menu),
   ];
 
+  /// A [GlobalKey] to retrieve the state of the [MirrorView]
   final GlobalKey<MirrorViewState> mirrorViewKey =
       GlobalKey(debugLabel: "MirrorView");
 
+  /// Triggers a refresh of the Flutter widget cache
   bool keyUpdateFlag = false;
 
   @override
@@ -69,7 +79,11 @@ class _MirrorEditState extends State<MirrorEdit> {
     ).then((_) => super.deactivate());
   }
 
+  /// Sets [selectedModule] to the given [module].
+  ///
+  /// This triggers a rebuild of the widget.
   void setSelectedModule(Module? module) {
+    // Only rebuild, if the module actually changed
     if (module != selectedModule) {
       setState(() {
         mirrorViewKey.currentState?.selectedModule = module;
@@ -81,6 +95,7 @@ class _MirrorEditState extends State<MirrorEdit> {
 
   @override
   Widget build(BuildContext context) {
+    // The layout of the mirror with the frame and wall
     MirrorContainer mirrorContainer = MirrorContainer(
       mirrorSize: 80,
       enableClick: false,
@@ -90,7 +105,10 @@ class _MirrorEditState extends State<MirrorEdit> {
       mirrorViewKey: mirrorViewKey,
     );
 
+    // The icons displayed in the top right corner to save the layout or quit the editor
+    // TODO: autoSaveOnExit -> No checkmark needed
     List<PlatformIconButton> controlIcons = [
+      // This checkmark saves the layout
       PlatformIconButton(
           icon: Icon(
             PlatformIcons(context).checkMarkCircledSolid,
@@ -104,10 +122,12 @@ class _MirrorEditState extends State<MirrorEdit> {
               mirrorViewKey.currentState?.layout,
             );
 
+            // Automatically quit if the user wants it to
             if (SharedPreferencesHandler.getValue(SettingKeys.quitOnSave)) {
               Navigator.pop(context);
             }
           }),
+      // This checkmark exists the layout editor without saving
       PlatformIconButton(
         icon: Icon(
           PlatformIcons(context).clearThickCircled,
@@ -120,8 +140,11 @@ class _MirrorEditState extends State<MirrorEdit> {
       ),
     ];
 
+    // The key of the second widget (right hand side of the layout) has to contain
+    // the flag to always update if wanted
     Key secondWidgetKey = Key("MirrorEdit:$keyUpdateFlag");
 
+    // The layout of the entire editor
     Row finalWidget = Row(
       children: [
         // Container on the left
@@ -149,30 +172,39 @@ class _MirrorEditState extends State<MirrorEdit> {
       ],
     );
 
+    // Wrap the entire layout in a transparent material widget to fix issues with
+    // icons on Android
     return isMaterial(context)
         ? Material(
             child: finalWidget,
             borderOnForeground: false,
-            type: MaterialType.transparency)
+            type: MaterialType.transparency,
+          )
         : finalWidget;
   }
 }
 
+/// Displays a list of Modules to drag into the layout
 class _ModuleCatalog extends StatelessWidget {
   const _ModuleCatalog({Key? key, required this.modules, required this.actions})
       : super(key: key);
 
+  /// Every available module
   final List<Module> modules;
+
+  /// The actions in the upper right corner (save / exit)
   final List<PlatformIconButton> actions;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Background color
+    // Use a sliver scroll container
     return CustomScrollView(
       slivers: [
+        // The app bar with a title and the given action icons
         SliverAppBar(
           title: Text(S.of(context).module_catalog),
           floating: true,
+          // Removes the leading "<" icon the close the layout
           automaticallyImplyLeading: false,
           backgroundColor: isMaterial(context)
               ? ThemeData.dark().appBarTheme.backgroundColor
@@ -189,6 +221,7 @@ class _ModuleCatalog extends StatelessWidget {
   }
 }
 
+/// Supports the configuration of a module by providing a settings-like screen
 class _ModuleConfiguration extends StatefulWidget {
   const _ModuleConfiguration(
       {Key? key,
@@ -198,9 +231,16 @@ class _ModuleConfiguration extends StatefulWidget {
       required this.cancelCallback})
       : super(key: key);
 
+  /// The module to display the [Module.config] of
   final Module selectedModule;
+
+  /// The actions in the upper right corner (save / exit)
   final List<PlatformIconButton> actions;
+
+  /// The function to call if the user saves the changes made to the configuration
   final Function(Map<String, dynamic>) saveCallback;
+
+  /// The function to call if the user cancels the changes
   final Function() cancelCallback;
 
   @override
@@ -208,12 +248,26 @@ class _ModuleConfiguration extends StatefulWidget {
 }
 
 class _ModuleConfigurationState extends State<_ModuleConfiguration> {
+  /// Store the config in a local variable to be able to reset the changes
   late Map<String, dynamic> moduleConfiguration =
       Map.from(widget.selectedModule.config ?? {});
+
+  /// Needed to validate all inputs in the form
   final GlobalKey<FormState> formKey = GlobalKey(debugLabel: "FormKey");
 
+  /// Triggers a refresh of the Flutter widget cache
   bool keyUpdateFlag = false;
 
+  /// Saves a change in the mirror configuration to the local configuration map.
+  ///
+  /// The module configuration can have multiple layers of maps and lists.
+  /// [key] is the top-level key of the config entry
+  ///
+  /// [value] is the new value of the config entry, while [fullValue] contains all values
+  /// of the top-level [key].
+  ///
+  /// If the configuration option is a list or map, [subKey] and [listIndex] are needed to save
+  /// the correct value of the item.
   void saveConfigurationChange(String key, dynamic value, dynamic fullValue,
       String? subKey, int? listIndex) {
     if (fullValue == null) {
@@ -255,6 +309,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         title: Text(subKey ?? key),
         trailing: SizedBox(
           // Make this input field the size of a quarter of the screen
+          // TODO: Fix keyboard overlaying input box -> Maybe insert a new element into the widget tree
           width: MediaQuery.of(context).size.width / 4,
           child: PlatformTextFormField(
             key: widgetKey,

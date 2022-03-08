@@ -13,20 +13,20 @@ import 'generated/l10n.dart';
 import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
-void main() {
+void main() async {
   // debugPrintGestureArenaDiagnostics = true;
 
-  // Init Settings
-  SharedPreferencesHandler.init().then((_) {
-    // Retrieve the default layout
-    rootBundle.loadString("assets/default_layout.json").then((value) {
-      defaultMirrorLayout = value;
-      defaultValues[SettingKeys.mirrorLayout] = MirrorLayout.fromString(value);
+  // Init settings first
+  await SharedPreferencesHandler.init();
 
-      // Start the app
-      runApp(const MagicApp());
-    });
-  });
+  // Retrieve the default layout from the file and persist it to storage
+  defaultMirrorLayout =
+      await rootBundle.loadString("assets/default_layout.json");
+  defaultValues[SettingKeys.mirrorLayout] =
+      MirrorLayout.fromString(defaultMirrorLayout);
+
+  // Start the app
+  runApp(const MagicApp());
 }
 
 class MagicApp extends StatefulWidget {
@@ -40,6 +40,7 @@ class MagicApp extends StatefulWidget {
 }
 
 class _MagicAppState extends State<MagicApp> {
+  /// Triggers a rebuild by calling [setState]
   void refreshApp() {
     setState(() {});
   }
@@ -49,8 +50,10 @@ class _MagicAppState extends State<MagicApp> {
     return Theme(
       data: ThemeData(),
       child: PlatformProvider(
+        // No special settings
         settings: PlatformSettingsData(),
         builder: (_) => PlatformApp(
+          // Delegate all localizations to support multiple languages
           localizationsDelegates: const [
             S.delegate,
             DefaultMaterialLocalizations.delegate,
@@ -60,12 +63,15 @@ class _MagicAppState extends State<MagicApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+          // Only support the translated languages
           supportedLocales: S.delegate.supportedLocales,
+          // Set the language by retrieving the value from the local storage
           locale: Locale(
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
           home: const MagicHomePage(),
+          // Load the android themes
           material: (_, __) => MaterialAppData(
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
@@ -73,12 +79,14 @@ class _MagicAppState extends State<MagicApp> {
                 ? ThemeMode.dark
                 : ThemeMode.light,
           ),
+          // Load the cupertino themes
           cupertino: (_, __) => CupertinoAppData(
             theme: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
                 ? darkCupertinoTheme
                 : lightCupertinoTheme,
           ),
         ),
+        // Selected the correct platform
         initialPlatform: SharedPreferencesHandler.getValue(
                     SettingKeys.alternativeAppearance) ||
                 !isMaterial(context)
@@ -97,8 +105,10 @@ class MagicHomePage extends StatefulWidget {
 }
 
 class _MagicHomePageState extends State<MagicHomePage> {
+  /// Controls which page will be displayed
   static int _selectedNavigationIndex = 1;
 
+  /// Contains the pages
   static final List<Widget> _menuItemsContents = [
     const ProfilePage(),
     const MainPage(),
@@ -116,6 +126,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
     ]);
   }
 
+  /// Updates the displayed page depending on the selected [newIndex]
   void _onMenuItemTapped(int newIndex) {
     setState(() {
       _selectedNavigationIndex = newIndex;
@@ -124,13 +135,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    // print(platform(context));
+    // Create the navigation items
     final List<BottomNavigationBarItem> _bottomNavigationList = [
       BottomNavigationBarItem(
         icon: Icon(PlatformIcons(context).accountCircle),
@@ -148,10 +153,12 @@ class _MagicHomePageState extends State<MagicHomePage> {
       ),
     ];
 
+    // The app layout consists of an AppBar, content and navigation footer
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(S.of(context).appName),
         material: (_, __) => MaterialAppBarData(),
+        // Show a slight border on iOS
         cupertino: (_, __) => CupertinoNavigationBarData(
           border: const Border(
             bottom: BorderSide(
@@ -161,6 +168,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
           transitionBetweenRoutes: true,
         ),
       ),
+      // Display the selected page
       body: Center(
         child: _menuItemsContents[_selectedNavigationIndex],
       ),
@@ -169,6 +177,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
         currentIndex: _selectedNavigationIndex,
         itemChanged: _onMenuItemTapped,
         material: (_, __) => MaterialNavBarData(),
+        // Show a slight border on iOS
         cupertino: (_, __) => CupertinoTabBarData(
           inactiveColor: Colors.white70,
           border: const Border(
