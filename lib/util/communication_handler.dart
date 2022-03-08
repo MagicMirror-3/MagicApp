@@ -303,6 +303,17 @@ class CommunicationHandler {
             .statusCode ==
         201;
   }
+
+  /// Gets all available modules
+  static Future<List<Module>> getModules() async {
+    String moduleString = (await _makeRequest(
+      MagicRoutes.getModules,
+      payload: {"user_id": 1},
+    ))
+        .body;
+
+    return modulesFromJSON(moduleString);
+  }
 }
 
 /// Contains all valid routes a MagicMirror has
@@ -340,7 +351,10 @@ class MagicRoutes {
     params: ["user_id", "layout"],
   );
 
-  static const getModules = _MagicRoute(route: "getModules");
+  static const getModules = _MagicRoute(
+    route: "getModules",
+    params: ["user_id"],
+  );
 }
 
 /// Contains information about a route

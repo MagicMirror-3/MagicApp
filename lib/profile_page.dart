@@ -28,22 +28,26 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       // Mirror is connected!
       setState(() {
-        mirrorFound = "Successfully connected to mirror.";
+        mirrorFound = "Successfully connected to mirror.\n";
       });
 
       print("Retrieving layout...");
-
       MirrorLayout? layout = await CommunicationHandler.getMirrorLayout("egal");
       setState(() {
-        mirrorFound += "\nThe layout is: $layout";
+        mirrorFound += "\nThe layout is: $layout\n";
       });
 
       print("Retrieving users...");
-
       List<MagicUser> users = await CommunicationHandler.getUsers();
 
       setState(() {
-        mirrorFound += "\nUsers:\n" + users.join("\n");
+        mirrorFound += "\nUsers:\n" + users.join("\n") + "\n";
+      });
+
+      print("Retrieving modules...");
+      List<Module> modules = await CommunicationHandler.getModules();
+      setState(() {
+        mirrorFound += "\nModules:\n" + modules.join("\n");
       });
     }
   }
@@ -61,7 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         Expanded(
-          child: Text(mirrorFound),
+          child: SingleChildScrollView(
+            child: Text(mirrorFound),
+          ),
         ),
         PlatformIconButton(
           icon: Icon(PlatformIcons(context).refresh),

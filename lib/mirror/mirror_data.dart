@@ -66,6 +66,11 @@ class Module {
   bool get hasConfig {
     return config != null && config!.isNotEmpty;
   }
+
+  @override
+  String toString() {
+    return "Module: $name";
+  }
 }
 
 /// Represents the layout of the modules on the mirror
