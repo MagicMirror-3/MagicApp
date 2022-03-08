@@ -72,12 +72,12 @@ class CommunicationHandler {
   ///
   /// It calls the route '/isMagicMirror' with a http get request.
   static Future<bool> isMagicMirror(String host) async {
-    _MagicResponse response = await _makeRequest(
+    http.Response response = await _makeRequest(
       _MagicRoutes.isMagicMirror,
       host: host,
     );
 
-    return response.responseCode == 200;
+    return response.statusCode == 200;
   }
 
   /// Try connecting to the previously saved IP or discover devices on the network
@@ -123,7 +123,7 @@ class CommunicationHandler {
   ///
   /// The response is of the class [_MagicResponse], which contains a JSON-formatted
   /// body by default.
-  static Future<_MagicResponse> _makeRequest(_MagicRoute route,
+  static Future<http.Response> _makeRequest(_MagicRoute route,
       {dynamic payload, String? host, Duration? timeout}) async {
     if (_mirrorClient == null && host == null) {
       throw ArgumentError(
@@ -174,7 +174,7 @@ class CommunicationHandler {
         break;
     }
 
-    return _MagicResponse(response);
+    return response;
   }
 
   /// Creates an URI for a given [route] at the [host].
@@ -259,29 +259,19 @@ class _MagicRoute {
 }
 
 /// Contains all valid types of mirror routes
+// ignore: constant_identifier_names
 enum _RouteType { GET, POST }
 
-/// A wrapper around {http.Response} with additional functionality.
 /// Automatically parses the JSON in the body of the response.
-class _MagicResponse {
-  _MagicResponse(this._response) {
-    if (_response.body.isNotEmpty) {
-      try {
-        _jsonBody = jsonDecode(_response.body);
-      } catch (e) {
-        print("Error while parsing JSON: $e");
-        print("The string was: ${_response.body}");
-        _jsonBody = {};
-      }
-    } else {
-      _jsonBody = {};
+/// A extension for {http.Response} with additional functionality.
+extension _MagicResponseExtension on http.Response {
+  Map parseJson() {
+    try {
+      return jsonDecode(body);
+    } catch (e) {
+      print("Error while parsing JSON: $e");
+      print("The body was: '$body'");
+      return {};
     }
   }
-
-  late final http.Response _response;
-  late final Map _jsonBody;
-
-  get responseCode => _response.statusCode;
-  get body => _jsonBody;
-  get httpResponse => _response;
 }
