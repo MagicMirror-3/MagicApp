@@ -37,6 +37,8 @@ class SettingChoices {
 }
 
 class SettingKeys {
+  static const String macAddress = "mirrorMAC";
+
   static const String userName = "userName";
 
   static const String darkMode = "darkMode";
@@ -53,6 +55,7 @@ class SettingKeys {
 }
 
 var defaultValues = {
+  SettingKeys.macAddress: "",
   SettingKeys.userName: "Default",
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
