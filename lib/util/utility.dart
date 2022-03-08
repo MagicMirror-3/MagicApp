@@ -98,4 +98,11 @@ class MagicUser {
   final String firstName;
   final String lastName;
   final String password;
+
+  @override
+  String toString() {
+    return "$firstName $lastName:\n"
+        "\t-ID: $_id\n"
+        "\t-PW: $password";
+  }
 }

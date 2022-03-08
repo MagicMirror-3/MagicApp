@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/util/utility.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
@@ -75,7 +76,7 @@ class CommunicationHandler {
   /// It calls the route '/isMagicMirror' with a http get request.
   static Future<bool> isMagicMirror(String host) async {
     http.Response response = await _makeRequest(
-      _MagicRoutes.isMagicMirror,
+      MagicRoutes.isMagicMirror,
       host: host,
     );
 
@@ -181,7 +182,7 @@ class CommunicationHandler {
 
   /// Creates an URI for a given [route] at the [host].
   ///
-  /// [_MagicRoutes] contains every supported route.
+  /// [MagicRoutes] contains every supported route.
   ///
   /// The [host] param is optional and wil default to the [_address] field of
   /// this class.
@@ -221,6 +222,7 @@ class CommunicationHandler {
   }
 
   // ---------- [Implementations for predefined routes] ---------- //
+  // TODO: consider retrieving the userID from SharedPreferencesHandler
 
   /// Create a new user in the mirror database and returns whether the creation
   /// was successful.
@@ -229,7 +231,7 @@ class CommunicationHandler {
   static Future<bool> createUser(String firstname, String surname,
       String password, List<String> images) async {
     return (await _makeRequest(
-          _MagicRoutes.createUser,
+          MagicRoutes.createUser,
           payload: {
             "firstname": firstname,
             "surname": surname,
@@ -241,14 +243,47 @@ class CommunicationHandler {
         201;
   }
 
-  static Future<>
+  /// Gets all registered users
+  static Future<List<MagicUser>> getUsers() async {
+    List<dynamic>? users =
+        (await _makeRequest(MagicRoutes.getUsers)).parseJson();
+
+    return users != null
+        ? users
+            .map(
+              (userMap) => MagicUser(
+                userMap["user_id"],
+                userMap["firstname"],
+                userMap["surname"],
+                "random string",
+              ),
+            )
+            .toList()
+        : [];
+  }
+
+  /// Updates the data of a given user identified by their [userID].
+  static Future<bool> updateUserData(
+      int userID, String firstname, String surname, String password) async {
+    return (await _makeRequest(
+          MagicRoutes.updateUser,
+          payload: {
+            "user_id": userID,
+            "firstname": firstname,
+            "surname": surname,
+            "new_password": password,
+          },
+        ))
+            .statusCode ==
+        201;
+  }
 
   /// Retrieve the mirror layout of the current user
   static Future<MirrorLayout?> getMirrorLayout(String username) async {
     http.Response response =
-        await _makeRequest(_MagicRoutes.getLayout, payload: {"user_id": 1});
+        await _makeRequest(MagicRoutes.getLayout, payload: {"user_id": 1});
 
-    print("Server responded with the body: ${response.body}");
+    // print("Server responded with the body: ${response.body}");
     switch (response.statusCode) {
       case 200:
         return MirrorLayout.fromString(response.body);
@@ -258,10 +293,22 @@ class CommunicationHandler {
 
     return null;
   }
+
+  /// Updates the layout of the given user
+  static Future<bool> updateLayout(int userID, MirrorLayout layout) async {
+    return (await _makeRequest(
+          MagicRoutes.setLayout,
+          payload: {"user_id": userID.toString(), "layout": layout.toString()},
+        ))
+            .statusCode ==
+        201;
+  }
 }
 
 /// Contains all valid routes a MagicMirror has
-class _MagicRoutes {
+class MagicRoutes {
+  const MagicRoutes._();
+
   static const isMagicMirror = _MagicRoute(route: "isMagicMirror");
 
   static const createUser = _MagicRoute(
@@ -275,12 +322,22 @@ class _MagicRoutes {
     ],
   );
   static const getUsers = _MagicRoute(route: "getUsers");
+  static const updateUser = _MagicRoute(
+    route: "updateUser",
+    type: _RouteType.POST,
+    params: [
+      "user_id",
+      "firstname",
+      "surname",
+      "new_password",
+    ],
+  );
 
   static const getLayout = _MagicRoute(route: "getLayout", params: ["user_id"]);
   static const setLayout = _MagicRoute(
     route: "setLayout",
     type: _RouteType.POST,
-    params: ["user", "layout"],
+    params: ["user_id", "layout"],
   );
 
   static const getModules = _MagicRoute(route: "getModules");
@@ -308,13 +365,13 @@ enum _RouteType { GET, POST }
 /// Automatically parses the JSON in the body of the response.
 /// A extension for {http.Response} with additional functionality.
 extension _MagicResponseExtension on http.Response {
-  Map parseJson() {
+  T? parseJson<T>() {
     try {
-      return jsonDecode(body);
+      return jsonDecode(body) as T;
     } catch (e) {
       print("Error while parsing JSON: $e");
       print("The body was: '$body'");
-      return {};
+      return null;
     }
   }
 }

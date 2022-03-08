@@ -5,6 +5,7 @@ import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -117,12 +118,18 @@ class _MirrorEditState extends State<MirrorEdit> {
           ),
           padding: const EdgeInsets.all(0),
           onPressed: () {
-            SharedPreferencesHandler.saveValue(
-              SettingKeys.mirrorLayout,
-              mirrorViewKey.currentState?.layout,
-            );
+            MirrorLayout? newLayout = mirrorViewKey.currentState?.layout;
+            if (newLayout != null) {
+              SharedPreferencesHandler.saveValue(
+                SettingKeys.mirrorLayout,
+                newLayout,
+              );
 
-            // Automatically quit if the user wants it to
+              // Save changes on the raspberry as well
+              CommunicationHandler.updateLayout(1, newLayout);
+            }
+
+            // Automatically quit if the user wants to
             if (SharedPreferencesHandler.getValue(SettingKeys.quitOnSave)) {
               Navigator.pop(context);
             }
@@ -290,6 +297,16 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     }
   }
 
+  /// Create a customization tile to configure single settings of the module by
+  /// providing a text input field or switch.
+  ///
+  /// [key] specifies the text on the left hand side of the widget, [displayValue]
+  /// the text on the right hand side, which can be customized by the user.
+  ///
+  /// [context] is needed for theme purposes.
+  ///
+  /// [fullValue], [subKey] and [listIndex] are used in the same way as in [saveConfigurationChange],
+  /// since the method is called every time a value is changed.
   SettingsTile createSettingsTile(
       String key, dynamic displayValue, BuildContext context,
       {dynamic fullValue, String? subKey, int? listIndex}) {
@@ -297,14 +314,19 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       throw Exception("Display value can not be null!");
     }
 
+    // If either fullValue or subKey are provided, the other one has to be as well
     if (fullValue != null && subKey == null ||
         fullValue == null && subKey != null) {
       throw Exception(
           "Both fullValue and subKey have to be specified if one of them is!");
     }
 
+    // Ensure that the widgets are never cached wrongly by using a custom key
     Key widgetKey = Key("${widget.selectedModule.name}:$key:$keyUpdateFlag");
+
+    // Change the widget depending on the type of value
     if (displayValue is String) {
+      // Create a text input tile
       return SettingsTile(
         title: Text(subKey ?? key),
         trailing: SizedBox(
@@ -333,6 +355,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         ),
       );
     } else if (displayValue is bool) {
+      // Create a switch tile
       return SettingsTile.switchTile(
         title: Text(subKey ?? key),
         key: widgetKey,
@@ -341,30 +364,39 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             saveConfigurationChange(key, value, fullValue, subKey, listIndex),
       );
     } else {
+      // Create an empty tile. This shouldn't happen tho
       return SettingsTile(title: Text(key));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // By default, display a text stating that no configuration is available for this module
     Widget bodyWidget = Center(
       child: DefaultPlatformText(S.of(context).noModuleConfiguration),
     );
 
+    // Check whether the module has configuration options
     if (moduleConfiguration.isNotEmpty) {
       List<SettingsSection> sections = [];
       List<AbstractSettingsTile> generalTiles = [];
 
+      // Go through every configuration option
       for (MapEntry<String, dynamic> entry in moduleConfiguration.entries) {
         String key = entry.key;
         var value = entry.value;
 
+        // A list is needed since some options have multiple configuration params
         List<AbstractSettingsTile> tiles = [];
 
+        // A list contains multiple options and also has to provide functionality
+        // for the adding and removal of items
         if (value is List) {
+          // Needed to update the values in the configuration
           dynamic fullValue = value;
           int listIndex = 0;
 
+          // Go through every option of a list item and create a tile
           for (Map<String, dynamic> listItem in value) {
             for (MapEntry<String, dynamic> entry in listItem.entries) {
               tiles.add(createSettingsTile(
@@ -377,6 +409,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
               ));
             }
 
+            // Provide setting tile remove items from the list if there is more than one item
             if (fullValue.length > 1) {
               tiles.add(SettingsTile(
                 title: Text(S.of(context).removeListItem),
@@ -411,7 +444,10 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
           ));
         } else if (value is Map) {
           dynamic fullValue = value;
+
+          // A map just has single configuration options
           for (MapEntry<String, dynamic> entry in fullValue.entries) {
+            // Create a tile for all of them
             tiles.add(createSettingsTile(
               key,
               entry.value,
@@ -421,14 +457,17 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             ));
           }
         } else {
+          // Group general settings together
           generalTiles.add(createSettingsTile(key, value, context));
         }
 
+        // Group all tiles in a section with the title being the super key of this configuration option
         if (tiles.isNotEmpty) {
           sections.add(SettingsSection(title: Text(key), tiles: tiles));
         }
       }
 
+      // Insert the general settings in the beginning in their own section
       if (generalTiles.isNotEmpty) {
         sections.insert(
           0,
@@ -439,11 +478,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         );
       }
 
+      // Create a list of sections if there are any
       if (sections.isNotEmpty) {
         bodyWidget = MagicSettingsList(sections: sections);
       }
     }
 
+    // Needed to validate the text input fields
     FormState? formState = formKey.currentState;
 
     return Column(

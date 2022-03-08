@@ -6,6 +6,8 @@ import 'package:magic_app/mirror/mirror_data.dart';
 import '../generated/l10n.dart';
 
 class SettingChoices {
+  const SettingChoices._();
+
   static Map<String, String> wallPatternChoices(BuildContext context) {
     return LinkedHashMap.from({
       "wall.jpg": S.of(context).defaultString,
@@ -37,6 +39,8 @@ class SettingChoices {
 }
 
 class SettingKeys {
+  const SettingKeys._();
+
   static const String mirrorAddress = "mirrorAddress";
 
   static const String userMap = "userMap";

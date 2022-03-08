@@ -4,6 +4,9 @@ import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/text_types.dart';
+import 'package:magic_app/util/utility.dart';
+
+import 'mirror/mirror_data.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -15,23 +18,34 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String mirrorFound = "";
 
-  void _refreshNetworkDevices() {
+  void _refreshNetworkDevices() async {
     // Try connecting to the mirror
-    CommunicationHandler.connectToMirror().then((value) {
-      if (value is List) {
-        setState(() {
-          mirrorFound = "Potential mirror candidates are: $value";
-        });
-      } else {
-        // Mirror is connected!
-        CommunicationHandler.getMirrorLayout("egal").then((layout) {
-          setState(() {
-            mirrorFound =
-                "Successfully connected to mirror. The layout is: $layout";
-          });
-        });
-      }
-    });
+    dynamic mirrorCandiates = await CommunicationHandler.connectToMirror();
+    if (mirrorCandiates is List) {
+      setState(() {
+        mirrorFound = "Potential mirror candidates are: $mirrorCandiates";
+      });
+    } else {
+      // Mirror is connected!
+      setState(() {
+        mirrorFound = "Successfully connected to mirror.";
+      });
+
+      print("Retrieving layout...");
+
+      MirrorLayout? layout = await CommunicationHandler.getMirrorLayout("egal");
+      setState(() {
+        mirrorFound += "\nThe layout is: $layout";
+      });
+
+      print("Retrieving users...");
+
+      List<MagicUser> users = await CommunicationHandler.getUsers();
+
+      setState(() {
+        mirrorFound += "\nUsers:\n" + users.join("\n");
+      });
+    }
   }
 
   @override

@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles the persistent saving and retrieving of values on the local device storage.
 class SharedPreferencesHandler {
+  const SharedPreferencesHandler._();
+
   static late SharedPreferences _preferences;
 
   /// Initialize the handler
