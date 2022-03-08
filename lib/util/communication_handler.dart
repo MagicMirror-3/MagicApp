@@ -188,7 +188,7 @@ class CommunicationHandler {
   /// this class.
   /// [getParams] are needed for a GET request with query params in the URI.
   static Uri createRouteURI(_MagicRoute route,
-      {String? host, Map<String, String>? getParams}) {
+      {String? host, Map<String, dynamic>? getParams}) {
     host ??= _address;
     getParams ??= {};
 
@@ -224,7 +224,7 @@ class CommunicationHandler {
   // ---------- [Implementations for predefined routes] ---------- //
   static Future<MirrorLayout> getMirrorLayout(String username) async {
     return MirrorLayout.fromString(
-      (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": "1"})).body,
+      (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": 1})).body,
     );
   }
 }
