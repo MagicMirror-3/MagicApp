@@ -31,9 +31,14 @@ class CommunicationHandler {
         // Check if the desired port is open
         if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
           // Check if the device has magic mirror routes
-          http.Response response = await http.get(
-            createRouteURI(_MagicRoutes.isMagicMirror, host.ip),
-          );
+          http.Response response = await http
+              .get(
+                createRouteURI(_MagicRoutes.isMagicMirror, host.ip),
+              )
+              .timeout(
+                const Duration(milliseconds: 500),
+                onTimeout: () => http.Response("timeout", 408),
+              );
 
           if (response.statusCode == 200) {
             print("device found at ${host.ip}");
