@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -9,6 +10,7 @@ class CommunicationHandler {
   static const int _port = 5000;
 
   static bool _connected = false;
+
   static bool get isConnected => _connected;
   static InternetAddress? _address;
   static String? _macAddress;
@@ -21,16 +23,27 @@ class CommunicationHandler {
       print("Searching on subnet $subnet");
       final hostStream = HostScanner.discover(subnet);
 
-      List<String> _deviceList = [];
+      List<String> mirrorList = [];
 
+      // Go through every device
       await for (ActiveHost host in hostStream) {
+        // Check if the desired port is open
         if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
-          print("device found at ${host.ip}");
-          _deviceList.add(host.ip);
+          // Check if the device has magic mirror routes
+          http.Response response = await http.get(
+            createRouteURI(_MagicRoutes.isMagicMirror, host.ip),
+          );
+
+          if (response.statusCode == 200) {
+            print("device found at ${host.ip}");
+            mirrorList.add(host.ip);
+          } else {
+            print("this device does not have the mirror routes");
+          }
         }
       }
 
-      return _deviceList;
+      return mirrorList;
     } else {
       print("failed to retrieve IP");
       return [];
@@ -38,13 +51,17 @@ class CommunicationHandler {
   }
 
   static Future<bool> connectToMirror() async {
-    final String savedMAC =
-        SharedPreferencesHandler.getValue(SettingKeys.macAddress);
-    if (savedMAC.isNotEmpty) {
-      print("Saved MAC: $savedMAC");
+    final String savedAddress =
+        SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
+    if (savedAddress.isNotEmpty) {
+      print("Saved Address: $savedAddress");
     } else {
       final List<String> foundDevices = await findLocalMirrors();
       print("all devices: $foundDevices");
+
+      if (foundDevices.length == 1) {
+        print("Thankfully, only one mirror found: ");
+      }
     }
 
     _connected = true;
@@ -53,4 +70,37 @@ class CommunicationHandler {
     // Send a request to the mirror
     return true;
   }
+
+  static Uri createRouteURI(_MagicRoute route, dynamic host) {
+    if (host == null) {
+      host = _address!;
+    } else {
+      if (host is String) {
+        host = InternetAddress(host, type: InternetAddressType.IPv4);
+      }
+    }
+
+    if (host is InternetAddress) {
+      return Uri.parse(host.address + "/" + route.route);
+    } else {
+      throw TypeError();
+    }
+  }
+}
+
+class _MagicRoutes {
+  static const _MagicRoute isMagicMirror = _MagicRoute(route: "isMagicMirror");
+  static const _MagicRoute createUser = _MagicRoute(
+    route: "createUser",
+    params: {
+      "name": String,
+    },
+  );
+}
+
+class _MagicRoute {
+  const _MagicRoute({required this.route, this.params});
+
+  final String route;
+  final Map<String, dynamic>? params;
 }

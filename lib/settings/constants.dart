@@ -37,7 +37,7 @@ class SettingChoices {
 }
 
 class SettingKeys {
-  static const String macAddress = "mirrorMAC";
+  static const String mirrorAddress = "mirrorAddress";
 
   static const String userName = "userName";
 
@@ -55,7 +55,7 @@ class SettingKeys {
 }
 
 var defaultValues = {
-  SettingKeys.macAddress: "",
+  SettingKeys.mirrorAddress: "",
   SettingKeys.userName: "Default",
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
