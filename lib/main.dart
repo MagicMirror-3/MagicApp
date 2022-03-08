@@ -6,6 +6,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings_page.dart';
+import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/themes.dart';
 
@@ -46,8 +47,10 @@ class _MagicAppState extends State<MagicApp> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    print("main app disposed");
+    CommunicationHandler.closeConnection();
+    super.dispose();
   }
 
   @override

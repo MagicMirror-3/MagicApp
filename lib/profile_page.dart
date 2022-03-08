@@ -15,13 +15,19 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String mirrorFound = "";
 
-  void _listItemClick() async {
-    print("connect and save mac");
-  }
-
   void _refreshNetworkDevices() {
     // Try connecting to the mirror
-    CommunicationHandler.connectToMirror();
+    CommunicationHandler.connectToMirror().then((value) {
+      if (value is List) {
+        setState(() {
+          mirrorFound = "Potential mirror candidates are: $value";
+        });
+      } else {
+        setState(() {
+          mirrorFound = "I dont know: $value";
+        });
+      }
+    });
   }
 
   @override
