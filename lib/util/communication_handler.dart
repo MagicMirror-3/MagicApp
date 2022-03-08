@@ -25,6 +25,7 @@ class CommunicationHandler {
       SettingKeys.mirrorAddress,
       address,
     );
+    print("Address $address saved");
   }
 
   /// A (potential) persistent connection to the mirror
@@ -91,8 +92,8 @@ class CommunicationHandler {
     String mirrorAddress =
         SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
 
+    print("Saved Address: $mirrorAddress");
     if (mirrorAddress.isNotEmpty) {
-      print("Saved Address: $mirrorAddress");
       _connected = await isMagicMirror(mirrorAddress);
     }
 

@@ -52,6 +52,7 @@ class SharedPreferencesHandler {
     // Use a special method depending on the class of the value
     // Color and MirrorLayout have to be converted back to a string
     if (value is String) {
+      _preferences.setString(key, value);
     } else if (value is int) {
       _preferences.setInt(key, value);
     } else if (value is bool) {
