@@ -23,8 +23,12 @@ class _ProfilePageState extends State<ProfilePage> {
           mirrorFound = "Potential mirror candidates are: $value";
         });
       } else {
-        setState(() {
-          mirrorFound = "Successfully connected to last known mirror";
+        // Mirror is connected!
+        CommunicationHandler.getMirrorLayout("egal").then((layout) {
+          setState(() {
+            mirrorFound =
+                "Successfully connected to mirror. The layout is: $layout";
+          });
         });
       }
     });

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -8,6 +9,8 @@ import 'package:network_tools/network_tools.dart';
 
 /// Handles the communication with the MagicController on the Raspberry pi via HTTP.
 class CommunicationHandler {
+  const CommunicationHandler._();
+
   /// The port the mirror backend runs on
   static const int _port = 5000;
 
@@ -213,11 +216,16 @@ class CommunicationHandler {
     return Uri.parse(uriString);
   }
 
-  // ---------- [Custom Route methods] ---------- //
-
   /// Closes the persistent connection to the mirror.
   static void closeConnection() {
     _mirrorClient?.close();
+  }
+
+  // ---------- [Implementations for predefined routes] ---------- //
+  static Future<MirrorLayout> getMirrorLayout(String username) async {
+    return MirrorLayout.fromString(
+      (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": 1})).body,
+    );
   }
 }
 
