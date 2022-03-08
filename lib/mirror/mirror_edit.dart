@@ -4,12 +4,12 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/settings/constants.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-import '../util/settings_widgets.dart';
+import '../settings/settings_widgets.dart';
 import 'mirror_data.dart';
 import 'mirror_view.dart';
 

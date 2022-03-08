@@ -39,6 +39,7 @@ class SettingChoices {
 class SettingKeys {
   static const String mirrorAddress = "mirrorAddress";
 
+  static const String userMap = "userMap";
   static const String userName = "userName";
 
   static const String darkMode = "darkMode";

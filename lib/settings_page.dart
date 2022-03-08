@@ -5,8 +5,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
-import 'package:magic_app/util/settings_widgets.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/settings/settings_widgets.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'generated/l10n.dart';

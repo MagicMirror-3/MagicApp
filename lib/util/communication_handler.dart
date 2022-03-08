@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
@@ -30,7 +30,6 @@ class CommunicationHandler {
       SettingKeys.mirrorAddress,
       address,
     );
-    print("Address $address saved");
   }
 
   /// A (potential) persistent connection to the mirror
@@ -203,7 +202,7 @@ class CommunicationHandler {
           String paramString = "?";
           for (String paramName in route.params!) {
             paramString +=
-                "$paramName=${Uri.encodeQueryComponent(getParams[paramName]!)}";
+                "$paramName=${Uri.encodeQueryComponent(getParams[paramName]!.toString())}";
           }
 
           uriString += paramString;
@@ -222,11 +221,42 @@ class CommunicationHandler {
   }
 
   // ---------- [Implementations for predefined routes] ---------- //
-  static Future<MirrorLayout> getMirrorLayout(String username) async {
-    String response =
-        (await _makeRequest(_MagicRoutes.getLayout, payload: {"user": 1})).body;
-    print("The response was: $response");
-    return MirrorLayout.fromString(response);
+
+  /// Create a new user in the mirror database and returns whether the creation
+  /// was successful.
+  ///
+  /// [images] should be a list of base64-encoded images.
+  static Future<bool> createUser(String firstname, String surname,
+      String password, List<String> images) async {
+    return (await _makeRequest(
+          _MagicRoutes.createUser,
+          payload: {
+            "firstname": firstname,
+            "surname": surname,
+            "password": password,
+            "images": images,
+          },
+        ))
+            .statusCode ==
+        201;
+  }
+
+  static Future<>
+
+  /// Retrieve the mirror layout of the current user
+  static Future<MirrorLayout?> getMirrorLayout(String username) async {
+    http.Response response =
+        await _makeRequest(_MagicRoutes.getLayout, payload: {"user_id": 1});
+
+    print("Server responded with the body: ${response.body}");
+    switch (response.statusCode) {
+      case 200:
+        return MirrorLayout.fromString(response.body);
+      default:
+        print("Invalid response: '${response.body}' (${response.statusCode})");
+    }
+
+    return null;
   }
 }
 
@@ -237,12 +267,16 @@ class _MagicRoutes {
   static const createUser = _MagicRoute(
     route: "createUser",
     params: [
-      "name",
+      "firstname",
+      "surname",
+      "password",
+      "current_layout",
+      "images",
     ],
   );
   static const getUsers = _MagicRoute(route: "getUsers");
 
-  static const getLayout = _MagicRoute(route: "getLayout", params: ["user"]);
+  static const getLayout = _MagicRoute(route: "getLayout", params: ["user_id"]);
   static const setLayout = _MagicRoute(
     route: "setLayout",
     type: _RouteType.POST,

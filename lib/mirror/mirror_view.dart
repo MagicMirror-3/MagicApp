@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/mirror/mirror_edit.dart';
 import 'package:magic_app/mirror/module_widget.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
 import '../generated/l10n.dart';

@@ -5,9 +5,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/communication_handler.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/themes.dart';
 
 import 'generated/l10n.dart';

@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 
 import '../mirror/mirror_data.dart';
 
+/// Show a cupertino picker with the given [items].
+///
+/// [onIndexSelected] will be called once the selected index changes or the picker
+/// was closed.
 showCupertinoDropdownPopup(
     {required BuildContext context,
     required List<Widget> items,
@@ -30,6 +34,7 @@ showCupertinoDropdownPopup(
   ).then((_) => onIndexSelected(tempIndex));
 }
 
+/// Loads a list of modules from a given String in JSON format.
 List<Module> modulesFromJSON(String jsonString) {
   List<Module> modules = [];
 
@@ -69,6 +74,7 @@ List<Module> modulesFromJSON(String jsonString) {
   return modules;
 }
 
+/// Converts a list of modules to a JSON string
 String modulesToJSON(List<Module> modules) {
   // Go over every module and create a map representation of it
   return jsonEncode(
@@ -82,4 +88,14 @@ String modulesToJSON(List<Module> modules) {
         )
         .toList(),
   );
+}
+
+/// Represents a user of the mirror
+class MagicUser {
+  const MagicUser(this._id, this.firstName, this.lastName, this.password);
+
+  final int _id;
+  final String firstName;
+  final String lastName;
+  final String password;
 }

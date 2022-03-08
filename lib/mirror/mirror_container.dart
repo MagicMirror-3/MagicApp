@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/settings/constants.dart';
-import 'package:magic_app/util/shared_preferences_handler.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 
 import 'mirror_data.dart';
 import 'mirror_view.dart';
