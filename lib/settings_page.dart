@@ -177,13 +177,23 @@ class _SettingsPageState extends State<SettingsPage> {
             mirrorBorderTile,
             SettingsTile(
               title: const Text("Reset Layout"),
-              onPressed: (_) => SharedPreferencesHandler.resetLayout(),
+              onPressed: (_) => SharedPreferencesHandler.resetKey(
+                SettingKeys.mirrorLayout,
+              ),
             )
           ],
         ),
         SettingsSection(
           title: Text(S.of(context).settings_general),
-          tiles: [quitOnSaveTile],
+          tiles: [
+            quitOnSaveTile,
+            SettingsTile(
+              title: const Text("Reset Mirror Address"),
+              onPressed: (_) => SharedPreferencesHandler.resetKey(
+                SettingKeys.mirrorAddress,
+              ),
+            )
+          ],
         )
       ],
     );

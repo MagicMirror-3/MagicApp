@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
@@ -19,7 +20,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _refreshNetworkDevices() {
-    print("refreshing...");
+    // Try connecting to the mirror
+    CommunicationHandler.connectToMirror();
   }
 
   @override

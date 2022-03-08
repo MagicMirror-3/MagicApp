@@ -72,8 +72,7 @@ class SharedPreferencesHandler {
     }
   }
 
-  /// Resets the mirror layout by removing the key from the storage
-  static void resetLayout() {
-    _preferences.remove(SettingKeys.mirrorLayout);
+  static void resetKey(String key) {
+    _preferences.remove(key);
   }
 }

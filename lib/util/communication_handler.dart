@@ -79,6 +79,7 @@ class CommunicationHandler {
           onTimeout: () => http.Response("timeout", 408),
         );
 
+    print("Response from potential mirror: $response");
     return response.statusCode == 200;
   }
 
@@ -95,6 +96,7 @@ class CommunicationHandler {
     print("Saved Address: $mirrorAddress");
     if (mirrorAddress.isNotEmpty) {
       _connected = await isMagicMirror(mirrorAddress);
+      print("connected to saved address: $_connected");
     }
 
     if (mirrorAddress.isEmpty || !_connected) {
