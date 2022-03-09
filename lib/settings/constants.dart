@@ -72,7 +72,7 @@ var defaultValues = {
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
   SettingKeys.mirrorFrame: "default.png",
-  SettingKeys.mirrorRefresh: false,
+  SettingKeys.mirrorRefresh: true,
   SettingKeys.quitOnSave: true,
 };
 

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
+import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/util/communication_handler.dart';
+import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
 
 import 'generated/l10n.dart';
+import 'mirror/mirror_data.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -14,49 +19,53 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   static const String userName = "Max Mustermann";
 
-  @override
-  void initState() {
-    super.initState();
+  bool modulesLoading = SharedPreferencesHandler.getValue(
+    SettingKeys.mirrorRefresh,
+  );
 
-    requestModules();
-  }
+  Future<bool> getLayout() async {
+    if (!modulesLoading) {
+      setState(() {
+        modulesLoading = true;
+      });
+    }
 
-  bool modulesLoading = true;
+    MirrorLayout? layout;
+    if (CommunicationHandler.isConnected) {
+      // Wait for the layout request
+      layout = await CommunicationHandler.getMirrorLayout("abc");
 
-  void requestModules() {
-    Future.delayed(const Duration(seconds: 3)).then((_) {
-      // Save the layout to local shared preferences
-      //     MirrorLayout mirrorLayout = MirrorLayout.fromString("""[
-      // {
-      //   "module": "clock",
-      //   "position": "top_right"
-      // },
-      // {
-      //   "module": "weather",
-      //   "position": "middle_center"
-      // }
-      //     ]""");
-      //
-      //     SharedPreferencesHandler.saveValue(
-      //         SettingKeys.mirrorLayout, mirrorLayout);
+      if (layout != null) {
+        SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, false);
+        SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, layout);
 
-      // Dont display loading screen
-      if (mounted) {
-        setState(() => modulesLoading = false);
+        // Wait for cosmetic purposes
+        Future.delayed(const Duration(seconds: 1)).then(
+          (_) => setState(() {
+            modulesLoading = false;
+          }),
+        );
       }
-    });
+    }
+
+    return layout != null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        HeaderPlatformText(S.of(context).greetings(userName)),
-        MirrorContainer(
-          onModuleChanged: (module) => "this is a void callback: $module",
-          displayLoading: modulesLoading,
-        )
-      ],
+    return MagicRefresher(
+      initialRefresh: modulesLoading,
+      onRefresh: getLayout,
+      childWidget: Column(
+        children: [
+          HeaderPlatformText(S.of(context).greetings(userName)),
+          MirrorContainer(
+            key: Key("MirrorContainer_MirrorPage:$modulesLoading"),
+            onModuleChanged: (module) => "this is a void callback: $module",
+            displayLoading: modulesLoading,
+          )
+        ],
+      ),
     );
   }
 }

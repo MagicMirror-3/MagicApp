@@ -12,10 +12,15 @@ import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/themes.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
 import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
+
+// TODO: Pull to refresh
+// TODO: Introduction
+// TODO: spinner
 
 void main() async {
   // debugPrintGestureArenaDiagnostics = true;
@@ -32,6 +37,12 @@ void main() async {
       await rootBundle.loadString("assets/default_layout.json");
   defaultValues[SettingKeys.mirrorLayout] =
       MirrorLayout.fromString(defaultMirrorLayout);
+
+  // Refresh the mirror layout on startup
+  SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, true);
+
+  // Connect to the mirror
+  await CommunicationHandler.connectToMirror();
 
   // Remove the screen
   FlutterNativeSplash.remove();
@@ -74,6 +85,7 @@ class _MagicAppState extends State<MagicApp> {
           // Delegate all localizations to support multiple languages
           localizationsDelegates: const [
             S.delegate,
+            RefreshLocalizations.delegate,
             DefaultMaterialLocalizations.delegate,
             DefaultWidgetsLocalizations.delegate,
             DefaultCupertinoLocalizations.delegate,
