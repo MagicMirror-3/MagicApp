@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
+const _materialTextTheme = TextTheme();
+
 // ---------- [General Themes] ---------- //
 const darkCupertinoTheme = CupertinoThemeData(
   textTheme: CupertinoTextThemeData(
@@ -18,6 +20,11 @@ const darkCupertinoTheme = CupertinoThemeData(
   barBackgroundColor: Colors.black,
 );
 
+final darkMaterialTheme = ThemeData.localize(
+  ThemeData.dark(),
+  _materialTextTheme,
+);
+
 const lightCupertinoTheme = CupertinoThemeData(
   textTheme: CupertinoTextThemeData(
     textStyle: TextStyle(color: Colors.black),
@@ -25,6 +32,11 @@ const lightCupertinoTheme = CupertinoThemeData(
   ),
   scaffoldBackgroundColor: Colors.white,
   barBackgroundColor: Colors.white,
+);
+
+final lightMaterialTheme = ThemeData.localize(
+  ThemeData.light(),
+  _materialTextTheme,
 );
 
 // ---------- [Settings Themes] ---------- //

@@ -1,3 +1,4 @@
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,8 @@ import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
 void main() async {
+  // TODO: Splash Screen: https://pub.dev/packages/flutter_native_splash
+
   // debugPrintGestureArenaDiagnostics = true;
 
   // Init settings first
@@ -81,8 +84,8 @@ class _MagicAppState extends State<MagicApp> {
           home: const MagicHomePage(),
           // Load the android themes
           material: (_, __) => MaterialAppData(
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
+            theme: lightMaterialTheme,
+            darkTheme: darkMaterialTheme,
             themeMode: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
                 ? ThemeMode.dark
                 : ThemeMode.light,
@@ -116,6 +119,11 @@ class _MagicHomePageState extends State<MagicHomePage> {
   /// Controls which page will be displayed
   static int _selectedNavigationIndex = 1;
 
+  /// Controls the style of the nav bar
+  static const double _navTop = -20;
+  static const double _navHeight = 50;
+  static const double _navCurveSize = 75;
+
   /// Contains the pages
   static final List<Widget> _menuItemsContents = [
     const ProfilePage(),
@@ -144,57 +152,105 @@ class _MagicHomePageState extends State<MagicHomePage> {
   @override
   Widget build(BuildContext context) {
     // Create the navigation items
-    final List<BottomNavigationBarItem> _bottomNavigationList = [
-      BottomNavigationBarItem(
+    final List<TabItem> _bottomNavigationList = [
+      TabItem(
+        title: S.of(context).profile,
         icon: Icon(PlatformIcons(context).accountCircle),
         activeIcon: Icon(PlatformIcons(context).accountCircleSolid),
-        label: S.of(context).profile,
+        isIconBlend: true,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.crop_portrait),
-        label: S.of(context).magicMirror,
+      const TabItem(
+        // title: S.of(context).magicMirror,
+        icon: Icon(
+          Icons.crop_portrait,
+          size: 35,
+        ),
+        isIconBlend: true,
       ),
-      BottomNavigationBarItem(
+      TabItem(
+        title: S.of(context).settings,
         icon: Icon(PlatformIcons(context).settings),
         activeIcon: Icon(PlatformIcons(context).settingsSolid),
-        label: S.of(context).settings,
+        isIconBlend: true,
       ),
     ];
 
-    // The app layout consists of an AppBar, content and navigation footer
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: Text(S.of(context).appName),
-        material: (_, __) => MaterialAppBarData(),
-        // Show a slight border on iOS
-        cupertino: (_, __) => CupertinoNavigationBarData(
-          border: const Border(
-            bottom: BorderSide(
-              color: Colors.white12,
-            ),
-          ),
-          transitionBetweenRoutes: true,
-        ),
+    final Widget centerWidget = Container(
+      decoration: BoxDecoration(
+        color: isMaterial(context)
+            ? Theme.of(context).scaffoldBackgroundColor
+            : darkCupertinoTheme.scaffoldBackgroundColor,
       ),
-      // Display the selected page
-      body: Center(
+      child: Center(
         child: _menuItemsContents[_selectedNavigationIndex],
       ),
-      bottomNavBar: PlatformNavBar(
-        items: _bottomNavigationList,
-        currentIndex: _selectedNavigationIndex,
-        itemChanged: _onMenuItemTapped,
-        material: (_, __) => MaterialNavBarData(),
-        // Show a slight border on iOS
-        cupertino: (_, __) => CupertinoTabBarData(
-          inactiveColor: Colors.white70,
-          border: const Border(
-            top: BorderSide(
-              color: Colors.white12,
+    );
+
+    // The app layout consists of an AppBar, content and navigation footer
+    return Column(
+      children: [
+        PlatformAppBar(
+          title: Text(S.of(context).appName),
+          material: (_, __) => MaterialAppBarData(),
+          // Show a slight border on iOS
+          cupertino: (_, __) => CupertinoNavigationBarData(
+            border: const Border(
+              bottom: BorderSide(
+                color: Colors.white12,
+              ),
             ),
+            transitionBetweenRoutes: true,
           ),
         ),
-      ),
+        Expanded(
+          child: PlatformWidget(
+            material: (_, __) => Material(
+              type: MaterialType.transparency,
+              child: centerWidget,
+            ),
+            cupertino: (_, __) => centerWidget,
+          ),
+        ),
+        StyleProvider(
+          style: _NavBarStyle(),
+          child: ConvexAppBar(
+            top: _navTop,
+            height: _navHeight,
+            curveSize: _navCurveSize,
+            style: TabStyle.fixedCircle,
+            backgroundColor: isMaterial(context)
+                ? Theme.of(context).bottomAppBarColor
+                : darkCupertinoTheme.barBackgroundColor,
+            activeColor: Colors.white,
+            items: _bottomNavigationList,
+            initialActiveIndex: _selectedNavigationIndex,
+            onTap: _onMenuItemTapped,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Needed to customize the text size of the labels
+class _NavBarStyle extends StyleHook {
+  @override
+  double get activeIconMargin => 6;
+
+  @override
+  double get activeIconSize => 35;
+
+  @override
+  double? get iconSize => 25;
+
+  @override
+  TextStyle textStyle(Color color) {
+    return TextStyle(
+      fontSize: 12,
+      fontFamily: "Roboto",
+      fontWeight: FontWeight.normal,
+      color: color,
+      decoration: TextDecoration.none,
     );
   }
 }
