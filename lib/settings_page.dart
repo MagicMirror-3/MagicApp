@@ -207,6 +207,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 MagicApp.of(context)?.refreshApp();
               },
             ),
+            SettingsTile(
+              title: const Text("Reset User"),
+              onPressed: (_) => SharedPreferencesHandler.resetKey(
+                SettingKeys.user,
+              ),
+            ),
           ],
         ),
       ],

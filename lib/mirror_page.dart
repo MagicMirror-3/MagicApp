@@ -32,7 +32,7 @@ class _MainPageState extends State<MainPage> {
     MirrorLayout? layout;
     if (CommunicationHandler.isConnected) {
       // Wait for the layout request
-      layout = await CommunicationHandler.getMirrorLayout("abc");
+      layout = await CommunicationHandler.getMirrorLayout();
 
       if (layout != null) {
         SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, false);

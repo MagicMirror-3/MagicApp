@@ -65,7 +65,11 @@ class SettingKeys {
 var defaultValues = {
   SettingKeys.firstUse: true,
   SettingKeys.mirrorAddress: "",
-  SettingKeys.user: const MagicUser(),
+  SettingKeys.user: const MagicUser(
+    id: 1,
+    firstName: "Default",
+    lastName: "Simon",
+  ),
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
   SettingKeys.language: "en",

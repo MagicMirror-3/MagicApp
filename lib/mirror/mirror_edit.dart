@@ -126,7 +126,7 @@ class _MirrorEditState extends State<MirrorEdit> {
               );
 
               // Save changes on the raspberry as well
-              CommunicationHandler.updateLayout(1, newLayout);
+              CommunicationHandler.updateLayout(newLayout);
             }
 
             // Automatically quit if the user wants to

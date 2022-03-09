@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
 
       print("Retrieving layout...");
-      MirrorLayout? layout = await CommunicationHandler.getMirrorLayout("egal");
+      MirrorLayout? layout = await CommunicationHandler.getMirrorLayout();
       setState(() {
         mirrorFound += "\nThe layout is: $layout\n";
       });

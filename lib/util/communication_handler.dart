@@ -155,6 +155,9 @@ class CommunicationHandler {
 
         break;
       case _RouteType.POST:
+        // Convert every value of the payload to a string to prevent errors
+        payload = payload.map((key, value) => MapEntry(key, value.toString()));
+
         if (host != null) {
           response = await http
               .post(
@@ -266,45 +269,76 @@ class CommunicationHandler {
   }
 
   /// Updates the data of a given user identified by their [userID].
-  static Future<bool> updateUserData(
-      int userID, String firstname, String surname, String password) async {
-    return (await _makeRequest(
-          MagicRoutes.updateUser,
-          payload: {
-            "user_id": userID,
-            "firstname": firstname,
-            "surname": surname,
-            "new_password": password,
-          },
-        ))
-            .statusCode ==
-        201;
+  ///
+  /// Throws [AttributeError], if no user is logged in
+  static Future<bool> updateUserData() async {
+    // Get the local user
+    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+
+    if (localUser.isRealUser) {
+      return (await _makeRequest(
+            MagicRoutes.updateUser,
+            payload: {
+              "user_id": localUser.id,
+              "firstname": localUser.firstName,
+              "lastname": localUser.lastName,
+              "new_password": localUser.password,
+            },
+          ))
+              .statusCode ==
+          201;
+    } else {
+      throw ArgumentError("There is no user logged in at the moment!");
+    }
   }
 
   /// Retrieve the mirror layout of the current user
-  static Future<MirrorLayout?> getMirrorLayout(String username) async {
-    http.Response response =
-        await _makeRequest(MagicRoutes.getLayout, payload: {"user_id": 1});
+  ///
+  /// Throws [AttributeError], if no user is logged in
+  static Future<MirrorLayout?> getMirrorLayout() async {
+    // Get the local user
+    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
-    // print("Server responded with the body: ${response.body}");
-    switch (response.statusCode) {
-      case 200:
-        return MirrorLayout.fromString(response.body);
-      default:
-        print("Invalid response: '${response.body}' (${response.statusCode})");
+    if (localUser.isRealUser) {
+      http.Response response = await _makeRequest(
+        MagicRoutes.getLayout,
+        payload: {
+          "user_id": localUser.id,
+        },
+      );
+
+      // print("Server responded with the body: ${response.body}");
+      switch (response.statusCode) {
+        case 200:
+          return MirrorLayout.fromString(response.body);
+        default:
+          print(
+              "Invalid response: '${response.body}' (${response.statusCode})");
+      }
+    } else {
+      throw ArgumentError("There is no user logged in at the moment!");
     }
 
     return null;
   }
 
   /// Updates the layout of the given user
-  static Future<bool> updateLayout(int userID, MirrorLayout layout) async {
-    return (await _makeRequest(
-          MagicRoutes.setLayout,
-          payload: {"user_id": userID.toString(), "layout": layout.toString()},
-        ))
-            .statusCode ==
-        201;
+  ///
+  /// Throws [AttributeError], if no user is logged in
+  static Future<bool> updateLayout(MirrorLayout layout) async {
+    // Get the local user
+    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+
+    if (localUser.isRealUser) {
+      return (await _makeRequest(
+            MagicRoutes.setLayout,
+            payload: {"user_id": localUser.id, "layout": layout.toString()},
+          ))
+              .statusCode ==
+          201;
+    } else {
+      throw ArgumentError("There is no user logged in at the moment!");
+    }
   }
 
   /// Gets all available modules
@@ -329,7 +363,7 @@ class MagicRoutes {
     route: "createUser",
     params: [
       "firstname",
-      "surname",
+      "lastname",
       "password",
       "current_layout",
       "images",
@@ -342,7 +376,7 @@ class MagicRoutes {
     params: [
       "user_id",
       "firstname",
-      "surname",
+      "lastname",
       "new_password",
     ],
   );
