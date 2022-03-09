@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
@@ -16,9 +17,11 @@ import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
 void main() async {
-  // TODO: Splash Screen: https://pub.dev/packages/flutter_native_splash
-
   // debugPrintGestureArenaDiagnostics = true;
+
+  // Preserve the splash screen until init is finished
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Init settings first
   await SharedPreferencesHandler.init();
@@ -28,6 +31,9 @@ void main() async {
       await rootBundle.loadString("assets/default_layout.json");
   defaultValues[SettingKeys.mirrorLayout] =
       MirrorLayout.fromString(defaultMirrorLayout);
+
+  // Remove the screen
+  FlutterNativeSplash.remove();
 
   // Start the app
   runApp(const MagicApp());
