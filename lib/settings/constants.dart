@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:magic_app/mirror/mirror_data.dart';
+import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
 
@@ -45,8 +46,8 @@ class SettingKeys {
 
   static const String mirrorAddress = "mirrorAddress";
 
-  static const String userMap = "userMap";
-  static const String userName = "userName";
+  static const String user = "user";
+  static const String userID = "userID";
 
   static const String darkMode = "darkMode";
   static const String alternativeAppearance = "alternativeAppearance";
@@ -64,7 +65,7 @@ class SettingKeys {
 var defaultValues = {
   SettingKeys.firstUse: true,
   SettingKeys.mirrorAddress: "",
-  SettingKeys.userName: "Default",
+  SettingKeys.user: const MagicUser(),
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
   SettingKeys.language: "en",

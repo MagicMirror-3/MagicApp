@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Container(
           margin: const EdgeInsets.only(top: 15),
           child: DefaultPlatformText(
-            "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.userName)}",
+            "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.user)}",
           ),
         ),
         Expanded(

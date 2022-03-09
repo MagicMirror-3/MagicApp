@@ -255,10 +255,10 @@ class CommunicationHandler {
         ? users
             .map(
               (userMap) => MagicUser(
-                userMap["user_id"],
-                userMap["firstname"],
-                userMap["surname"],
-                "random string",
+                id: userMap["user_id"] ?? -1,
+                firstName: userMap["firstname"] ?? "",
+                lastName: userMap["surname"] ?? "",
+                password: "random string",
               ),
             )
             .toList()

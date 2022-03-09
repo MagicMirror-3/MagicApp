@@ -92,17 +92,34 @@ String modulesToJSON(List<Module> modules) {
 
 /// Represents a user of the mirror
 class MagicUser {
-  const MagicUser(this._id, this.firstName, this.lastName, this.password);
+  const MagicUser(
+      {this.id = -1,
+      this.firstName = "",
+      this.lastName = "",
+      this.password = ""});
 
-  final int _id;
+  MagicUser.fromJSON(Map<String, dynamic> userMap)
+      : id = userMap["id"],
+        firstName = userMap["firstName"],
+        lastName = userMap["lastName"],
+        password = userMap["password"];
+
+  final int id;
   final String firstName;
   final String lastName;
   final String password;
 
+  bool get isRealUser => id != -1 && !(firstName.isEmpty && lastName.isEmpty);
+
+  String get name => "$firstName $lastName";
+
   @override
   String toString() {
-    return "$firstName $lastName:\n"
-        "\t-ID: $_id\n"
-        "\t-PW: $password";
+    return jsonEncode({
+      "id": id,
+      "firstName": firstName,
+      "lastName": lastName,
+      "password": password,
+    });
   }
 }

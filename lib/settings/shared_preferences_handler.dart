@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/util/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Handles the persistent saving and retrieving of values on the local device storage.
@@ -36,6 +39,9 @@ class SharedPreferencesHandler {
         return MirrorLayout.fromString(
             _preferences.getString(SettingKeys.mirrorLayout) ??
                 defaultMirrorLayout) as T;
+      } else if (defaultValue is MagicUser) {
+        return MagicUser.fromJSON(
+            jsonDecode(_preferences.getString(SettingKeys.user) ?? "")) as T;
       } else {
         // No special treatment needed
         return _preferences.get(key) as T;
@@ -67,6 +73,8 @@ class SharedPreferencesHandler {
       _preferences.setString(key, value.value.toRadixString(16));
     } else if (value is MirrorLayout) {
       // print("Saving mirror layout as ${value.toString()}");
+      _preferences.setString(key, value.toString());
+    } else if (value is MagicUser) {
       _preferences.setString(key, value.toString());
     } else {
       // Unknown class T of value

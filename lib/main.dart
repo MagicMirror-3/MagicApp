@@ -13,6 +13,7 @@ import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/themes.dart';
+import 'package:magic_app/util/utility.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
@@ -43,6 +44,14 @@ void main() async {
 
   // Try connecting to the mirror
   await CommunicationHandler.connectToMirror();
+
+  // TODO: Log user in -> device auth (face id, fingerprint)?
+  MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
+  if (user.isRealUser) {
+    print("User is logged in as: $user}");
+  } else {
+    print("this is the default user: $user");
+  }
 
   // Remove the screen
   FlutterNativeSplash.remove();

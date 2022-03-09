@@ -5,6 +5,7 @@ import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
+import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
 import 'mirror/mirror_data.dart';
@@ -17,8 +18,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  static const String userName = "Max Mustermann";
-
   bool modulesLoading = SharedPreferencesHandler.getValue(
     SettingKeys.mirrorRefresh,
   );
@@ -53,6 +52,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    String userName =
+        SharedPreferencesHandler.getValue<MagicUser>(SettingKeys.user).name;
     return MagicRefresher(
       initialRefresh: modulesLoading,
       onRefresh: getLayout,
