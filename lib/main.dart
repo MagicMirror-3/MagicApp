@@ -18,7 +18,6 @@ import 'generated/l10n.dart';
 import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
-// TODO: Pull to refresh
 // TODO: Introduction
 // TODO: spinner
 

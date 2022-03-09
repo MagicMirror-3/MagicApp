@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
+import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
@@ -65,51 +65,18 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Text(mirrorFound),
+          child: MagicRefresher(
+            initialRefresh: true,
+            onRefresh: () async {
+              _refreshNetworkDevices();
+              return true;
+            },
+            childWidget: SingleChildScrollView(
+              child: Text(mirrorFound),
+            ),
           ),
         ),
-        PlatformIconButton(
-          icon: Icon(PlatformIcons(context).refresh),
-          onPressed: _refreshNetworkDevices,
-        ),
       ],
-    );
-  }
-}
-
-class BluetoothInfo extends StatefulWidget {
-  const BluetoothInfo({Key? key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _BluetoothInfoState();
-}
-
-class _BluetoothInfoState extends State<BluetoothInfo> {
-  String helloMessage = "";
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> columnChildren = [];
-    columnChildren.add(PlatformTextButton(
-      child: const Text("Send a test message"),
-      onPressed: () => print("test message"),
-    ));
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Network Info"),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: columnChildren,
-        ),
-      ),
     );
   }
 }
