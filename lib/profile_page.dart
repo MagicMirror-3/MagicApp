@@ -22,12 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // Try connecting to the mirror
     await CommunicationHandler.connectToMirror();
 
-    if (!CommunicationHandler.isConnected) {
-      List<String> candidates = await CommunicationHandler.findLocalMirrors();
-      setState(() {
-        mirrorFound = "Potential mirror candidates are: $candidates";
-      });
-    } else {
+    if (CommunicationHandler.isConnected) {
       // Mirror is connected!
       setState(() {
         mirrorFound = "Successfully connected to mirror.\n";

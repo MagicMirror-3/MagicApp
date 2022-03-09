@@ -76,6 +76,8 @@ class _MagicAppState extends State<MagicApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Show the Connect screen, if no mirror is connected
+    // Otherwise the widgets depends on whether this is the first time the app is used
     Widget mainWidget = !CommunicationHandler.isConnected
         ? const ConnectMirror()
         : SharedPreferencesHandler.getValue(SettingKeys.firstUse)
@@ -106,7 +108,7 @@ class _MagicAppState extends State<MagicApp> {
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
-          home: mainWidget,
+          home: PlatformScaffold(body: mainWidget),
           // Load the android themes
           material: (_, __) => MaterialAppData(
             theme: lightMaterialTheme,
@@ -228,12 +230,8 @@ class _MagicHomePageState extends State<MagicHomePage> {
           ),
         ),
         Expanded(
-          child: PlatformWidget(
-            material: (_, __) => Material(
-              type: MaterialType.transparency,
-              child: centerWidget,
-            ),
-            cupertino: (_, __) => centerWidget,
+          child: PlatformScaffold(
+            body: centerWidget,
           ),
         ),
         StyleProvider(
@@ -270,12 +268,6 @@ class _NavBarStyle extends StyleHook {
 
   @override
   TextStyle textStyle(Color color) {
-    return TextStyle(
-      fontSize: 12,
-      fontFamily: "Roboto",
-      fontWeight: FontWeight.normal,
-      color: color,
-      decoration: TextDecoration.none,
-    );
+    return magicTextTheme.bodyText2!;
   }
 }

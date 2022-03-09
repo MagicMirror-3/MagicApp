@@ -3,6 +3,7 @@ import 'package:magic_app/main.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
+import 'package:network_tools/network_tools.dart';
 
 class ConnectMirror extends StatefulWidget {
   const ConnectMirror({Key? key}) : super(key: key);
@@ -26,15 +27,15 @@ class _ConnectMirrorState extends State<ConnectMirror> {
   }
 
   Future<bool> _refreshMirrors() async {
-    List<String> mirrors = await CommunicationHandler.findLocalMirrors();
+    List<ActiveHost> mirrors = await CommunicationHandler.findLocalMirrors();
 
     if (mirrors.isNotEmpty) {
       _refreshChildren.removeAt(1);
 
       setState(() {
-        for (String ip in mirrors) {
+        for (ActiveHost host in mirrors) {
           _refreshChildren
-              .add(_MirrorIPWidget(ip, (ip) => _onMirrorSelected(ip)));
+              .add(_MirrorIPWidget(host, (ip) => _onMirrorSelected(ip)));
         }
       });
     } else {
@@ -60,16 +61,27 @@ class _ConnectMirrorState extends State<ConnectMirror> {
 }
 
 class _MirrorIPWidget extends StatelessWidget {
-  const _MirrorIPWidget(this.ip, this.onSelected);
+  const _MirrorIPWidget(this.hostDevice, this.onSelected);
 
-  final String ip;
+  final ActiveHost hostDevice;
   final Function(String) onSelected;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onSelected(ip),
-      child: Text("Mirror with IP: $ip"),
+      onTap: () => onSelected(hostDevice.ip),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.crop_portrait),
+          Column(
+            children: [
+              Text(hostDevice.make),
+              Text("IP:${hostDevice.ip}"),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

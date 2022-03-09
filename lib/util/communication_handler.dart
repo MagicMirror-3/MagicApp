@@ -38,12 +38,12 @@ class CommunicationHandler {
   static http.Client? _mirrorClient;
 
   /// Discovers devices on the local network and returns the IP-addresses of MagicMirrors
-  static Future<List<String>> findLocalMirrors() {
+  static Future<List<ActiveHost>> findLocalMirrors() {
     // Get the IP of the current device
     return NetworkInfo().getWifiIP().then((wifiIP) async {
       // Do the computation in a separate isolate to stop the UI freezing
       return await compute((String? wifiIP) async {
-        List<String> mirrorList = [];
+        List<ActiveHost> mirrorList = [];
 
         if (wifiIP != null) {
           final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
@@ -59,7 +59,7 @@ class CommunicationHandler {
 
               if (isMirror) {
                 print("This is indeed a mirror!");
-                mirrorList.add(host.ip);
+                mirrorList.add(host);
               } else {
                 print("this device does not have the mirror routes");
               }
@@ -104,11 +104,11 @@ class CommunicationHandler {
     if (autoConnect || _connected) {
       // Otherwise, start the local network discovery
       if (mirrorAddress.isEmpty || !_connected) {
-        final List<String> foundDevices = await findLocalMirrors();
+        final List<ActiveHost> foundDevices = await findLocalMirrors();
 
         if (foundDevices.length == 1 && autoConnect) {
           _connected = true;
-          mirrorAddress = foundDevices.first;
+          mirrorAddress = foundDevices.first.ip;
         }
       }
 
