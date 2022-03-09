@@ -192,9 +192,18 @@ class _SettingsPageState extends State<SettingsPage> {
               onPressed: (_) => SharedPreferencesHandler.resetKey(
                 SettingKeys.mirrorAddress,
               ),
-            )
+            ),
+            SettingsTile(
+              title: const Text("Reset Introduction"),
+              onPressed: (_) {
+                SharedPreferencesHandler.resetKey(
+                  SettingKeys.firstUse,
+                );
+                MagicApp.of(context)?.refreshApp();
+              },
+            ),
           ],
-        )
+        ),
       ],
     );
   }

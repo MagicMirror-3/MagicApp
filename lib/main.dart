@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/introduction/introduction_page.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
@@ -57,7 +58,7 @@ class _MagicAppState extends State<MagicApp> {
 
   @override
   void dispose() {
-    print("main app disposed");
+    // Close the client connection to the raspberry pi
     CommunicationHandler.closeConnection();
     super.dispose();
   }
@@ -87,7 +88,9 @@ class _MagicAppState extends State<MagicApp> {
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
-          home: const MagicHomePage(),
+          home: SharedPreferencesHandler.getValue(SettingKeys.firstUse)
+              ? const IntroductionPage()
+              : const MagicHomePage(),
           // Load the android themes
           material: (_, __) => MaterialAppData(
             theme: lightMaterialTheme,

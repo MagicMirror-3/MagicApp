@@ -41,6 +41,8 @@ class SettingChoices {
 class SettingKeys {
   const SettingKeys._();
 
+  static const String firstUse = "firstUse";
+
   static const String mirrorAddress = "mirrorAddress";
 
   static const String userMap = "userMap";
@@ -60,6 +62,7 @@ class SettingKeys {
 }
 
 var defaultValues = {
+  SettingKeys.firstUse: true,
   SettingKeys.mirrorAddress: "",
   SettingKeys.userName: "Default",
   SettingKeys.darkMode: true,
