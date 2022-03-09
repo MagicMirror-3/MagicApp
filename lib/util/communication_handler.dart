@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
@@ -37,38 +38,39 @@ class CommunicationHandler {
   static http.Client? _mirrorClient;
 
   /// Discovers devices on the local network and returns the IP-addresses of MagicMirrors
-  static Future<List<String>> findLocalMirrors() async {
-    final String? wifiIP = await NetworkInfo().getWifiIP();
+  static Future<List<String>> findLocalMirrors() {
+    // Get the IP of the current device
+    return NetworkInfo().getWifiIP().then((wifiIP) async {
+      // Do the computation in a separate isolate to stop the UI freezing
+      return await compute((String? wifiIP) async {
+        List<String> mirrorList = [];
 
-    if (wifiIP != null) {
-      final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
-      print("Searching on subnet $subnet...");
-      final hostStream = HostScanner.discover(subnet);
+        if (wifiIP != null) {
+          final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
+          print("Searching on subnet $subnet...");
+          final hostStream = HostScanner.discover(subnet);
 
-      List<String> mirrorList = [];
+          await for (ActiveHost host in hostStream) {
+            // Check if the desired port is open
+            if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
+              // Check if the device has magic mirror routes
+              print("device found at ${host.ip}. Checking routes...");
+              bool isMirror = await isMagicMirror(host.ip);
 
-      // Go through every device
-      await for (ActiveHost host in hostStream) {
-        // Check if the desired port is open
-        if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
-          // Check if the device has magic mirror routes
-          print("device found at ${host.ip}. Checking routes...");
-          bool isMirror = await isMagicMirror(host.ip);
-
-          if (isMirror) {
-            print("This is indeed a mirror!");
-            mirrorList.add(host.ip);
-          } else {
-            print("this device does not have the mirror routes");
+              if (isMirror) {
+                print("This is indeed a mirror!");
+                mirrorList.add(host.ip);
+              } else {
+                print("this device does not have the mirror routes");
+              }
+            }
           }
+        } else {
+          print("failed to retrieve IP");
         }
-      }
-
-      return mirrorList;
-    } else {
-      print("failed to retrieve IP");
-      return [];
-    }
+        return mirrorList;
+      }, wifiIP);
+    });
   }
 
   /// Checks whether the given [host] is a MagicMirror.
@@ -89,8 +91,9 @@ class CommunicationHandler {
   /// If multiple mirrors are found, it returns a [List<String>] representing the
   /// IPs of every mirror in the local network. If only one is found, the [Future]
   /// returns nothing.
-  static Future<dynamic> connectToMirror() async {
-    String mirrorAddress =
+  static Future<void> connectToMirror(
+      {bool autoConnect = false, String? mirrorIP}) async {
+    String mirrorAddress = mirrorIP ??
         SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
 
     // Try connecting to the saved address
@@ -98,22 +101,21 @@ class CommunicationHandler {
       _connected = await isMagicMirror(mirrorAddress);
     }
 
-    // Otherwise, start the local network discovery
-    if (mirrorAddress.isEmpty || !_connected) {
-      final List<String> foundDevices = await findLocalMirrors();
+    if (autoConnect || _connected) {
+      // Otherwise, start the local network discovery
+      if (mirrorAddress.isEmpty || !_connected) {
+        final List<String> foundDevices = await findLocalMirrors();
 
-      if (foundDevices.length == 1) {
-        _connected = true;
-        mirrorAddress = foundDevices.first;
-      } else {
-        // Return all devices for user prompt
-        return foundDevices;
+        if (foundDevices.length == 1 && autoConnect) {
+          _connected = true;
+          mirrorAddress = foundDevices.first;
+        }
       }
-    }
 
-    // Create a persistent client and save the mirror address
-    _mirrorClient = http.Client();
-    address = mirrorAddress;
+      // Create a persistent client and save the mirror address
+      _mirrorClient = http.Client();
+      address = mirrorAddress;
+    }
   }
 
   /// This method makes a request to the specified [route] and returns the response.
@@ -219,6 +221,7 @@ class CommunicationHandler {
   /// Closes the persistent connection to the mirror.
   static void closeConnection() {
     _mirrorClient?.close();
+    _connected = false;
   }
 
   // ---------- [Implementations for predefined routes] ---------- //

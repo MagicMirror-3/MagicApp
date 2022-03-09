@@ -7,6 +7,7 @@ import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/settings/settings_widgets.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/util/communication_handler.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'generated/l10n.dart';
@@ -189,9 +190,13 @@ class _SettingsPageState extends State<SettingsPage> {
             quitOnSaveTile,
             SettingsTile(
               title: const Text("Reset Mirror Address"),
-              onPressed: (_) => SharedPreferencesHandler.resetKey(
-                SettingKeys.mirrorAddress,
-              ),
+              onPressed: (_) {
+                SharedPreferencesHandler.resetKey(
+                  SettingKeys.mirrorAddress,
+                );
+                CommunicationHandler.closeConnection();
+                MagicApp.of(context)?.refreshApp();
+              },
             ),
             SettingsTile(
               title: const Text("Reset Introduction"),

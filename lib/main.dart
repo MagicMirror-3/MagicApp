@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/introduction/connect_mirror.dart';
 import 'package:magic_app/introduction/introduction_page.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
@@ -40,7 +41,7 @@ void main() async {
   // Refresh the mirror layout on startup
   SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, true);
 
-  // Connect to the mirror
+  // Try connecting to the mirror
   await CommunicationHandler.connectToMirror();
 
   // Remove the screen
@@ -75,6 +76,12 @@ class _MagicAppState extends State<MagicApp> {
 
   @override
   Widget build(BuildContext context) {
+    Widget mainWidget = !CommunicationHandler.isConnected
+        ? const ConnectMirror()
+        : SharedPreferencesHandler.getValue(SettingKeys.firstUse)
+            ? const IntroductionPage()
+            : const MagicHomePage();
+
     return Theme(
       data: ThemeData(),
       child: PlatformProvider(
@@ -99,9 +106,7 @@ class _MagicAppState extends State<MagicApp> {
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
-          home: SharedPreferencesHandler.getValue(SettingKeys.firstUse)
-              ? const IntroductionPage()
-              : const MagicHomePage(),
+          home: mainWidget,
           // Load the android themes
           material: (_, __) => MaterialAppData(
             theme: lightMaterialTheme,

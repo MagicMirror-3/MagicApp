@@ -20,10 +20,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _refreshNetworkDevices() async {
     // Try connecting to the mirror
-    dynamic mirrorCandiates = await CommunicationHandler.connectToMirror();
-    if (mirrorCandiates is List) {
+    await CommunicationHandler.connectToMirror();
+
+    if (!CommunicationHandler.isConnected) {
+      List<String> candidates = await CommunicationHandler.findLocalMirrors();
       setState(() {
-        mirrorFound = "Potential mirror candidates are: $mirrorCandiates";
+        mirrorFound = "Potential mirror candidates are: $candidates";
       });
     } else {
       // Mirror is connected!
