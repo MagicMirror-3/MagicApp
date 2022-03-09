@@ -29,10 +29,10 @@ class _IntroductionPageState extends State<IntroductionPage> {
           title: "Title of first page",
           body:
               "Here you can write the description of the page, to explain someting...",
-          image: Center(
-            child:
-                Image.network("https://domaine.com/image.png", height: 175.0),
-          ),
+          // image: Center(
+          //   child:
+          //       Image.network("https://domaine.com/image.png", height: 175.0),
+          // ),
         ),
       ],
       done: const Text("Done"),
