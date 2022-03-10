@@ -90,7 +90,7 @@ class MirrorViewState extends State<MirrorView> {
         Module? m = MirrorLayoutHandler.layout.modules[modulePosition];
 
         if (m != null) {
-          ModuleWidget moduleWidget = ModuleWidget(
+          ModuleLayoutWidget moduleWidget = ModuleLayoutWidget(
             module: m,
             selectedCallback: setSelectedModule,
             isSelected: selectedModule != null &&

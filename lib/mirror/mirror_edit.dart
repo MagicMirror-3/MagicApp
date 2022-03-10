@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
+import 'package:magic_app/mirror/module_widget.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
@@ -226,12 +227,9 @@ class _ModuleCatalog extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed(
               MirrorLayoutHandler.moduleCatalog
                   .map(
-                    (module) => LongPressDraggable(
-                      data: module,
-                      maxSimultaneousDrags: 1,
-                      child: DefaultPlatformText(module.name),
-                      feedback: DefaultPlatformText(module.name),
-                      onDragCompleted: () => onModuleToLayout(module),
+                    (module) => ModuleCatalogWidget(
+                      module: module,
+                      onDragCompleted: onModuleToLayout,
                     ),
                   )
                   .toList(),

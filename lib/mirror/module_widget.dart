@@ -3,8 +3,8 @@ import 'package:magic_app/util/text_types.dart';
 
 import 'module.dart';
 
-class ModuleWidget extends StatelessWidget {
-  const ModuleWidget(
+class ModuleLayoutWidget extends StatelessWidget {
+  const ModuleLayoutWidget(
       {required this.module,
       required this.selectedCallback,
       this.isSelected = false,
@@ -29,6 +29,31 @@ class ModuleWidget extends StatelessWidget {
         ),
         child: Center(child: DefaultPlatformText(module.name)),
       ),
+    );
+  }
+}
+
+class ModuleCatalogWidget extends StatelessWidget {
+  const ModuleCatalogWidget(
+      {required this.module, required this.onDragCompleted, Key? key})
+      : super(key: key);
+
+  final Module module;
+  final Function(Module) onDragCompleted;
+
+  @override
+  Widget build(BuildContext context) {
+    return LongPressDraggable(
+      data: module,
+      maxSimultaneousDrags: 1,
+      child: Row(
+        children: [
+          const Icon(Icons.crop_portrait),
+          DefaultPlatformText(module.name),
+        ],
+      ),
+      feedback: DefaultPlatformText(module.name),
+      onDragCompleted: () => onDragCompleted(module),
     );
   }
 }
