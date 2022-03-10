@@ -59,6 +59,13 @@ class MirrorLayoutHandler {
     _initialized = tempLayout != null;
   }
 
+  /// Load the default layout from the [default_layout.json] file
+  static void loadDefaultLayout() async {
+    _layout = (defaultValues[SettingKeys.mirrorLayout]) as MirrorLayout;
+
+    saveLayout();
+  }
+
   /// Refresh the module catalog
   static Future _refreshCatalog() async {
     moduleCatalog = await CommunicationHandler.getModules();
@@ -66,7 +73,7 @@ class MirrorLayoutHandler {
 
   /// Save the current layout to the preferences and backend
   static void saveLayout() {
-    SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, layout);
+    SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, _layout);
     CommunicationHandler.updateLayout(_layout);
   }
 

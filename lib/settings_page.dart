@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/main.dart';
+import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/settings/settings_widgets.dart';
@@ -178,9 +178,7 @@ class _SettingsPageState extends State<SettingsPage> {
             mirrorBorderTile,
             SettingsTile(
               title: const Text("Reset Layout"),
-              onPressed: (_) => SharedPreferencesHandler.resetKey(
-                SettingKeys.mirrorLayout,
-              ),
+              onPressed: (_) => MirrorLayoutHandler.loadDefaultLayout(),
             )
           ],
         ),
