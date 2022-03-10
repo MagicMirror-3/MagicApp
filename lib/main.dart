@@ -7,6 +7,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/introduction/connect_mirror.dart';
 import 'package:magic_app/introduction/introduction_page.dart';
+import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
@@ -17,7 +18,6 @@ import 'package:magic_app/util/utility.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
-import 'mirror/mirror_data.dart';
 import 'mirror_page.dart';
 
 // TODO: Introduction
@@ -176,6 +176,9 @@ class _MagicHomePageState extends State<MagicHomePage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
+    // Init the layout handler
+    MirrorLayoutHandler.init();
   }
 
   /// Updates the displayed page depending on the selected [newIndex]
@@ -239,9 +242,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
           ),
         ),
         Expanded(
-          child: PlatformScaffold(
-            body: centerWidget,
-          ),
+          child: centerWidget,
         ),
         StyleProvider(
           style: _NavBarStyle(),

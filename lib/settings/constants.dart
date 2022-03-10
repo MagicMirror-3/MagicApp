@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
+import '../mirror/mirror_layout_handler.dart';
 
 class SettingChoices {
   const SettingChoices._();

@@ -3,13 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/mirror/mirror_edit.dart';
+import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/mirror/module_widget.dart';
-import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
 import '../generated/l10n.dart';
-import '../settings/constants.dart';
-import 'mirror_data.dart';
+import 'module.dart';
 
 class MirrorView extends StatefulWidget {
   const MirrorView(
@@ -18,6 +17,7 @@ class MirrorView extends StatefulWidget {
       this.displayLoading = true,
       this.selectedModule,
       this.onModuleChanged = print,
+      this.onModuleToCatalog = print,
       Key? key})
       : super(key: key);
 
@@ -26,6 +26,9 @@ class MirrorView extends StatefulWidget {
   final bool displayLoading;
   final Module? selectedModule;
   final ValueChanged<Module?> onModuleChanged;
+
+  /// A callback to inform the [MirrorEdit] that this module should be added to the catalog
+  final Function(Module)? onModuleToCatalog;
 
   @override
   MirrorViewState createState() => MirrorViewState();
@@ -41,7 +44,6 @@ class MirrorViewState extends State<MirrorView> {
   void initState() {
     super.initState();
     selectedModule = widget.selectedModule;
-    layout = SharedPreferencesHandler.getValue(SettingKeys.mirrorLayout);
 
     // print("Loaded layout: $layout");
     // print(
@@ -49,7 +51,6 @@ class MirrorViewState extends State<MirrorView> {
   }
 
   Module? selectedModule;
-  late MirrorLayout layout;
 
   Module? tempMovedModule;
 
@@ -83,73 +84,96 @@ class MirrorViewState extends State<MirrorView> {
   Widget build(BuildContext context) {
     List<Widget> modulesWidgets = [];
     for (ModulePosition modulePosition in validModulePositions) {
-      Module? m = layout.modules[modulePosition];
-      dynamic targetChild;
+      dynamic targetChild = Container();
 
-      if (m != null) {
-        ModuleWidget moduleWidget = ModuleWidget(
-          module: m,
-          selectedCallback: setSelectedModule,
-          isSelected: selectedModule != null &&
-              m.name == selectedModule!.name &&
-              !widget.enableClick,
-        );
+      if (MirrorLayoutHandler.isReady) {
+        Module? m = MirrorLayoutHandler.layout.modules[modulePosition];
 
-        targetChild = Draggable(
-          data: m,
-          maxSimultaneousDrags: widget.enableClick ? 0 : 1,
-          child: moduleWidget,
-          feedback: moduleWidget,
-        );
-      } else {
-        // print("No module for position $modulePosition");
-        targetChild = Container();
+        if (m != null) {
+          ModuleWidget moduleWidget = ModuleWidget(
+            module: m,
+            selectedCallback: setSelectedModule,
+            isSelected: selectedModule != null &&
+                m.name == selectedModule!.name &&
+                !widget.enableClick,
+          );
+
+          targetChild = Draggable(
+            data: m,
+            maxSimultaneousDrags: widget.enableClick ? 0 : 1,
+            child: moduleWidget,
+            feedback: moduleWidget,
+          );
+        } else {
+          // print("No module for position $modulePosition");
+          targetChild = Container();
+        }
       }
 
       modulesWidgets.add(
         Flexible(
           fit: FlexFit.tight,
           child: DragTarget(
-            onAccept: (newModule) {
-              if (newModule is Module) {
-                if (tempMovedModule != null) {
-                  tempMovedModule!.originalPosition =
-                      newModule.originalPosition;
-                }
-                newModule.originalPosition = modulePosition;
-
-                setState(() {
-                  layout.changeModulePosition(newModule, modulePosition);
-                });
-              }
+            onAccept: (Module newModule) {
+              setState(() {
+                MirrorLayoutHandler.moveModule(newModule, modulePosition);
+              });
+              // // Adjust the original position of the modules to correctly back-track
+              // // at the next move
+              // if (tempMovedModule != null) {
+              //   tempMovedModule!.originalPosition = newModule.originalPosition;
+              // }
+              // newModule.originalPosition = modulePosition;
+              //
+              // // Swap the positions
+              // setState(() {
+              //   layout.changeModulePosition(newModule, modulePosition);
+              // });
             },
             onMove: (data) {
+              // Grab the involved modules
               Module newModule = data.data as Module;
-              Module? currentModule = layout.modules[modulePosition];
-              if (newModule.name != currentModule?.name) {
-                tempMovedModule = currentModule;
+              // Module? currentModule = layout.modules[modulePosition];
 
-                setState(() {
-                  layout.changeModulePosition(newModule, modulePosition);
-
-                  if (tempMovedModule != null) {
-                    layout.changeModulePosition(
-                        tempMovedModule!, newModule.originalPosition);
-                  }
-                });
-              }
+              setState(() {
+                MirrorLayoutHandler.temporarilyMoveModule(
+                  newModule,
+                  modulePosition,
+                );
+              });
+              // // Only react to different modules
+              // if (newModule.name != currentModule?.name) {
+              //   // Save the module, which is currently at this position
+              //   tempMovedModule = currentModule;
+              //
+              //   setState(() {
+              //     // Swap the modules
+              //     layout.changeModulePosition(newModule, modulePosition);
+              //
+              //     // Move the old module to the original position of the new one
+              //     if (tempMovedModule != null) {
+              //       layout.changeModulePosition(
+              //         tempMovedModule!,
+              //         newModule.originalPosition,
+              //       );
+              //     }
+              //   });
+              // }
             },
             onLeave: (data) {
-              if (tempMovedModule != null) {
-                layout.changeModulePosition(
-                  tempMovedModule!,
-                  tempMovedModule!.originalPosition,
-                );
-
-                setState(() {
-                  tempMovedModule = null;
-                });
-              }
+              setState(() {
+                MirrorLayoutHandler.undoTemporaryMove();
+              });
+              // if (tempMovedModule != null) {
+              //   layout.changeModulePosition(
+              //     tempMovedModule!,
+              //     tempMovedModule!.originalPosition,
+              //   );
+              //
+              //   setState(() {
+              //     tempMovedModule = null;
+              //   });
+              // }
             },
             builder: (_, __, ___) => targetChild,
           ),

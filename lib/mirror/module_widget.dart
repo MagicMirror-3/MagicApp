@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/util/text_types.dart';
 
-import 'mirror_data.dart';
+import 'module.dart';
 
 class ModuleWidget extends StatelessWidget {
   const ModuleWidget(

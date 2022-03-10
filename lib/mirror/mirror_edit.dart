@@ -3,16 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
+import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
-import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../settings/settings_widgets.dart';
-import 'mirror_data.dart';
 import 'mirror_view.dart';
+import 'module.dart';
 
 /// This widget support the configuration of the [MirrorLayout] and [Module.config].
 ///
@@ -31,16 +31,8 @@ class MirrorEdit extends StatefulWidget {
 }
 
 class _MirrorEditState extends State<MirrorEdit> {
+  /// The selected module
   Module? selectedModule;
-
-  /// A list of modules containing every available module
-  List<Module> moduleCatalog = [
-    Module(name: "dummy_module_1", position: ModulePosition.from_menu),
-    Module(name: "dummy_module_2", position: ModulePosition.from_menu),
-    Module(name: "dummy_module_3", position: ModulePosition.from_menu),
-    Module(name: "dummy_module_4", position: ModulePosition.from_menu),
-    Module(name: "dummy_module_5", position: ModulePosition.from_menu),
-  ];
 
   /// A [GlobalKey] to retrieve the state of the [MirrorView]
   final GlobalKey<MirrorViewState> mirrorViewKey =
@@ -118,16 +110,7 @@ class _MirrorEditState extends State<MirrorEdit> {
           ),
           padding: const EdgeInsets.all(0),
           onPressed: () {
-            MirrorLayout? newLayout = mirrorViewKey.currentState?.layout;
-            if (newLayout != null) {
-              SharedPreferencesHandler.saveValue(
-                SettingKeys.mirrorLayout,
-                newLayout,
-              );
-
-              // Save changes on the raspberry as well
-              CommunicationHandler.updateLayout(newLayout);
-            }
+            MirrorLayoutHandler.saveLayout();
 
             // Automatically quit if the user wants to
             if (SharedPreferencesHandler.getValue(SettingKeys.quitOnSave)) {
@@ -143,7 +126,10 @@ class _MirrorEditState extends State<MirrorEdit> {
         ),
         padding: const EdgeInsets.all(0),
         // TODO: Prompt unsaved changes
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          MirrorLayoutHandler.refresh();
+          Navigator.pop(context);
+        },
       ),
     ];
 
@@ -161,15 +147,23 @@ class _MirrorEditState extends State<MirrorEdit> {
           child: selectedModule == null
               ? _ModuleCatalog(
                   key: secondWidgetKey,
-                  modules: moduleCatalog,
                   actions: controlIcons,
+                  onModuleToCatalog: (Module module) => setState(
+                    () => MirrorLayoutHandler.moveModule(
+                      module,
+                      ModulePosition.menu,
+                    ),
+                  ),
+                  onModuleToLayout: (Module module) => setState(
+                    () => MirrorLayoutHandler.removeFromCatalog(module),
+                  ),
                 )
               : _ModuleConfiguration(
                   actions: controlIcons,
                   key: secondWidgetKey,
                   selectedModule: selectedModule!,
-                  saveCallback: (config) => mirrorViewKey.currentState!.layout
-                      .saveModuleConfiguration(
+                  saveCallback: (config) =>
+                      MirrorLayoutHandler.layout.saveModuleConfiguration(
                     selectedModule!.position,
                     config,
                   ),
@@ -193,37 +187,58 @@ class _MirrorEditState extends State<MirrorEdit> {
 
 /// Displays a list of Modules to drag into the layout
 class _ModuleCatalog extends StatelessWidget {
-  const _ModuleCatalog({Key? key, required this.modules, required this.actions})
-      : super(key: key);
-
-  /// Every available module
-  final List<Module> modules;
+  const _ModuleCatalog({
+    Key? key,
+    required this.actions,
+    required this.onModuleToCatalog,
+    required this.onModuleToLayout,
+  }) : super(key: key);
 
   /// The actions in the upper right corner (save / exit)
   final List<PlatformIconButton> actions;
 
+  /// Callback to update the state of the parent if a module was moved to the catalog
+  final Function(Module) onModuleToCatalog;
+
+  /// Callback to update the state of the parent if a module was moved from the
+  /// catalog to the layout
+  final Function(Module) onModuleToLayout;
+
   @override
   Widget build(BuildContext context) {
     // Use a sliver scroll container
-    return CustomScrollView(
-      slivers: [
-        // The app bar with a title and the given action icons
-        SliverAppBar(
-          title: Text(S.of(context).module_catalog),
-          floating: true,
-          // Removes the leading "<" icon the close the layout
-          automaticallyImplyLeading: false,
-          backgroundColor: isMaterial(context)
-              ? ThemeData.dark().appBarTheme.backgroundColor
-              : darkCupertinoTheme.barBackgroundColor,
-          actions: actions,
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate.fixed(
-            modules.map((module) => DefaultPlatformText(module.name)).toList(),
+    return DragTarget(
+      onAccept: onModuleToCatalog,
+      builder: (_, __, ___) => CustomScrollView(
+        slivers: [
+          // The app bar with a title and the given action icons
+          SliverAppBar(
+            title: Text(S.of(context).module_catalog),
+            floating: true,
+            // Removes the leading "<" icon the close the layout
+            automaticallyImplyLeading: false,
+            backgroundColor: isMaterial(context)
+                ? ThemeData.dark().appBarTheme.backgroundColor
+                : darkCupertinoTheme.barBackgroundColor,
+            actions: actions,
           ),
-        ),
-      ],
+          SliverList(
+            delegate: SliverChildListDelegate.fixed(
+              MirrorLayoutHandler.moduleCatalog
+                  .map(
+                    (module) => LongPressDraggable(
+                      data: module,
+                      maxSimultaneousDrags: 1,
+                      child: DefaultPlatformText(module.name),
+                      feedback: DefaultPlatformText(module.name),
+                      onDragCompleted: () => onModuleToLayout(module),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

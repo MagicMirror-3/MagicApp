@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:magic_app/mirror/mirror_data.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../mirror/mirror_layout_handler.dart';
 
 /// Handles the persistent saving and retrieving of values on the local device storage.
 class SharedPreferencesHandler {

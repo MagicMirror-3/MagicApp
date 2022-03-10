@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:magic_app/mirror/mirror_data.dart';
+import 'package:magic_app/mirror/module.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
+
+import '../mirror/mirror_layout_handler.dart';
 
 /// Handles the communication with the MagicController on the Raspberry pi via HTTP.
 class CommunicationHandler {
@@ -136,7 +138,7 @@ class CommunicationHandler {
     }
 
     Uri targetURI = createRouteURI(route, host: host, getParams: payload);
-    timeout ??= const Duration(milliseconds: 500);
+    timeout ??= const Duration(seconds: 1);
 
     late http.Response response;
     switch (route.type) {
@@ -343,13 +345,22 @@ class CommunicationHandler {
 
   /// Gets all available modules
   static Future<List<Module>> getModules() async {
-    String moduleString = (await _makeRequest(
-      MagicRoutes.getModules,
-      payload: {"user_id": 1},
-    ))
-        .body;
+    // Get the local user
+    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
-    return modulesFromJSON(moduleString);
+    List<Module> modules = [];
+    if (localUser.isRealUser) {
+      String moduleString = (await _makeRequest(
+        MagicRoutes.getModules,
+        payload: {"user_id": localUser.id},
+        timeout: const Duration(seconds: 1),
+      ))
+          .body;
+
+      modules = modulesFromJSON(moduleString);
+    }
+
+    return modules;
   }
 }
 

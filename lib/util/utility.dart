@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../mirror/mirror_data.dart';
+import '../mirror/module.dart';
 
 /// Show a cupertino picker with the given [items].
 ///
@@ -49,7 +49,7 @@ List<Module> modulesFromJSON(String jsonString) {
         // Try getting the position in the dict. Defaults to ModulePosition.from_menu
         ModulePosition modulePosition = ModulePosition.values.firstWhere(
           (element) => element.toShortString() == listEntry["position"],
-          orElse: () => ModulePosition.from_menu,
+          orElse: () => ModulePosition.menu,
         );
 
         // Get the config

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 
-import 'mirror_data.dart';
 import 'mirror_view.dart';
+import 'module.dart';
 
 /// Displays the mirror layout with a wall in the background ([MirrorBackground])
 /// and a frame ([MirrorFrame]) around the mirror ([MirrorView])
@@ -14,6 +14,7 @@ class MirrorContainer extends StatelessWidget {
       this.displayLoading = true,
       this.selectedModule,
       this.onModuleChanged,
+      this.onModuleToCatalog,
       this.mirrorViewKey,
       Key? key})
       : super(key: key);
@@ -35,6 +36,9 @@ class MirrorContainer extends StatelessWidget {
 
   /// A key to retrieve the state of the [MirrorView]
   final GlobalKey<MirrorViewState>? mirrorViewKey;
+
+  /// A callback to inform the [MirrorEdit] that this module should be added to the catalog
+  final Function(Module)? onModuleToCatalog;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,7 @@ class MirrorContainer extends StatelessWidget {
                   displayLoading: displayLoading,
                   selectedModule: selectedModule,
                   onModuleChanged: onModuleChanged ?? print,
+                  onModuleToCatalog: onModuleToCatalog ?? print,
                 ),
               ),
             ),

@@ -6,7 +6,8 @@ import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
-import 'mirror/mirror_data.dart';
+import 'mirror/mirror_layout_handler.dart';
+import 'mirror/module.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);

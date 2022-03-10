@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
+import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
@@ -8,7 +9,6 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
-import 'mirror/mirror_data.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -29,15 +29,10 @@ class _MainPageState extends State<MainPage> {
       });
     }
 
-    MirrorLayout? layout;
     if (CommunicationHandler.isConnected) {
-      // Wait for the layout request
-      layout = await CommunicationHandler.getMirrorLayout();
+      await MirrorLayoutHandler.refresh();
 
-      if (layout != null) {
-        SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, false);
-        SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, layout);
-
+      if (MirrorLayoutHandler.isReady) {
         // Wait for cosmetic purposes
         Future.delayed(const Duration(seconds: 1)).then(
           (_) => setState(() {
@@ -47,7 +42,7 @@ class _MainPageState extends State<MainPage> {
       }
     }
 
-    return layout != null;
+    return MirrorLayoutHandler.isReady;
   }
 
   @override
