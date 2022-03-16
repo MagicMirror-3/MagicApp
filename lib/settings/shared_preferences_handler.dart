@@ -78,6 +78,7 @@ class SharedPreferencesHandler {
     }
   }
 
+  /// Removes the given [key] from storage and therefore deletes any value associated with it
   static void resetKey(String key) {
     _preferences.remove(key);
   }

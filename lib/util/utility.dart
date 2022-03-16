@@ -38,8 +38,10 @@ showCupertinoDropdownPopup(
 List<Module> modulesFromJSON(String jsonString) {
   List<Module> modules = [];
 
+  // decode the string
   dynamic stringJSON = jsonDecode(jsonString);
 
+  // The most outer structure should be a list
   if (stringJSON is List) {
     for (dynamic listEntry in stringJSON) {
       // Entry has to be a Map and contain at least the key 'module'
@@ -48,13 +50,14 @@ List<Module> modulesFromJSON(String jsonString) {
 
         // Try getting the position in the dict. Defaults to ModulePosition.from_menu
         ModulePosition modulePosition = ModulePosition.values.firstWhere(
-          (element) => element.toShortString() == listEntry["position"],
+          (element) => element.name == listEntry["position"],
           orElse: () => ModulePosition.menu,
         );
 
         // Get the config
         Map<String, dynamic> moduleConfig = listEntry["config"] ?? {};
 
+        // Save the module
         modules.add(
           Module(
             name: moduleName,
@@ -82,7 +85,7 @@ String modulesToJSON(List<Module> modules) {
         .map(
           (m) => {
             "module": m.name,
-            "position": m.position.toShortString(),
+            "position": m.position.name,
             "config": m.config ?? {},
           },
         )
@@ -92,25 +95,40 @@ String modulesToJSON(List<Module> modules) {
 
 /// Represents a user of the mirror
 class MagicUser {
-  const MagicUser(
-      {this.id = -1,
-      this.firstName = "",
-      this.lastName = "",
-      this.password = ""});
+  const MagicUser({
+    this.id = -1,
+    this.firstName = "",
+    this.lastName = "",
+    this.password = "",
+  });
 
+  /// Parses user information from a given map.
+  ///
+  /// The map has to contain the keys ["id", "firstName", "lastName", "password"]
   MagicUser.fromJSON(Map<String, dynamic> userMap)
       : id = userMap["id"],
         firstName = userMap["firstName"],
         lastName = userMap["lastName"],
         password = userMap["password"];
 
+  /// The unique identifier of the user
   final int id;
+
+  /// The first name of the user
   final String firstName;
+
+  /// The last name of the user
   final String lastName;
+
+  /// The password of the user
   final String password;
 
-  bool get isRealUser => id != -1 && !(firstName.isEmpty && lastName.isEmpty);
+  /// Whether the user is not the default user.
+  ///
+  /// The default user has no name and the id 0
+  bool get isRealUser => id != 0 && !(firstName.isEmpty && lastName.isEmpty);
 
+  /// A combination of first and last name
   String get name => "$firstName $lastName";
 
   @override

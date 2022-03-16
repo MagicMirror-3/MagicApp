@@ -8,16 +8,16 @@ import 'module.dart';
 /// Displays the mirror layout with a wall in the background ([MirrorBackground])
 /// and a frame ([MirrorFrame]) around the mirror ([MirrorView])
 class MirrorContainer extends StatelessWidget {
-  const MirrorContainer(
-      {this.mirrorSize = 75,
-      this.enableClick = true,
-      this.displayLoading = true,
-      this.selectedModule,
-      this.onModuleChanged,
-      this.onModuleToCatalog,
-      this.mirrorViewKey,
-      Key? key})
-      : super(key: key);
+  const MirrorContainer({
+    this.mirrorSize = 75,
+    this.enableClick = true,
+    this.displayLoading = true,
+    this.selectedModule,
+    this.onModuleChanged,
+    this.onModuleToCatalog,
+    this.mirrorViewKey,
+    Key? key,
+  }) : super(key: key);
 
   /// The size (in % of the available height) of the mirror
   final int mirrorSize;
@@ -50,7 +50,6 @@ class MirrorContainer extends StatelessWidget {
         child: LayoutBuilder(
           // Open the MirrorEdit on click
           builder: (_, BoxConstraints constraints) => GestureDetector(
-            // behavior: HitTestBehavior.translucent,
             onTap: () => onModuleChanged!(null),
             // Construct the displayed layout
             child: MirrorBackground(
@@ -62,7 +61,6 @@ class MirrorContainer extends StatelessWidget {
                   displayLoading: displayLoading,
                   selectedModule: selectedModule,
                   onModuleChanged: onModuleChanged ?? print,
-                  onModuleToCatalog: onModuleToCatalog ?? print,
                 ),
               ),
             ),
@@ -86,7 +84,8 @@ class MirrorBackground extends StatelessWidget {
     // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
     // Retrieve the image from the value in the local storage
     AssetImage backgroundImage = AssetImage(
-        "assets/patterns/wall/${SharedPreferencesHandler.getValue(SettingKeys.wallPattern)}");
+      "assets/patterns/wall/${SharedPreferencesHandler.getValue(SettingKeys.wallPattern)}",
+    );
 
     return Container(
       child: mirrorBorder,
@@ -118,7 +117,8 @@ class MirrorFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
     AssetImage borderImage = AssetImage(
-        "assets/patterns/mirror_frame/${SharedPreferencesHandler.getValue(SettingKeys.mirrorFrame)}");
+      "assets/patterns/mirror_frame/${SharedPreferencesHandler.getValue(SettingKeys.mirrorFrame)}",
+    );
 
     return Container(
       // Use the frameWidth as a safe zone

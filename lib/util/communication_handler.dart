@@ -230,14 +230,17 @@ class CommunicationHandler {
   }
 
   // ---------- [Implementations for predefined routes] ---------- //
-  // TODO: consider retrieving the userID from SharedPreferencesHandler
 
   /// Create a new user in the mirror database and returns whether the creation
   /// was successful.
   ///
   /// [images] should be a list of base64-encoded images.
-  static Future<bool> createUser(String firstname, String surname,
-      String password, List<String> images) async {
+  static Future<bool> createUser(
+    String firstname,
+    String surname,
+    String password,
+    List<String> images,
+  ) async {
     return (await _makeRequest(
           MagicRoutes.createUser,
           payload: {
@@ -270,7 +273,7 @@ class CommunicationHandler {
         : [];
   }
 
-  /// Updates the data of a given user identified by their [userID].
+  /// Updates the data of the currently logged in user
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateUserData() async {
@@ -324,7 +327,7 @@ class CommunicationHandler {
     return null;
   }
 
-  /// Updates the layout of the given user
+  /// Updates the layout of the current user
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateLayout(MirrorLayout layout) async {
@@ -366,10 +369,13 @@ class CommunicationHandler {
 
 /// Contains all valid routes a MagicMirror has
 class MagicRoutes {
+  // No instantiation wanted
   const MagicRoutes._();
 
+  /// Needed to check whether a device is a MagicMirror
   static const isMagicMirror = _MagicRoute(route: "isMagicMirror");
 
+  /// Registers a new user
   static const createUser = _MagicRoute(
     route: "createUser",
     params: [
@@ -380,7 +386,11 @@ class MagicRoutes {
       "images",
     ],
   );
+
+  /// Gets all registered users
   static const getUsers = _MagicRoute(route: "getUsers");
+
+  /// Updates the data of a user
   static const updateUser = _MagicRoute(
     route: "updateUser",
     type: _RouteType.POST,
@@ -392,13 +402,17 @@ class MagicRoutes {
     ],
   );
 
+  /// Gets the layout of a given user
   static const getLayout = _MagicRoute(route: "getLayout", params: ["user_id"]);
+
+  /// Updates the layout of a user
   static const setLayout = _MagicRoute(
     route: "setLayout",
     type: _RouteType.POST,
     params: ["user_id", "layout"],
   );
 
+  /// Gets all available modules
   static const getModules = _MagicRoute(
     route: "getModules",
     params: ["user_id"],
@@ -407,8 +421,11 @@ class MagicRoutes {
 
 /// Contains information about a route
 class _MagicRoute {
-  const _MagicRoute(
-      {required this.route, this.type = _RouteType.GET, this.params});
+  const _MagicRoute({
+    required this.route,
+    this.type = _RouteType.GET,
+    this.params,
+  });
 
   /// The name of the route
   final String route;

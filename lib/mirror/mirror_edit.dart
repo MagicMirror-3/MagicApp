@@ -11,7 +11,7 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-import '../settings/settings_widgets.dart';
+import '../util/magic_widgets.dart';
 import 'mirror_view.dart';
 import 'module.dart';
 
@@ -91,7 +91,7 @@ class _MirrorEditState extends State<MirrorEdit> {
   Widget build(BuildContext context) {
     // The layout of the mirror with the frame and wall
     MirrorContainer mirrorContainer = MirrorContainer(
-      mirrorSize: 80,
+      mirrorSize: 88,
       enableClick: false,
       displayLoading: false,
       selectedModule: selectedModule,
@@ -100,7 +100,6 @@ class _MirrorEditState extends State<MirrorEdit> {
     );
 
     // The icons displayed in the top right corner to save the layout or quit the editor
-    // TODO: autoSaveOnExit -> No checkmark needed
     List<PlatformIconButton> controlIcons = [
       // This checkmark saves the layout
       PlatformIconButton(
@@ -243,13 +242,13 @@ class _ModuleCatalog extends StatelessWidget {
 
 /// Supports the configuration of a module by providing a settings-like screen
 class _ModuleConfiguration extends StatefulWidget {
-  const _ModuleConfiguration(
-      {Key? key,
-      required this.selectedModule,
-      required this.actions,
-      required this.saveCallback,
-      required this.cancelCallback})
-      : super(key: key);
+  const _ModuleConfiguration({
+    Key? key,
+    required this.selectedModule,
+    required this.actions,
+    required this.saveCallback,
+    required this.cancelCallback,
+  }) : super(key: key);
 
   /// The module to display the [Module.config] of
   final Module selectedModule;

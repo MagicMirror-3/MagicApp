@@ -20,29 +20,26 @@ enum ModulePosition {
   menu
 }
 
-/// Extend the [ModulePosition] enum with a method to convert it to a [String]
-extension ParseToString on ModulePosition {
-  String toShortString() {
-    return toString().split(".").last;
-  }
-}
-
 /// Represents a module of the mirror
 class Module {
-  Module(
-      {required this.name,
-      required this.position,
-      this.header,
-      this.description,
-      this.image = "no_image.png",
-      this.config}) {
+  Module({
+    required this.name,
+    required this.position,
+    this.header,
+    this.description,
+    this.image = "no_image.png",
+    this.config,
+  }) {
     originalPosition = position;
   }
 
   /// The (unique) name of the module
   final String name;
 
-  /// The [ModulePosition] of this module
+  /// The current [ModulePosition] of this module.
+  ///
+  /// It only differs from [originalPosition] if the module is being dragged
+  /// across the layout
   ModulePosition position;
 
   /// An optional header to display on top of this module

@@ -4,6 +4,7 @@ import 'package:magic_app/util/communication_handler.dart';
 
 import '../util/utility.dart';
 
+/// Contains the current layout and every available module
 class MirrorLayoutHandler {
   // Make constructor private
   MirrorLayoutHandler._();
@@ -197,7 +198,7 @@ class MirrorLayout {
   /// This method also handles the switching of modules, if [position] is already
   /// occupied by another method.
   void setModulePosition(Module module, ModulePosition position) {
-    print("Setting module '${module.name}' to '$position'");
+    // print("Setting module '${module.name}' to '$position'");
     modules.update(
       position,
       (oldModule) {

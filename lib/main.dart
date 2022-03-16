@@ -138,6 +138,7 @@ class _MagicAppState extends State<MagicApp> {
   }
 }
 
+/// The general layout of the app with a bottom navigation bar
 class MagicHomePage extends StatefulWidget {
   const MagicHomePage({Key? key}) : super(key: key);
 

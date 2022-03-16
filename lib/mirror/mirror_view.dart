@@ -10,6 +10,7 @@ import 'package:magic_app/util/text_types.dart';
 import '../generated/l10n.dart';
 import 'module.dart';
 
+/// Displays the current layout of the mirror
 class MirrorView extends StatefulWidget {
   const MirrorView(
       {required this.height,
@@ -17,18 +18,23 @@ class MirrorView extends StatefulWidget {
       this.displayLoading = true,
       this.selectedModule,
       this.onModuleChanged = print,
-      this.onModuleToCatalog = print,
       Key? key})
       : super(key: key);
 
+  /// The height of the mirror. The width will be calculated depending on the ratio.
   final double height;
-  final bool enableClick;
-  final bool displayLoading;
-  final Module? selectedModule;
-  final ValueChanged<Module?> onModuleChanged;
 
-  /// A callback to inform the [MirrorEdit] that this module should be added to the catalog
-  final Function(Module)? onModuleToCatalog;
+  /// Whether layout should be clickable
+  final bool enableClick;
+
+  /// Whether a loading animation should be displayed on top of the layout
+  final bool displayLoading;
+
+  /// The currently selected module (will be displayed with a border
+  final Module? selectedModule;
+
+  /// Called whenever the module selection changed
+  final ValueChanged<Module?> onModuleChanged;
 
   @override
   MirrorViewState createState() => MirrorViewState();
@@ -37,6 +43,8 @@ class MirrorView extends StatefulWidget {
 class MirrorViewState extends State<MirrorView> {
   // TODO: Convert this to a setting
   static const double mirrorRatio = 50 / 70;
+
+  /// Every position a module can have except [ModulePositions.menu]
   static final Iterable<ModulePosition> validModulePositions =
       ModulePosition.values.getRange(0, ModulePosition.values.length - 2);
 
@@ -50,10 +58,10 @@ class MirrorViewState extends State<MirrorView> {
     //     "MirrorView built with selected module $selectedModule (${widget.selectedModule}), enableClick: ${widget.enableClick}");
   }
 
+  /// The currently selected module
   Module? selectedModule;
 
-  Module? tempMovedModule;
-
+  /// Pushes the [MirrorEdit] view onto the Navigator
   void openMirrorEdit(BuildContext context) {
     if (widget.enableClick && !widget.displayLoading) {
       Navigator.push(
@@ -68,6 +76,7 @@ class MirrorViewState extends State<MirrorView> {
     }
   }
 
+  /// Updates the selected module and calls [openMirrorEdit()]
   void setSelectedModule(Module? module, BuildContext context) {
     if (module != selectedModule) {
       setState(() {
@@ -82,13 +91,53 @@ class MirrorViewState extends State<MirrorView> {
 
   @override
   Widget build(BuildContext context) {
+    Container moduleContainer = _buildLayoutContainer();
+
+    // Open the MirrorEdit view, if the layout is clickable and not loading
+    return widget.enableClick && !widget.displayLoading
+        ? GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () => openMirrorEdit(context),
+            child: moduleContainer,
+          )
+        // Else, display a loading animation on top of the layout if its loading
+        : widget.displayLoading
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  ImageFiltered(
+                    imageFilter: ImageFilter.blur(
+                      sigmaX: 0.55,
+                      sigmaY: 0.55,
+                    ),
+                    child: moduleContainer,
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(bottom: 25),
+                        child: PlatformCircularProgressIndicator(),
+                      ),
+                      DefaultPlatformText(S.of(context).mirror_refresh)
+                    ],
+                  )
+                ],
+              )
+            // Just display the layout
+            : moduleContainer;
+  }
+
+  /// Builds a widget representing the layout of the MagicMirror² framework
+  Container _buildLayoutContainer() {
     List<Widget> modulesWidgets = [];
     for (ModulePosition modulePosition in validModulePositions) {
-      dynamic targetChild = Container();
+      Widget targetChild = Container();
 
       if (MirrorLayoutHandler.isReady) {
         Module? m = MirrorLayoutHandler.layout.modules[modulePosition];
 
+        // Fill the widget with the name of the module and make it draggable
         if (m != null) {
           ModuleLayoutWidget moduleWidget = ModuleLayoutWidget(
             module: m,
@@ -104,12 +153,10 @@ class MirrorViewState extends State<MirrorView> {
             child: moduleWidget,
             feedback: moduleWidget,
           );
-        } else {
-          // print("No module for position $modulePosition");
-          targetChild = Container();
         }
       }
 
+      // Each position in the layout could be target of a drag movement
       modulesWidgets.add(
         Flexible(
           fit: FlexFit.tight,
@@ -145,7 +192,8 @@ class MirrorViewState extends State<MirrorView> {
       );
     }
 
-    Container moduleContainer = Container(
+    // Order the widgets as they would be on the MagicMirror itself
+    return Container(
       constraints: BoxConstraints(
         maxHeight: widget.height,
         maxWidth: widget.height * mirrorRatio,
@@ -154,7 +202,9 @@ class MirrorViewState extends State<MirrorView> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // top_bar
           modulesWidgets[0],
+          // top_left, top_center, top_right
           Flexible(
             fit: FlexFit.tight,
             child: Row(
@@ -165,9 +215,13 @@ class MirrorViewState extends State<MirrorView> {
               ],
             ),
           ),
+          // upper_third
           modulesWidgets[4],
+          // middle_center
           modulesWidgets[5],
+          // lower_third
           modulesWidgets[6],
+          // bottom_left, bottom_center, bottom_right
           Flexible(
             fit: FlexFit.tight,
             child: Row(
@@ -178,6 +232,7 @@ class MirrorViewState extends State<MirrorView> {
               ],
             ),
           ),
+          // bottom_bar
           modulesWidgets[10],
         ],
       ),
@@ -185,36 +240,5 @@ class MirrorViewState extends State<MirrorView> {
         color: Colors.black,
       ),
     );
-
-    return widget.enableClick && !widget.displayLoading
-        ? GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => openMirrorEdit(context),
-            child: moduleContainer,
-          )
-        : widget.displayLoading
-            ? Stack(
-                alignment: Alignment.center,
-                children: [
-                  ImageFiltered(
-                    imageFilter: ImageFilter.blur(
-                      sigmaX: 0.55,
-                      sigmaY: 0.55,
-                    ),
-                    child: moduleContainer,
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(bottom: 25),
-                        child: PlatformCircularProgressIndicator(),
-                      ),
-                      DefaultPlatformText(S.of(context).mirror_refresh)
-                    ],
-                  )
-                ],
-              )
-            : moduleContainer;
   }
 }

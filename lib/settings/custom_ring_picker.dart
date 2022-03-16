@@ -3,8 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-class CustomRingPicker extends StatefulWidget {
-  const CustomRingPicker({
+/// Slightly different implementation of the RingPicker contained in the
+/// [flutter_colorpicker] package.
+///
+/// This is needed to adjust the picker to the special needs of this app
+class MagicRingPicker extends StatefulWidget {
+  const MagicRingPicker({
     Key? key,
     required this.pickerColor,
     required this.onColorChanged,
@@ -26,10 +30,10 @@ class CustomRingPicker extends StatefulWidget {
   final BorderRadius pickerAreaBorderRadius;
 
   @override
-  _CustomRingPickerState createState() => _CustomRingPickerState();
+  _MagicRingPickerState createState() => _MagicRingPickerState();
 }
 
-class _CustomRingPickerState extends State<CustomRingPicker> {
+class _MagicRingPickerState extends State<MagicRingPicker> {
   HSVColor currentHsvColor = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
 
   @override
@@ -39,7 +43,7 @@ class _CustomRingPickerState extends State<CustomRingPicker> {
   }
 
   @override
-  void didUpdateWidget(CustomRingPicker oldWidget) {
+  void didUpdateWidget(MagicRingPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
     currentHsvColor = HSVColor.fromColor(widget.pickerColor);
   }

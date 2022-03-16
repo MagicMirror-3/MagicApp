@@ -10,6 +10,7 @@ import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
 
+/// Displays a greeting message and the [MirrorContainer]
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -18,14 +19,16 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  bool modulesLoading = SharedPreferencesHandler.getValue(
+  /// Whether the layout is being retrieved from the backend
+  bool loading = SharedPreferencesHandler.getValue(
     SettingKeys.mirrorRefresh,
   );
 
+  /// Tries getting the layout from the backend
   Future<bool> getLayout() async {
-    if (!modulesLoading) {
+    if (!loading) {
       setState(() {
-        modulesLoading = true;
+        loading = true;
       });
     }
 
@@ -35,9 +38,13 @@ class _MainPageState extends State<MainPage> {
       if (MirrorLayoutHandler.isReady) {
         // Wait for cosmetic purposes
         Future.delayed(const Duration(seconds: 1)).then(
-          (_) => setState(() {
-            modulesLoading = false;
-          }),
+          (_) {
+            if (mounted) {
+              setState(() {
+                loading = false;
+              });
+            }
+          },
         );
       }
     }
@@ -47,18 +54,20 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the name of the user
     String userName =
         SharedPreferencesHandler.getValue<MagicUser>(SettingKeys.user).name;
+
+    // Wrap the widget in a drag down refresher
     return MagicRefresher(
-      initialRefresh: modulesLoading,
+      initialRefresh: loading,
       onRefresh: getLayout,
       childWidget: Column(
         children: [
           HeaderPlatformText(S.of(context).greetings(userName)),
           MirrorContainer(
-            key: Key("MirrorContainer_MirrorPage:$modulesLoading"),
-            onModuleChanged: (module) => "this is a void callback: $module",
-            displayLoading: modulesLoading,
+            key: Key("MirrorContainer_MirrorPage:$loading"),
+            displayLoading: loading,
           )
         ],
       ),

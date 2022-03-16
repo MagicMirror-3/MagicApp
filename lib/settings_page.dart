@@ -5,13 +5,15 @@ import 'package:magic_app/main.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
-import 'package:magic_app/settings/settings_widgets.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
+import 'package:magic_app/util/magic_widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'generated/l10n.dart';
 
+/// Displays a list of every available settings option the user can customize
+/// his MagicMirror and MagicApp with
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
@@ -22,11 +24,12 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   Color prevColor = SharedPreferencesHandler.getValue(SettingKeys.wallColor);
 
-  void updateDarkMode(bool sliderValue, BuildContext context) {
-    SharedPreferencesHandler.saveValue(SettingKeys.darkMode, sliderValue);
-    MagicApp.of(context)!.refreshApp();
-  }
+  // void updateDarkMode(bool sliderValue, BuildContext context) {
+  //   SharedPreferencesHandler.saveValue(SettingKeys.darkMode, sliderValue);
+  //   MagicApp.of(context)!.refreshApp();
+  // }
 
+  /// Switches the alternative appearance of the app (platform)
   void updateAlternativeAppearance(bool sliderValue, BuildContext context) {
     SharedPreferencesHandler.saveValue(
       SettingKeys.alternativeAppearance,
@@ -42,6 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  /// Update the language of the app and refresh
   void updateLanguage(String language, BuildContext context) {
     if (S.delegate.supportedLocales.contains(Locale(language))) {
       SharedPreferencesHandler.saveValue(SettingKeys.language, language);
@@ -99,12 +103,13 @@ class _SettingsPageState extends State<SettingsPage> {
       onPressed: (context) {
         Color tempColor = prevColor;
 
+        // Display the color picker in a dialog
         showPlatformDialog(
           context: context,
           builder: (context) => PlatformAlertDialog(
             title: Text(S.of(context).settings_wallColor),
             content: SingleChildScrollView(
-              child: CustomRingPicker(
+              child: MagicRingPicker(
                 pickerColor:
                     SharedPreferencesHandler.getValue(SettingKeys.wallColor),
                 onColorChanged: (color) {
@@ -142,7 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
     LinkedMagicChoiceTile mirrorBorderTile = LinkedMagicChoiceTile(
       title: S.of(context).settings_mirrorBorder,
       settingKey: SettingKeys.mirrorFrame,
-      settingChoices: SettingChoices.mirrorBorderChoices(context),
+      settingChoices: SettingChoices.mirrorFrameChoices(context),
       selectCallback: (value) => setState(() {
         SharedPreferencesHandler.saveValue(SettingKeys.mirrorFrame, value);
       }),
@@ -159,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
       description: Text(S.of(context).settings_quitOnSaveDescription),
     );
 
-    // Construct the layout
+    // Construct the layout by creating sections and tiles accordingly
     return MagicSettingsList(
       sections: [
         SettingsSection(

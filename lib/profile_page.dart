@@ -25,27 +25,31 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (CommunicationHandler.isConnected) {
       // Mirror is connected!
-      setState(() {
-        mirrorFound = "Successfully connected to mirror.\n";
-      });
+      if (mounted) {
+        setState(() {
+          mirrorFound = "Successfully connected to mirror.\n";
+        });
+      }
 
       print("Retrieving layout...");
       MirrorLayout? layout = await CommunicationHandler.getMirrorLayout();
-      setState(() {
-        mirrorFound += "\nThe layout is: $layout\n";
-      });
+      _addToMirrorFound("\nThe layout is: $layout\n");
 
       print("Retrieving users...");
       List<MagicUser> users = await CommunicationHandler.getUsers();
-
-      setState(() {
-        mirrorFound += "\nUsers:\n" + users.join("\n") + "\n";
-      });
+      _addToMirrorFound("\nUsers:\n" + users.join("\n") + "\n");
 
       print("Retrieving modules...");
       List<Module> modules = await CommunicationHandler.getModules();
+      _addToMirrorFound("\nModules:\n" + modules.join("\n"));
+    }
+  }
+
+  /// This method wont be here for long...
+  void _addToMirrorFound(String text) {
+    if (mounted) {
       setState(() {
-        mirrorFound += "\nModules:\n" + modules.join("\n");
+        mirrorFound += text;
       });
     }
   }
