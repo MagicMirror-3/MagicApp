@@ -1,8 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:magic_app/mirror/module.dart';
 import 'package:magic_app/util/communication_handler.dart';
 
-import '../settings/constants.dart';
-import '../settings/shared_preferences_handler.dart';
 import '../util/utility.dart';
 
 class MirrorLayoutHandler {
@@ -53,7 +52,6 @@ class MirrorLayoutHandler {
 
     if (tempLayout != null) {
       _layout = tempLayout;
-      SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, _layout);
     }
 
     _initialized = tempLayout != null;
@@ -61,7 +59,9 @@ class MirrorLayoutHandler {
 
   /// Load the default layout from the [default_layout.json] file
   static void loadDefaultLayout() async {
-    _layout = (defaultValues[SettingKeys.mirrorLayout]) as MirrorLayout;
+    _layout = MirrorLayout.fromString(
+      await rootBundle.loadString("assets/default_layout.json"),
+    );
 
     saveLayout();
   }
@@ -73,7 +73,6 @@ class MirrorLayoutHandler {
 
   /// Save the current layout to the preferences and backend
   static void saveLayout() {
-    SharedPreferencesHandler.saveValue(SettingKeys.mirrorLayout, _layout);
     CommunicationHandler.updateLayout(_layout);
   }
 

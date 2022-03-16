@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
-import '../mirror/mirror_layout_handler.dart';
 
 class SettingChoices {
   const SettingChoices._();
@@ -53,7 +52,6 @@ class SettingKeys {
   static const String alternativeAppearance = "alternativeAppearance";
   static const String language = "language";
 
-  static const String mirrorLayout = "mirrorLayout";
   static const String wallPattern = "wallPattern";
   static const String wallColor = "wallColor";
   static const String mirrorFrame = "mirrorBorder";
@@ -73,12 +71,9 @@ var defaultValues = {
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
   SettingKeys.language: "en",
-  SettingKeys.mirrorLayout: MirrorLayout.fromString(defaultMirrorLayout),
   SettingKeys.wallPattern: "wall.jpg",
   SettingKeys.wallColor: Colors.white,
   SettingKeys.mirrorFrame: "default.png",
   SettingKeys.mirrorRefresh: true,
   SettingKeys.quitOnSave: true,
 };
-
-String defaultMirrorLayout = "";

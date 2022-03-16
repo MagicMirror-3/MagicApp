@@ -33,12 +33,6 @@ void main() async {
   // Init settings first
   await SharedPreferencesHandler.init();
 
-  // Retrieve the default layout from the file and persist it to storage
-  defaultMirrorLayout =
-      await rootBundle.loadString("assets/default_layout.json");
-  defaultValues[SettingKeys.mirrorLayout] =
-      MirrorLayout.fromString(defaultMirrorLayout);
-
   // Refresh the mirror layout on startup
   SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, true);
 

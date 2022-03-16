@@ -30,16 +30,11 @@ class SharedPreferencesHandler {
     defaultValue = defaultValue ?? defaultValues[key] as T;
 
     if (_preferences.get(key) != null) {
-      // Color and MirrorLayout values need special treatment, because they are saved as strings
+      // Color and MagicUser values need special treatment, because they are saved as strings
       if (defaultValue is Color) {
         // Convert the string to a color
         return (colorFromHex(_preferences.getString(key) ?? "ffffff") ??
             defaultValue) as T;
-      } else if (defaultValue is MirrorLayout) {
-        // Construct a layout from the given string
-        return MirrorLayout.fromString(
-            _preferences.getString(SettingKeys.mirrorLayout) ??
-                defaultMirrorLayout) as T;
       } else if (defaultValue is MagicUser) {
         return MagicUser.fromJSON(
             jsonDecode(_preferences.getString(SettingKeys.user) ?? "")) as T;
