@@ -85,6 +85,8 @@ class MirrorLayoutHandler {
     undoTemporaryMove();
 
     Module? currentModule = _layout.getModule(position);
+    // If there already is a module at this position, change the originalPosition to the originalPosition
+    // of the moved module
     if (currentModule != null) {
       // print(
       //     "Moving current module '${currentModule.name}' to '${module.originalPosition}'");
@@ -99,13 +101,14 @@ class MirrorLayoutHandler {
       }
     }
 
+    // Module is removed from layout
     if (position == ModulePosition.menu) {
       _layout.removeModule(module);
       moduleCatalog.add(module);
     } else {
       // Move the modules in the layout
       // The 'position' field will be changed by this method
-      _layout.changeModulePosition(module, position);
+      _layout.setModulePosition(module, position);
     }
 
     // Save new position as original position
@@ -125,11 +128,11 @@ class MirrorLayoutHandler {
     // Check if the modules are actually different
     if (module.name != _tempMovedModule?.name) {
       // Swap the modules
-      _layout.changeModulePosition(module, position);
+      _layout.setModulePosition(module, position);
 
       // Move the old one back to the original position of the new one
       if (_tempMovedModule != null) {
-        _layout.changeModulePosition(
+        _layout.setModulePosition(
           _tempMovedModule!,
           module.originalPosition,
         );
@@ -143,14 +146,12 @@ class MirrorLayoutHandler {
 
     if (_tempMovedModule != null) {
       // Move the module back to it's original position
-      _layout.changeModulePosition(
+      _layout.setModulePosition(
         _tempMovedModule!,
         _tempMovedModule!.originalPosition,
       );
 
       _tempMovedModule = null;
-    } else {
-      // print("No temporary move to undo!");
     }
   }
 
@@ -174,10 +175,12 @@ class MirrorLayout {
     MirrorLayout layout = MirrorLayout();
     // Add every module to the layout
     for (Module module in modulesFromJSON(string)) {
-      layout.changeModulePosition(
-        module,
-        module.originalPosition,
-      );
+      if (module.originalPosition != ModulePosition.menu) {
+        layout.setModulePosition(
+          module,
+          module.originalPosition,
+        );
+      }
     }
 
     return layout;
@@ -189,40 +192,37 @@ class MirrorLayout {
     return modulesToJSON(modules.values.toList());
   }
 
-  /// Updates the position of the [newModule] on the layout to [newPosition].
+  /// Updates the position of the [module] on the layout to [position].
   ///
-  /// This method also handles the switching of modules, if [newPosition] is already
+  /// This method also handles the switching of modules, if [position] is already
   /// occupied by another method.
-  void changeModulePosition(Module newModule, ModulePosition newPosition) {
-    // print("Moving module '${newModule.name}' to '$newPosition'");
+  void setModulePosition(Module module, ModulePosition position) {
+    print("Setting module '${module.name}' to '$position'");
     modules.update(
-      newPosition,
+      position,
       (oldModule) {
         // print("Previous Module was '${oldModule.name}'");
-        // If the module is not new, move the old module to the original position
-        // of the new module
-        if (newModule.position != ModulePosition.menu) {
-          modules.update(
-            newModule.position,
-            (_) => oldModule,
-            ifAbsent: () => oldModule,
-          );
-        }
+        // Move the old module to the original position of the new module
+        modules.update(
+          module.position,
+          (_) => oldModule,
+          ifAbsent: () => oldModule,
+        );
 
-        oldModule.position = newModule.position;
+        oldModule.position = module.position;
 
-        return newModule;
+        return module;
       },
       ifAbsent: () {
         // print("No previous module!");
 
-        modules.remove(newModule.position);
-        return newModule;
+        modules.remove(module.position);
+        return module;
       },
     );
 
     // Update the position of the module internally
-    newModule.position = newPosition;
+    module.position = position;
   }
 
   /// Save the [newConfiguration] of the [Module] at the position [modulePosition].
@@ -230,7 +230,7 @@ class MirrorLayout {
   /// This method is typically called after the configuration of the module changed
   void saveModuleConfiguration(
       ModulePosition modulePosition, Map<String, dynamic> newConfiguration) {
-    print("configuration changed to $newConfiguration");
+    // print("configuration changed to $newConfiguration");
     modules[modulePosition]?.config = newConfiguration;
   }
 

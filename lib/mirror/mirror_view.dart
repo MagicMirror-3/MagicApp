@@ -114,26 +114,17 @@ class MirrorViewState extends State<MirrorView> {
         Flexible(
           fit: FlexFit.tight,
           child: DragTarget(
+            // Move module here if it's dropped on top of this target
             onAccept: (Module newModule) {
               setState(() {
                 MirrorLayoutHandler.moveModule(newModule, modulePosition);
               });
-              // // Adjust the original position of the modules to correctly back-track
-              // // at the next move
-              // if (tempMovedModule != null) {
-              //   tempMovedModule!.originalPosition = newModule.originalPosition;
-              // }
-              // newModule.originalPosition = modulePosition;
-              //
-              // // Swap the positions
-              // setState(() {
-              //   layout.changeModulePosition(newModule, modulePosition);
-              // });
             },
+
+            // Swap the module if its hovering over this target
             onMove: (data) {
               // Grab the involved modules
               Module newModule = data.data as Module;
-              // Module? currentModule = layout.modules[modulePosition];
 
               setState(() {
                 MirrorLayoutHandler.temporarilyMoveModule(
@@ -141,39 +132,12 @@ class MirrorViewState extends State<MirrorView> {
                   modulePosition,
                 );
               });
-              // // Only react to different modules
-              // if (newModule.name != currentModule?.name) {
-              //   // Save the module, which is currently at this position
-              //   tempMovedModule = currentModule;
-              //
-              //   setState(() {
-              //     // Swap the modules
-              //     layout.changeModulePosition(newModule, modulePosition);
-              //
-              //     // Move the old module to the original position of the new one
-              //     if (tempMovedModule != null) {
-              //       layout.changeModulePosition(
-              //         tempMovedModule!,
-              //         newModule.originalPosition,
-              //       );
-              //     }
-              //   });
-              // }
             },
+            // Undo the temporary move if the module hover over this target ends
             onLeave: (data) {
               setState(() {
                 MirrorLayoutHandler.undoTemporaryMove();
               });
-              // if (tempMovedModule != null) {
-              //   layout.changeModulePosition(
-              //     tempMovedModule!,
-              //     tempMovedModule!.originalPosition,
-              //   );
-              //
-              //   setState(() {
-              //     tempMovedModule = null;
-              //   });
-              // }
             },
             builder: (_, __, ___) => targetChild,
           ),
