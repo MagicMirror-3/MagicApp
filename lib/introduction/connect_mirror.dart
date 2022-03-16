@@ -27,6 +27,10 @@ class _ConnectMirrorState extends State<ConnectMirror> {
   }
 
   Future<bool> _refreshMirrors() async {
+    if (_refreshChildren.length > 2) {
+      _refreshChildren.removeAt(2);
+    }
+
     List<ActiveHost> mirrors = await CommunicationHandler.findLocalMirrors();
 
     if (mirrors.isNotEmpty) {
@@ -39,10 +43,12 @@ class _ConnectMirrorState extends State<ConnectMirror> {
         }
       });
     } else {
-      _refreshChildren.add(
-        const Text(
-            "No mirrors found! Please make sure it is turned on and connected to your network!"),
-      );
+      setState(() {
+        _refreshChildren.add(
+          const Text(
+              "No mirrors found! Please make sure it is turned on and connected to your network!"),
+        );
+      });
     }
 
     return mirrors.isNotEmpty;
@@ -50,11 +56,13 @@ class _ConnectMirrorState extends State<ConnectMirror> {
 
   @override
   Widget build(BuildContext context) {
-    return MagicRefresher(
-      onRefresh: _refreshMirrors,
-      childWidget: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: _refreshChildren,
+    return SafeArea(
+      child: MagicRefresher(
+        onRefresh: _refreshMirrors,
+        childWidget: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: _refreshChildren,
+        ),
       ),
     );
   }
