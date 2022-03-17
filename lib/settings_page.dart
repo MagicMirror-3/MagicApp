@@ -7,6 +7,7 @@ import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/custom_ring_picker.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/util/api_test.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -192,6 +193,11 @@ class _SettingsPageState extends State<SettingsPage> {
           title: Text(S.of(context).settings_general),
           tiles: [
             quitOnSaveTile,
+          ],
+        ),
+        SettingsSection(
+          title: const Text("Debug"),
+          tiles: [
             SettingsTile(
               title: const Text("Reset Mirror Address"),
               onPressed: (_) {
@@ -217,6 +223,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingKeys.user,
               ),
             ),
+            SettingsTile(
+              title: const Text("Open API Test"),
+              onPressed: (_) => Navigator.push(
+                context,
+                platformPageRoute(
+                  context: context,
+                  builder: (_) => const APIPage(),
+                ),
+              ),
+            ),
             SettingsTile.navigation(
               title: const Text("Face Detection"),
               onPressed: (_) {
@@ -228,9 +244,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
               },
-            )
+            ),
           ],
-        ),
+        )
       ],
     );
   }

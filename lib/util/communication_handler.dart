@@ -49,25 +49,24 @@ class CommunicationHandler {
 
         if (wifiIP != null) {
           final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
-          print("Searching on subnet $subnet...");
+          // print("Searching on subnet $subnet...");
           final hostStream = HostScanner.discover(subnet);
 
           await for (ActiveHost host in hostStream) {
             // Check if the desired port is open
             if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
               // Check if the device has magic mirror routes
-              print("device found at ${host.ip}. Checking routes...");
+              // print("device found at ${host.ip}. Checking routes...");
               bool isMirror = await isMagicMirror(host.ip);
 
               if (isMirror) {
-                print("This is indeed a mirror!");
+                // print("This is indeed a mirror!");
                 mirrorList.add(host);
-              } else {
-                print("this device does not have the mirror routes");
               }
             }
           }
         } else {
+          // TODO: Handle error
           print("failed to retrieve IP");
         }
         return mirrorList;
@@ -93,8 +92,10 @@ class CommunicationHandler {
   /// If multiple mirrors are found, it returns a [List<String>] representing the
   /// IPs of every mirror in the local network. If only one is found, the [Future]
   /// returns nothing.
-  static Future<void> connectToMirror(
-      {bool autoConnect = false, String? mirrorIP}) async {
+  static Future<void> connectToMirror({
+    bool autoConnect = false,
+    String? mirrorIP,
+  }) async {
     String mirrorAddress = mirrorIP ??
         SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
 
@@ -130,8 +131,12 @@ class CommunicationHandler {
   ///
   /// The response is of the class [_MagicResponse], which contains a JSON-formatted
   /// body by default.
-  static Future<http.Response> _makeRequest(_MagicRoute route,
-      {dynamic payload, String? host, Duration? timeout}) async {
+  static Future<http.Response> _makeRequest(
+    _MagicRoute route, {
+    dynamic payload,
+    String? host,
+    Duration? timeout,
+  }) async {
     if (_mirrorClient == null && host == null) {
       throw ArgumentError(
           "Please provide a host name if the mirror is not connected yet!");
@@ -194,8 +199,11 @@ class CommunicationHandler {
   /// The [host] param is optional and wil default to the [_address] field of
   /// this class.
   /// [getParams] are needed for a GET request with query params in the URI.
-  static Uri createRouteURI(_MagicRoute route,
-      {String? host, Map<String, dynamic>? getParams}) {
+  static Uri createRouteURI(
+    _MagicRoute route, {
+    String? host,
+    Map<String, dynamic>? getParams,
+  }) {
     host ??= _address;
     getParams ??= {};
 
@@ -241,6 +249,8 @@ class CommunicationHandler {
     String password,
     List<String> images,
   ) async {
+    assert(_connected);
+
     return (await _makeRequest(
           MagicRoutes.createUser,
           payload: {
@@ -256,6 +266,8 @@ class CommunicationHandler {
 
   /// Gets all registered users
   static Future<List<MagicUser>> getUsers() async {
+    assert(_connected);
+
     List<dynamic>? users =
         (await _makeRequest(MagicRoutes.getUsers)).parseJson();
 
@@ -266,7 +278,6 @@ class CommunicationHandler {
                 id: userMap["user_id"] ?? -1,
                 firstName: userMap["firstname"] ?? "",
                 lastName: userMap["surname"] ?? "",
-                password: "random string",
               ),
             )
             .toList()
@@ -277,6 +288,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateUserData() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -287,7 +300,6 @@ class CommunicationHandler {
               "user_id": localUser.id,
               "firstname": localUser.firstName,
               "lastname": localUser.lastName,
-              "new_password": localUser.password,
             },
           ))
               .statusCode ==
@@ -301,6 +313,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<MirrorLayout?> getMirrorLayout() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -331,6 +345,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateLayout(MirrorLayout layout) async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -348,6 +364,8 @@ class CommunicationHandler {
 
   /// Gets all available modules
   static Future<List<Module>> getModules() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -381,7 +399,6 @@ class MagicRoutes {
     params: [
       "firstname",
       "lastname",
-      "password",
       "current_layout",
       "images",
     ],
@@ -398,7 +415,6 @@ class MagicRoutes {
       "user_id",
       "firstname",
       "lastname",
-      "new_password",
     ],
   );
 

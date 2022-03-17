@@ -9,7 +9,7 @@ import 'module.dart';
 /// and a frame ([MirrorFrame]) around the mirror ([MirrorView])
 class MirrorContainer extends StatelessWidget {
   const MirrorContainer({
-    this.mirrorSize = 75,
+    this.mirrorSize = 70,
     this.enableClick = true,
     this.displayLoading = true,
     this.selectedModule,

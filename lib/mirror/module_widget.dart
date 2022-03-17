@@ -64,12 +64,7 @@ class ModuleCatalogWidget extends StatelessWidget {
     return LongPressDraggable(
       data: module,
       maxSimultaneousDrags: 1,
-      child: Row(
-        children: [
-          const Icon(Icons.crop_portrait),
-          DefaultPlatformText(module.name),
-        ],
-      ),
+      child: DefaultPlatformText(module.name),
       feedback: DefaultPlatformText(module.name),
       onDragCompleted: () => onDragCompleted(module),
     );

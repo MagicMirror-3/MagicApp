@@ -230,3 +230,113 @@ class LinkedMagicChoiceTile extends AbstractSettingsTile {
     );
   }
 }
+
+/// Displays a [List<MagicListViewItem>] of [children].
+///
+/// If [hasDivider] is set, a divider is inserted between each item.
+class MagicListView extends StatelessWidget {
+  const MagicListView({
+    required this.children,
+    this.hasDivider = false,
+    this.shrinkWrap = false,
+    Key? key,
+  }) : super(key: key);
+
+  /// The widgets to display
+  final List<Widget> children;
+
+  /// Whether a divider should be inserted between each child widget
+  final bool hasDivider;
+
+  /// Whether the list should only take the space it needs
+  final bool shrinkWrap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (hasDivider) {
+      return ListView.separated(
+        shrinkWrap: shrinkWrap,
+        itemCount: children.length,
+        itemBuilder: (_, index) => children[index],
+        separatorBuilder: (_, __) => const Divider(color: Colors.white),
+      );
+    } else {
+      return ListView(
+        shrinkWrap: shrinkWrap,
+        children: children,
+      );
+    }
+  }
+}
+
+/// Represents an item inside a [MagicListView]. It has different styles for
+/// cupertino and material
+class MagicListViewItem extends StatelessWidget {
+  const MagicListViewItem({
+    this.leading,
+    this.content,
+    this.trailing,
+    this.trailingChevron = true,
+    this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  /// A widget to display in front of the [content]
+  final Widget? leading;
+
+  /// The widget in the center of the list item
+  final Widget? content;
+
+  /// Widget to the left of the [content]
+  final Widget? trailing;
+
+  /// If this is true and no [trailing] widget is specified, it will display a
+  /// right chevron as a trailing widget
+  final bool trailingChevron;
+
+  /// Function to call whenever the item is tapped
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformWidget(
+        cupertino: (_, __) => _buildCupertinoItem(context),
+        material: (_, __) => _buildMaterialItem(context));
+  }
+
+  /// Builds the iOS variant of this widget
+  Widget _buildCupertinoItem(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(0),
+      shape: const ContinuousRectangleBorder(),
+      borderOnForeground: false,
+      color: Colors.transparent,
+      child: ListTile(
+        // Cupertino style
+        iconColor: Colors.white,
+        textColor: Colors.white,
+        // Default stuff
+        leading: leading,
+        title: content,
+        trailing: trailingChevron && trailing == null
+            ? Icon(PlatformIcons(context).rightChevron)
+            : trailing,
+        onTap: onTap,
+      ),
+    );
+  }
+
+  /// Builds the Android variant of this widget
+  Widget _buildMaterialItem(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: leading,
+        title: content,
+        trailing: trailingChevron && trailing == null
+            ? Icon(PlatformIcons(context).rightChevron)
+            : trailing,
+        onTap: onTap,
+      ),
+    );
+  }
+}

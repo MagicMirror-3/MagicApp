@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
-import 'package:magic_app/util/communication_handler.dart';
-import 'package:magic_app/util/magic_widgets.dart';
+import 'package:magic_app/user/user_select.dart';
+import 'package:magic_app/util/safe_material_area.dart';
 import 'package:magic_app/util/text_types.dart';
-import 'package:magic_app/util/utility.dart';
-
-import 'mirror/mirror_layout_handler.dart';
-import 'mirror/module.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,68 +15,36 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String mirrorFound = "";
-
-  void _refreshNetworkDevices() async {
-    // Try connecting to the mirror
-    await CommunicationHandler.connectToMirror();
-
-    if (CommunicationHandler.isConnected) {
-      // Mirror is connected!
-      if (mounted) {
-        setState(() {
-          mirrorFound = "Successfully connected to mirror.\n";
-        });
-      }
-
-      print("Retrieving layout...");
-      MirrorLayout? layout = await CommunicationHandler.getMirrorLayout();
-      _addToMirrorFound("\nThe layout is: $layout\n");
-
-      print("Retrieving users...");
-      List<MagicUser> users = await CommunicationHandler.getUsers();
-      _addToMirrorFound("\nUsers:\n" + users.join("\n") + "\n");
-
-      print("Retrieving modules...");
-      List<Module> modules = await CommunicationHandler.getModules();
-      _addToMirrorFound("\nModules:\n" + modules.join("\n"));
-    }
-  }
-
-  /// This method wont be here for long...
-  void _addToMirrorFound(String text) {
-    if (mounted) {
-      setState(() {
-        mirrorFound += text;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 15),
-          child: DefaultPlatformText(
-            "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.user)}",
-          ),
-        ),
-        Expanded(
-          child: MagicRefresher(
-            initialRefresh: true,
-            onRefresh: () async {
-              _refreshNetworkDevices();
-              return true;
-            },
-            childWidget: SingleChildScrollView(
-              child: Text(mirrorFound),
+    return SafeMaterialArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 15),
+            child: DefaultPlatformText(
+              "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.user)}",
             ),
           ),
-        ),
-      ],
+          PlatformTextButton(
+            child: const Text("Open widget"),
+            onPressed: () => Navigator.push(
+              context,
+              platformPageRoute(
+                context: context,
+                builder: (_) => UserSelect(
+                  onUserSelected: () {
+                    // Remove the user selection and refresh the entire app
+                    Navigator.pop(context);
+                    MagicApp.of(context)?.refreshApp();
+                  },
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

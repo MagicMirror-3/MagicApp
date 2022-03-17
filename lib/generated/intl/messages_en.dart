@@ -27,10 +27,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "addListItem": MessageLookupByLibrary.simpleMessage("Add item"),
         "appName": MessageLookupByLibrary.simpleMessage("Magic App"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "connect_mirror":
+            MessageLookupByLibrary.simpleMessage("Connect a mirror"),
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
         "fillOutField":
             MessageLookupByLibrary.simpleMessage("Please fill out this field"),
         "greetings": m0,
+        "local_network_refresh": MessageLookupByLibrary.simpleMessage(
+            "Pull down to start searching for MagicMirrors on your local network"),
         "magicMirror": MessageLookupByLibrary.simpleMessage("MagicMirror"),
         "mirror_refresh":
             MessageLookupByLibrary.simpleMessage("Refreshing layout..."),
@@ -40,10 +44,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Module configuration"),
         "noModuleConfiguration": MessageLookupByLibrary.simpleMessage(
             "No configuration available for this module!"),
+        "no_mirror_found": MessageLookupByLibrary.simpleMessage(
+            "No MagicMirror found! Please make sure it is turned on and connected to your network!"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
         "removeListItem": MessageLookupByLibrary.simpleMessage("Remove item"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),
+        "select_user": MessageLookupByLibrary.simpleMessage("Select a user"),
+        "select_user_or_create": MessageLookupByLibrary.simpleMessage(
+            "Select a user or create a new one"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "settings_alternativeAppearance":
             MessageLookupByLibrary.simpleMessage("Alternative Appearance"),

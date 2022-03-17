@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -136,6 +135,56 @@ class S {
     return Intl.message(
       'Please fill out this field',
       name: 'fillOutField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect a mirror`
+  String get connect_mirror {
+    return Intl.message(
+      'Connect a mirror',
+      name: 'connect_mirror',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pull down to start searching for MagicMirrors on your local network`
+  String get local_network_refresh {
+    return Intl.message(
+      'Pull down to start searching for MagicMirrors on your local network',
+      name: 'local_network_refresh',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No MagicMirror found! Please make sure it is turned on and connected to your network!`
+  String get no_mirror_found {
+    return Intl.message(
+      'No MagicMirror found! Please make sure it is turned on and connected to your network!',
+      name: 'no_mirror_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a user`
+  String get select_user {
+    return Intl.message(
+      'Select a user',
+      name: 'select_user',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a user or create a new one`
+  String get select_user_or_create {
+    return Intl.message(
+      'Select a user or create a new one',
+      name: 'select_user_or_create',
       desc: '',
       args: [],
     );
