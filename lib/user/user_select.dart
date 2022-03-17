@@ -12,7 +12,9 @@ import '../util/utility.dart';
 class UserSelect extends StatelessWidget {
   const UserSelect({this.onUserSelected, Key? key}) : super(key: key);
 
-  /// An optional callback to call if a user was selected
+  /// An optional callback to call if a user was selected.
+  ///
+  /// Note: The value in the SharedPreferences is already updated by this class.
   final Function()? onUserSelected;
 
   /// Called whenever a user is selected from the list

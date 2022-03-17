@@ -242,8 +242,8 @@ class MagicListView extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  /// The widget to display
-  final List<MagicListViewItem> children;
+  /// The widgets to display
+  final List<Widget> children;
 
   /// Whether a divider should be inserted between each child widget
   final bool hasDivider;
@@ -276,6 +276,7 @@ class MagicListViewItem extends StatelessWidget {
     this.leading,
     this.content,
     this.trailing,
+    this.trailingChevron = true,
     this.onTap,
     Key? key,
   }) : super(key: key);
@@ -289,6 +290,10 @@ class MagicListViewItem extends StatelessWidget {
   /// Widget to the left of the [content]
   final Widget? trailing;
 
+  /// If this is true and no [trailing] widget is specified, it will display a
+  /// right chevron as a trailing widget
+  final bool trailingChevron;
+
   /// Function to call whenever the item is tapped
   final void Function()? onTap;
 
@@ -299,6 +304,7 @@ class MagicListViewItem extends StatelessWidget {
         material: (_, __) => _buildMaterialItem(context));
   }
 
+  /// Builds the iOS variant of this widget
   Widget _buildCupertinoItem(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(0),
@@ -312,18 +318,23 @@ class MagicListViewItem extends StatelessWidget {
         // Default stuff
         leading: leading,
         title: content,
-        trailing: trailing,
+        trailing: trailingChevron && trailing == null
+            ? Icon(PlatformIcons(context).rightChevron)
+            : trailing,
         onTap: onTap,
       ),
     );
   }
 
+  /// Builds the Android variant of this widget
   Widget _buildMaterialItem(BuildContext context) {
     return Card(
       child: ListTile(
         leading: leading,
         title: content,
-        trailing: trailing,
+        trailing: trailingChevron && trailing == null
+            ? Icon(PlatformIcons(context).rightChevron)
+            : trailing,
         onTap: onTap,
       ),
     );

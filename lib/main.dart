@@ -5,19 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/introduction/connect_mirror.dart';
-import 'package:magic_app/introduction/introduction_page.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
+import 'package:magic_app/user/user_select.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
+import 'introduction/connect_mirror.dart';
+import 'introduction/introduction_page.dart';
 import 'mirror_page.dart';
 
 // TODO: Introduction
@@ -39,14 +40,6 @@ void main() async {
   // Try connecting to the mirror
   await CommunicationHandler.connectToMirror();
 
-  // TODO: Log user in -> device auth (face id, fingerprint)?
-  MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
-  if (user.isRealUser) {
-    print("User is logged in as: $user}");
-  } else if (!SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
-    print("promp the user to login");
-  }
-
   // Remove the screen
   FlutterNativeSplash.remove();
 
@@ -54,12 +47,14 @@ void main() async {
   runApp(const MagicApp());
 }
 
+/// The main widget of this application
 class MagicApp extends StatefulWidget {
   const MagicApp({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MagicAppState();
 
+  /// Returns the state to trigger a refresh
   static _MagicAppState? of(BuildContext context) =>
       context.findAncestorStateOfType<_MagicAppState>();
 }
@@ -79,13 +74,29 @@ class _MagicAppState extends State<MagicApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Show the Connect screen, if no mirror is connected
-    // Otherwise the widgets depends on whether this is the first time the app is used
-    Widget mainWidget = !CommunicationHandler.isConnected
-        ? const ConnectMirror()
-        : SharedPreferencesHandler.getValue(SettingKeys.firstUse)
-            ? const IntroductionPage()
-            : const MagicHomePage();
+    Widget mainWidget = Container();
+
+    if (!CommunicationHandler.isConnected) {
+      // Show the Connect screen, if no mirror is connected
+      mainWidget = const ConnectMirror();
+    } else {
+      if (SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
+        // Show the introduction is a mirror is connected but this is the first time
+        // the user launched the app
+        mainWidget = const IntroductionPage();
+      } else {
+        MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
+        if (!user.isRealUser) {
+          // Force the user to select a MagicUser if none is logged in
+          mainWidget = UserSelect(
+            onUserSelected: refreshApp,
+          );
+        } else {
+          // Show the main app layout
+          mainWidget = const MagicHomePage();
+        }
+      }
+    }
 
     return Theme(
       data: ThemeData(),

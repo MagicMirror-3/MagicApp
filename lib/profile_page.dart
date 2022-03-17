@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_select.dart';
@@ -27,13 +28,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           PlatformTextButton(
-            child: Text("Open widget"),
+            child: const Text("Open widget"),
             onPressed: () => Navigator.push(
               context,
               platformPageRoute(
                 context: context,
                 builder: (_) => UserSelect(
-                  onUserSelected: () => setState(() => Navigator.pop(context)),
+                  onUserSelected: () {
+                    // Remove the user selection and refresh the entire app
+                    Navigator.pop(context);
+                    MagicApp.of(context)?.refreshApp();
+                  },
                 ),
               ),
             ),

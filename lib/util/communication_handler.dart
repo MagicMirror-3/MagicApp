@@ -49,18 +49,18 @@ class CommunicationHandler {
 
         if (wifiIP != null) {
           final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
-          // print("Searching on subnet $subnet...");
+          print("Searching on subnet $subnet...");
           final hostStream = HostScanner.discover(subnet);
 
           await for (ActiveHost host in hostStream) {
             // Check if the desired port is open
             if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
               // Check if the device has magic mirror routes
-              // print("device found at ${host.ip}. Checking routes...");
+              print("device found at ${host.ip}. Checking routes...");
               bool isMirror = await isMagicMirror(host.ip);
 
               if (isMirror) {
-                // print("This is indeed a mirror!");
+                print("This is indeed a mirror!");
                 mirrorList.add(host);
               }
             }

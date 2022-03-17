@@ -9,6 +9,7 @@ import '../util/utility.dart';
 class UserList extends StatefulWidget {
   const UserList({this.onUserSelected, Key? key}) : super(key: key);
 
+  /// Calls the provided method with the selected User data
   final Function(MagicUser)? onUserSelected;
 
   @override
@@ -30,7 +31,6 @@ class _UserListState extends State<UserList> {
             .map(
               (user) => MagicListViewItem(
                 leading: Icon(PlatformIcons(context).person),
-                trailing: Icon(PlatformIcons(context).rightChevron),
                 content: Text(user.name),
                 onTap: widget.onUserSelected != null
                     ? () => widget.onUserSelected!(user)
