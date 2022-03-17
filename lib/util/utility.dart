@@ -99,7 +99,6 @@ class MagicUser {
     this.id = -1,
     this.firstName = "",
     this.lastName = "",
-    this.password = "",
   });
 
   /// Parses user information from a given map.
@@ -108,8 +107,7 @@ class MagicUser {
   MagicUser.fromJSON(Map<String, dynamic> userMap)
       : id = userMap["id"],
         firstName = userMap["firstName"],
-        lastName = userMap["lastName"],
-        password = userMap["password"];
+        lastName = userMap["lastName"];
 
   /// The unique identifier of the user
   final int id;
@@ -119,9 +117,6 @@ class MagicUser {
 
   /// The last name of the user
   final String lastName;
-
-  /// The password of the user
-  final String password;
 
   /// Whether the user is not the default user.
   ///
@@ -137,7 +132,6 @@ class MagicUser {
       "id": id,
       "firstName": firstName,
       "lastName": lastName,
-      "password": password,
     });
   }
 }

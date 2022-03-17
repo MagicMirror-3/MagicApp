@@ -266,7 +266,6 @@ class CommunicationHandler {
                 id: userMap["user_id"] ?? -1,
                 firstName: userMap["firstname"] ?? "",
                 lastName: userMap["surname"] ?? "",
-                password: "random string",
               ),
             )
             .toList()
@@ -287,7 +286,6 @@ class CommunicationHandler {
               "user_id": localUser.id,
               "firstname": localUser.firstName,
               "lastname": localUser.lastName,
-              "new_password": localUser.password,
             },
           ))
               .statusCode ==
@@ -381,7 +379,6 @@ class MagicRoutes {
     params: [
       "firstname",
       "lastname",
-      "password",
       "current_layout",
       "images",
     ],
@@ -398,7 +395,6 @@ class MagicRoutes {
       "user_id",
       "firstname",
       "lastname",
-      "new_password",
     ],
   );
 
