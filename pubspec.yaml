@@ -48,6 +48,8 @@ dependencies:
   convex_bottom_bar: ^3.0.0
   introduction_screen: ^3.0.0
   pull_to_refresh: ^2.0.0
+  learning_face_detection: ^0.0.3
+  learning_input_image: ^0.0.6+2
 
 dev_dependencies:
   flutter_test:
