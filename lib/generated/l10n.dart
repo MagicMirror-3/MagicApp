@@ -170,6 +170,26 @@ class S {
     );
   }
 
+  /// `Select a user`
+  String get select_user {
+    return Intl.message(
+      'Select a user',
+      name: 'select_user',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a user or create a new one`
+  String get select_user_or_create {
+    return Intl.message(
+      'Select a user or create a new one',
+      name: 'select_user_or_create',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Hello {name}!`
   String greetings(Object name) {
     return Intl.message(

@@ -50,6 +50,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "removeListItem": MessageLookupByLibrary.simpleMessage("Remove item"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),
+        "select_user": MessageLookupByLibrary.simpleMessage("Select a user"),
+        "select_user_or_create": MessageLookupByLibrary.simpleMessage(
+            "Select a user or create a new one"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "settings_alternativeAppearance":
             MessageLookupByLibrary.simpleMessage("Alternative Appearance"),

@@ -5,6 +5,7 @@ import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_create.dart';
 import 'package:magic_app/util/text_types.dart';
 
+import '../generated/l10n.dart';
 import '../util/communication_handler.dart';
 import '../util/magic_widgets.dart';
 import '../util/safe_material_area.dart';
@@ -35,10 +36,8 @@ class UserSelect extends StatelessWidget {
       child: PlatformScaffold(
         body: Column(
           children: [
-            const HeaderPlatformText("Select a user"),
-            const DefaultPlatformText(
-              "Select a user out of the following list or create a new one",
-            ),
+            HeaderPlatformText(S.of(context).select_user),
+            DefaultPlatformText(S.of(context).select_user_or_create),
             _UserList(
               onUserSelected: userSelected,
             ),
