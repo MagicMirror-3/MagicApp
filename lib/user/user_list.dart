@@ -25,7 +25,7 @@ class _UserListState extends State<UserList> {
               (user) => MagicListViewItem(
                 leading: Icon(PlatformIcons(context).person),
                 trailing: Icon(PlatformIcons(context).rightChevron),
-                title: Text(user.name),
+                content: Text(user.name),
                 onTap: () => print("User ${user.name} selected"),
               ),
             )
@@ -39,7 +39,7 @@ class _UserListState extends State<UserList> {
     if (items.isNotEmpty) {
       return Expanded(
         child: MagicListView(
-          hasDivider: false,
+          hasDivider: !isMaterial(context),
           shrinkWrap: true,
           children: items,
         ),

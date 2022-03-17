@@ -209,32 +209,34 @@ class _ModuleCatalog extends StatelessWidget {
     // Use a sliver scroll container
     return DragTarget(
       onAccept: onModuleToCatalog,
-      builder: (_, __, ___) => CustomScrollView(
-        slivers: [
-          // The app bar with a title and the given action icons
-          SliverAppBar(
-            title: Text(S.of(context).module_catalog),
-            floating: true,
-            // Removes the leading "<" icon the close the layout
-            automaticallyImplyLeading: false,
-            backgroundColor: isMaterial(context)
-                ? ThemeData.dark().appBarTheme.backgroundColor
-                : darkCupertinoTheme.barBackgroundColor,
-            actions: actions,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate.fixed(
-              MirrorLayoutHandler.moduleCatalog
+      builder: (_, __, ___) => PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: Text(S.of(context).module_catalog),
+          trailingActions: actions,
+          automaticallyImplyLeading: false,
+        ),
+        body: Stack(
+          children: [
+            MagicListView(
+              hasDivider: !isMaterial(context),
+              children: MirrorLayoutHandler.moduleCatalog
                   .map(
-                    (module) => ModuleCatalogWidget(
-                      module: module,
-                      onDragCompleted: onModuleToLayout,
+                    (module) => MagicListViewItem(
+                      leading: const Icon(Icons.crop_portrait),
+                      content: ModuleCatalogWidget(
+                        module: module,
+                        onDragCompleted: onModuleToLayout,
+                      ),
                     ),
                   )
                   .toList(),
             ),
-          ),
-        ],
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: Text("ADD MODULE PLACEHOLDER"),
+            )
+          ],
+        ),
       ),
     );
   }

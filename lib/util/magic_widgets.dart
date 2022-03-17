@@ -237,7 +237,7 @@ class LinkedMagicChoiceTile extends AbstractSettingsTile {
 class MagicListView extends StatelessWidget {
   const MagicListView({
     required this.children,
-    this.hasDivider = true,
+    this.hasDivider = false,
     this.shrinkWrap = false,
     Key? key,
   }) : super(key: key);
@@ -258,7 +258,7 @@ class MagicListView extends StatelessWidget {
         shrinkWrap: shrinkWrap,
         itemCount: children.length,
         itemBuilder: (_, index) => children[index],
-        separatorBuilder: (_, __) => const Divider(),
+        separatorBuilder: (_, __) => const Divider(color: Colors.white),
       );
     } else {
       return ListView(
@@ -274,19 +274,22 @@ class MagicListView extends StatelessWidget {
 class MagicListViewItem extends StatelessWidget {
   const MagicListViewItem({
     this.leading,
-    this.title,
-    this.subtitle,
+    this.content,
     this.trailing,
-    this.isThreeLine = false,
     this.onTap,
     Key? key,
   }) : super(key: key);
 
+  /// A widget to display in front of the [content]
   final Widget? leading;
-  final Widget? title;
-  final Widget? subtitle;
+
+  /// The widget in the center of the list item
+  final Widget? content;
+
+  /// Widget to the left of the [content]
   final Widget? trailing;
-  final bool isThreeLine;
+
+  /// Function to call whenever the item is tapped
   final void Function()? onTap;
 
   @override
@@ -301,17 +304,15 @@ class MagicListViewItem extends StatelessWidget {
       margin: const EdgeInsets.all(0),
       shape: const ContinuousRectangleBorder(),
       borderOnForeground: false,
-      color: Colors.white10,
+      color: Colors.transparent,
       child: ListTile(
         // Cupertino style
         iconColor: Colors.white,
         textColor: Colors.white,
         // Default stuff
         leading: leading,
-        title: title,
-        subtitle: subtitle,
+        title: content,
         trailing: trailing,
-        isThreeLine: isThreeLine,
         onTap: onTap,
       ),
     );
@@ -321,10 +322,8 @@ class MagicListViewItem extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: leading,
-        title: title,
-        subtitle: subtitle,
+        title: content,
         trailing: trailing,
-        isThreeLine: isThreeLine,
         onTap: onTap,
       ),
     );
