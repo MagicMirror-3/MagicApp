@@ -43,8 +43,8 @@ void main() async {
   MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
   if (user.isRealUser) {
     print("User is logged in as: $user}");
-  } else {
-    print("this is the default user: $user");
+  } else if (!SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
+    print("promp the user to login");
   }
 
   // Remove the screen
