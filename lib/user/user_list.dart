@@ -3,9 +3,13 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 
-/// Displays
+import '../util/utility.dart';
+
+/// Displays a list of all available users for the user to choose from
 class UserList extends StatefulWidget {
-  const UserList({Key? key}) : super(key: key);
+  const UserList({this.onUserSelected, Key? key}) : super(key: key);
+
+  final Function(MagicUser)? onUserSelected;
 
   @override
   State<StatefulWidget> createState() => _UserListState();
@@ -18,6 +22,8 @@ class _UserListState extends State<UserList> {
   void initState() {
     super.initState();
 
+    // Create a list item for every user in the list
+    // The callback is fired upon selection
     CommunicationHandler.getUsers().then(
       (userList) => setState(
         () => items = userList
@@ -26,7 +32,9 @@ class _UserListState extends State<UserList> {
                 leading: Icon(PlatformIcons(context).person),
                 trailing: Icon(PlatformIcons(context).rightChevron),
                 content: Text(user.name),
-                onTap: () => print("User ${user.name} selected"),
+                onTap: widget.onUserSelected != null
+                    ? () => widget.onUserSelected!(user)
+                    : null,
               ),
             )
             .toList(),
@@ -46,6 +54,7 @@ class _UserListState extends State<UserList> {
       );
     }
 
+    // Otherwise display a loading widget
     return PlatformCircularProgressIndicator();
   }
 }
