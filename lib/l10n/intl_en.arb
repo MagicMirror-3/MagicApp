@@ -14,8 +14,11 @@
 
     "fillOutField": "Please fill out this field",
 
-    "greetings": "Hello {name}!",
+    "connect_mirror": "Connect a mirror",
+    "local_network_refresh": "Pull down to start searching for MagicMirrors on your local network",
+    "no_mirror_found": "No MagicMirror found! Please make sure it is turned on and connected to your network!",
 
+    "greetings": "Hello {name}!",
     "mirror_refresh": "Refreshing layout...",
 
     "module_configuration": "Module configuration",

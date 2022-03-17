@@ -6,6 +6,7 @@ import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:network_tools/network_tools.dart';
 
+import '../generated/l10n.dart';
 import '../util/safe_material_area.dart';
 
 /// Lets the user search for MagicMirrors on the network and connect to any of the found mirrors.
@@ -18,12 +19,7 @@ class ConnectMirror extends StatefulWidget {
 
 class _ConnectMirrorState extends State<ConnectMirror> {
   /// A list of widgets being displayed under one another and containing Text and MagicMirrors
-  List<Widget> _refreshChildren = [
-    const HeaderPlatformText("Connect a mirror"),
-    const DefaultPlatformText(
-      "Pull down to start searching for mirrors on your local network.",
-    ),
-  ];
+  List<Widget> _refreshChildren = [];
 
   /// Called once the user selected a MagicMirror with the given [ip]
   void _onMirrorSelected(String ip) async {
@@ -54,7 +50,7 @@ class _ConnectMirrorState extends State<ConnectMirror> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DefaultPlatformText(host.make),
-                DefaultPlatformText("IP:${host.ip}"),
+                DefaultPlatformText("IP: ${host.ip}"),
               ],
             ),
             onTap: () => _onMirrorSelected(host.ip),
@@ -62,18 +58,12 @@ class _ConnectMirrorState extends State<ConnectMirror> {
         );
       }
     } else {
-      _refreshChildren.add(
-        const DefaultPlatformText(
-          "No mirrors found! Please make sure it is turned on and connected to your network!",
-        ),
-      );
+      _refreshChildren.add(DefaultPlatformText(S.of(context).no_mirror_found));
     }
 
     // Check if the widget is still mounted to prevent errors
     if (mounted) {
       setState(() {});
-    } else {
-      print("not mounted");
     }
 
     // Return value is needed for the MagicRefresher
@@ -82,6 +72,11 @@ class _ConnectMirrorState extends State<ConnectMirror> {
 
   @override
   Widget build(BuildContext context) {
+    _refreshChildren = [
+      HeaderPlatformText(S.of(context).connect_mirror),
+      DefaultPlatformText(S.of(context).local_network_refresh),
+    ];
+
     return SafeMaterialArea(
       child: PlatformScaffold(
         body: MagicRefresher(
