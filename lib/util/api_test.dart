@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
+import 'package:magic_app/util/safe_material_area.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../mirror/mirror_layout_handler.dart';
@@ -54,7 +55,7 @@ class _APIPageState extends State<APIPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SafeMaterialArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
