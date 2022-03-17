@@ -220,42 +220,31 @@ class _MagicHomePageState extends State<MagicHomePage> {
       ),
     );
 
-    // The app layout consists of an AppBar, content and navigation footer
-    return Column(
-      children: [
-        PlatformAppBar(
-          title: Text(S.of(context).appName),
-          material: (_, __) => MaterialAppBarData(),
-          // Show a slight border on iOS
-          cupertino: (_, __) => CupertinoNavigationBarData(
-            border: const Border(
-              bottom: BorderSide(
-                color: Colors.white12,
-              ),
+    // The app layout consists of the content and navigation footer
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: centerWidget,
+          ),
+          StyleProvider(
+            style: _NavBarStyle(),
+            child: ConvexAppBar(
+              top: _navTop,
+              height: _navHeight,
+              curveSize: _navCurveSize,
+              style: TabStyle.fixedCircle,
+              backgroundColor: isMaterial(context)
+                  ? Theme.of(context).bottomAppBarColor
+                  : darkCupertinoTheme.barBackgroundColor,
+              activeColor: Colors.white,
+              items: _bottomNavigationList,
+              initialActiveIndex: _selectedNavigationIndex,
+              onTap: _onMenuItemTapped,
             ),
-            transitionBetweenRoutes: true,
           ),
-        ),
-        Expanded(
-          child: centerWidget,
-        ),
-        StyleProvider(
-          style: _NavBarStyle(),
-          child: ConvexAppBar(
-            top: _navTop,
-            height: _navHeight,
-            curveSize: _navCurveSize,
-            style: TabStyle.fixedCircle,
-            backgroundColor: isMaterial(context)
-                ? Theme.of(context).bottomAppBarColor
-                : darkCupertinoTheme.barBackgroundColor,
-            activeColor: Colors.white,
-            items: _bottomNavigationList,
-            initialActiveIndex: _selectedNavigationIndex,
-            onTap: _onMenuItemTapped,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
