@@ -241,6 +241,8 @@ class CommunicationHandler {
     String password,
     List<String> images,
   ) async {
+    assert(_connected);
+
     return (await _makeRequest(
           MagicRoutes.createUser,
           payload: {
@@ -258,6 +260,7 @@ class CommunicationHandler {
   static Future<List<MagicUser>> getUsers() async {
     List<dynamic>? users =
         (await _makeRequest(MagicRoutes.getUsers)).parseJson();
+    assert(_connected);
 
     return users != null
         ? users
@@ -276,6 +279,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateUserData() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -299,6 +304,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<MirrorLayout?> getMirrorLayout() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -329,6 +336,8 @@ class CommunicationHandler {
   ///
   /// Throws [AttributeError], if no user is logged in
   static Future<bool> updateLayout(MirrorLayout layout) async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
@@ -346,6 +355,8 @@ class CommunicationHandler {
 
   /// Gets all available modules
   static Future<List<Module>> getModules() async {
+    assert(_connected);
+
     // Get the local user
     MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
 
