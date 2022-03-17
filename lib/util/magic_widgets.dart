@@ -230,3 +230,103 @@ class LinkedMagicChoiceTile extends AbstractSettingsTile {
     );
   }
 }
+
+/// Displays a [List<MagicListViewItem>] of [children].
+///
+/// If [hasDivider] is set, a divider is inserted between each item.
+class MagicListView extends StatelessWidget {
+  const MagicListView({
+    required this.children,
+    this.hasDivider = true,
+    this.shrinkWrap = false,
+    Key? key,
+  }) : super(key: key);
+
+  /// The widget to display
+  final List<MagicListViewItem> children;
+
+  /// Whether a divider should be inserted between each child widget
+  final bool hasDivider;
+
+  /// Whether the list should only take the space it needs
+  final bool shrinkWrap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (hasDivider) {
+      return ListView.separated(
+        shrinkWrap: shrinkWrap,
+        itemCount: children.length,
+        itemBuilder: (_, index) => children[index],
+        separatorBuilder: (_, __) => const Divider(),
+      );
+    } else {
+      return ListView(
+        shrinkWrap: shrinkWrap,
+        children: children,
+      );
+    }
+  }
+}
+
+/// Represents an item inside a [MagicListView]. It has different styles for
+/// cupertino and material
+class MagicListViewItem extends StatelessWidget {
+  const MagicListViewItem({
+    this.leading,
+    this.title,
+    this.subtitle,
+    this.trailing,
+    this.isThreeLine = false,
+    this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  final Widget? leading;
+  final Widget? title;
+  final Widget? subtitle;
+  final Widget? trailing;
+  final bool isThreeLine;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformWidget(
+        cupertino: (_, __) => _buildCupertinoItem(context),
+        material: (_, __) => _buildMaterialItem(context));
+  }
+
+  Widget _buildCupertinoItem(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(0),
+      shape: const ContinuousRectangleBorder(),
+      borderOnForeground: false,
+      color: Colors.white10,
+      child: ListTile(
+        // Cupertino style
+        iconColor: Colors.white,
+        textColor: Colors.white,
+        // Default stuff
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+        trailing: trailing,
+        isThreeLine: isThreeLine,
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _buildMaterialItem(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+        trailing: trailing,
+        isThreeLine: isThreeLine,
+        onTap: onTap,
+      ),
+    );
+  }
+}

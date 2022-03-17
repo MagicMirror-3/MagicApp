@@ -111,7 +111,8 @@ class _MagicAppState extends State<MagicApp> {
             SharedPreferencesHandler.getValue(SettingKeys.language),
           ),
           title: "Magic App",
-          home: PlatformScaffold(body: mainWidget),
+          // Material wrapper is needed for some widgets to work
+          home: Material(type: MaterialType.transparency, child: mainWidget),
           // Load the android themes
           material: (_, __) => MaterialAppData(
             theme: lightMaterialTheme,
