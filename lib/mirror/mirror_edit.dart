@@ -270,8 +270,9 @@ class _ModuleConfiguration extends StatefulWidget {
 
 class _ModuleConfigurationState extends State<_ModuleConfiguration> {
   /// Store the config in a local variable to be able to reset the changes
-  late Map<String, dynamic> moduleConfiguration =
-      Map.from(widget.selectedModule.config ?? {});
+  late Map<String, dynamic> moduleConfiguration = Map.from(
+    widget.selectedModule.config ?? {},
+  );
 
   /// Needed to validate all inputs in the form
   final GlobalKey<FormState> formKey = GlobalKey(debugLabel: "FormKey");
