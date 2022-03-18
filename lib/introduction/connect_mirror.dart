@@ -72,10 +72,12 @@ class _ConnectMirrorState extends State<ConnectMirror> {
 
   @override
   Widget build(BuildContext context) {
-    _refreshChildren = [
-      HeaderPlatformText(S.of(context).connect_mirror),
-      DefaultPlatformText(S.of(context).local_network_refresh),
-    ];
+    if (_refreshChildren.isEmpty) {
+      _refreshChildren = [
+        HeaderPlatformText(S.of(context).connect_mirror),
+        DefaultPlatformText(S.of(context).local_network_refresh),
+      ];
+    }
 
     return SafeMaterialArea(
       child: PlatformScaffold(
