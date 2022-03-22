@@ -290,8 +290,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
   ///
   /// If the configuration option is a list or map, [subKey] and [listIndex] are needed to save
   /// the correct value of the item.
-  void saveConfigurationChange(String key, dynamic value, dynamic fullValue,
-      String? subKey, int? listIndex) {
+  void saveConfigurationChange(
+    String key,
+    dynamic value,
+    dynamic fullValue,
+    String? subKey,
+    int? listIndex,
+  ) {
     if (fullValue == null) {
       setState(() {
         moduleConfiguration[key] = value;
@@ -323,8 +328,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
   /// [fullValue], [subKey] and [listIndex] are used in the same way as in [saveConfigurationChange],
   /// since the method is called every time a value is changed.
   SettingsTile createSettingsTile(
-      String key, dynamic displayValue, BuildContext context,
-      {dynamic fullValue, String? subKey, int? listIndex}) {
+    String key,
+    dynamic displayValue,
+    BuildContext context, {
+    dynamic fullValue,
+    String? subKey,
+    int? listIndex,
+  }) {
     if (displayValue == null) {
       throw Exception("Display value can not be null!");
     }
@@ -386,6 +396,64 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
 
   @override
   Widget build(BuildContext context) {
+    // Needed to validate the text input fields
+    FormState? formState = formKey.currentState;
+
+    return Column(
+      children: [
+        PlatformAppBar(
+          title: Text(S.of(context).module_configuration),
+          automaticallyImplyLeading: false,
+          trailingActions: widget.actions,
+        ),
+        Flexible(
+          child: Form(
+            key: formKey,
+            autovalidateMode: AutovalidateMode.always,
+            child: _buildMainContents(context),
+          ),
+        ),
+        if (moduleConfiguration.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: isMaterial(context)
+                  ? ThemeData.dark().scaffoldBackgroundColor
+                  : darkCupertinoTheme.barBackgroundColor,
+              border: const Border(
+                top: BorderSide(color: Colors.white12),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                PlatformElevatedButton(
+                  child: DefaultPlatformText(S.of(context).saveChanges),
+                  color: Colors.green,
+                  onPressed: formState != null && formState.validate() ||
+                          formState == null
+                      ? () => widget.saveCallback(moduleConfiguration)
+                      : null,
+                  padding: const EdgeInsets.all(8),
+                ),
+                PlatformElevatedButton(
+                  child: DefaultPlatformText(S.of(context).cancel),
+                  color: Colors.red,
+                  onPressed: () => widget.cancelCallback(),
+                  padding: const EdgeInsets.all(8),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Creates the main contents of the configuration widget.
+  ///
+  /// This is either a settings-like menu, or a text informing the user that the
+  /// current module has no configuration options.
+  Widget _buildMainContents(BuildContext context) {
     // By default, display a text stating that no configuration is available for this module
     Widget bodyWidget = Center(
       child: DefaultPlatformText(S.of(context).noModuleConfiguration),
@@ -499,55 +567,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       }
     }
 
-    // Needed to validate the text input fields
-    FormState? formState = formKey.currentState;
-
-    return Column(
-      children: [
-        PlatformAppBar(
-          title: Text(S.of(context).module_configuration),
-          automaticallyImplyLeading: false,
-          trailingActions: widget.actions,
-        ),
-        Flexible(
-          child: Form(
-            key: formKey,
-            autovalidateMode: AutovalidateMode.always,
-            child: bodyWidget,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isMaterial(context)
-                ? ThemeData.dark().scaffoldBackgroundColor
-                : darkCupertinoTheme.barBackgroundColor,
-            border: const Border(
-              top: BorderSide(color: Colors.white12),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              PlatformElevatedButton(
-                child: Text(S.of(context).saveChanges),
-                color: Colors.green,
-                onPressed: formState != null && formState.validate() ||
-                        formState == null
-                    ? () => widget.saveCallback(moduleConfiguration)
-                    : null,
-                padding: const EdgeInsets.all(8),
-              ),
-              PlatformElevatedButton(
-                child: Text(S.of(context).cancel),
-                color: Colors.red,
-                onPressed: () => widget.cancelCallback(),
-                padding: const EdgeInsets.all(8),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    return bodyWidget;
   }
 }
