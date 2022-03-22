@@ -72,10 +72,36 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: DefaultPlatformText(S.of(context).deleteUser),
                         color: Colors.red,
                         onPressed: () async {
-                          // send a request to delete the user
-                          if (await CommunicationHandler.deleteUser()) {
-                            // change to the introduction screen
-                          }
+                          // change to the introduction screen
+
+                          // Display a dialog window to cancel the deletion
+                          showPlatformDialog(
+                            context: context,
+                            builder: (context) => PlatformAlertDialog(
+                              title: const Text("Delete User"),
+                              content: const Text(
+                                  "Do you really want to delete the user?"),
+                              actions: [
+                                PlatformDialogAction(
+                                  child: Text(S.of(context).cancel),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                PlatformDialogAction(
+                                  child: Text(S.of(context).deleteUser),
+                                  onPressed: () {
+                                    // send a request to delete the user
+                                    CommunicationHandler.deleteUser()
+                                        .then((succesful) {
+                                      if (succesful) {
+                                        _openUserIntroduction(context);
+                                      }
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
                         },
                         padding: const EdgeInsets.all(8),
                       ),
