@@ -89,10 +89,8 @@ class CommunicationHandler {
   /// Try connecting to the previously saved IP or discover devices on the network
   /// potentially being a network.
   ///
-  /// If multiple mirrors are found, it returns a [List<String>] representing the
-  /// IPs of every mirror in the local network. If only one is found, the [Future]
-  /// returns nothing.
-  static Future<void> connectToMirror({
+  /// Returns true if a mirror was connected.
+  static Future<bool> connectToMirror({
     bool autoConnect = false,
     String? mirrorIP,
   }) async {
@@ -112,13 +110,18 @@ class CommunicationHandler {
         if (foundDevices.length == 1 && autoConnect) {
           _connected = true;
           mirrorAddress = foundDevices.first.ip;
+        } else {
+          return false;
         }
       }
 
       // Create a persistent client and save the mirror address
       _mirrorClient = http.Client();
       address = mirrorAddress;
+      return true;
     }
+
+    return false;
   }
 
   /// This method makes a request to the specified [route] and returns the response.

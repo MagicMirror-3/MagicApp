@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/main.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:network_tools/network_tools.dart';
 
 import '../generated/l10n.dart';
-import '../util/safe_material_area.dart';
+import 'safe_material_area.dart';
 
 /// Lets the user search for MagicMirrors on the network and connect to any of the found mirrors.
 class ConnectMirror extends StatefulWidget {
-  const ConnectMirror({Key? key}) : super(key: key);
+  const ConnectMirror({required this.onSuccessfulConnection, Key? key})
+      : super(key: key);
+
+  /// Will be called once a mirror was successfully connected to the app
+  final void Function() onSuccessfulConnection;
 
   @override
   _ConnectMirrorState createState() => _ConnectMirrorState();
@@ -23,8 +26,9 @@ class _ConnectMirrorState extends State<ConnectMirror> {
 
   /// Called once the user selected a MagicMirror with the given [ip]
   void _onMirrorSelected(String ip) async {
-    await CommunicationHandler.connectToMirror(mirrorIP: ip);
-    MagicApp.of(context)?.refreshApp();
+    if (await CommunicationHandler.connectToMirror(mirrorIP: ip)) {
+      widget.onSuccessfulConnection();
+    }
   }
 
   /// Do a broadcast request in the local network and check if there are any mirrors.

@@ -17,9 +17,9 @@ import 'package:magic_app/util/utility.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
-import 'introduction/connect_mirror.dart';
 import 'introduction/introduction_page.dart';
 import 'mirror_page.dart';
+import 'util/connect_mirror.dart';
 
 // TODO: Introduction
 // TODO: spinner
@@ -78,7 +78,7 @@ class _MagicAppState extends State<MagicApp> {
 
     if (!CommunicationHandler.isConnected) {
       // Show the Connect screen, if no mirror is connected
-      mainWidget = const ConnectMirror();
+      mainWidget = ConnectMirror(onSuccessfulConnection: () => refreshApp());
     } else {
       if (SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
         // Show the introduction is a mirror is connected but this is the first time
