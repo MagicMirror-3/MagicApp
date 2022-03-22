@@ -64,6 +64,7 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
         }
       });
     }
+    validateImages();
   }
 
   void validateImages() {
