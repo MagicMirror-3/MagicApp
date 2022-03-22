@@ -62,8 +62,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
           }),
         ),
         FaceRegistrationScreen(
-          onFinished: () => setState(() {
-            userCreated = true;
+          onFinished: (valid) => setState(() {
+            print("Backed answered with $valid");
+            userCreated = valid;
           }),
         ),
       ],
