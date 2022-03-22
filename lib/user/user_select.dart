@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
-import 'package:magic_app/user/user_create.dart';
 import 'package:magic_app/util/text_types.dart';
 
 import '../generated/l10n.dart';
@@ -40,20 +39,6 @@ class UserSelect extends StatelessWidget {
             DefaultPlatformText(S.of(context).select_user_or_create),
             _UserList(
               onUserSelected: userSelected,
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: PlatformIconButton(
-                icon: Icon(PlatformIcons(context).personAddSolid),
-                onPressed: () => Navigator.push(
-                  context,
-                  platformPageRoute(
-                    context: context,
-                    maintainState: false,
-                    builder: (_) => const UserCreate(),
-                  ),
-                ),
-              ),
             ),
           ],
         ),
