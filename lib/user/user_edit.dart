@@ -67,33 +67,35 @@ class _UserEditState extends State<UserEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      autovalidateMode: AutovalidateMode.always,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 64),
-          _ProfileInputField(
-            autofocus: true,
-            textValue: _firstName,
-            hint: S.of(context).first_name_hint,
-            changedCallback: (newFirstName) => updateUserData(
-              newFirstName,
-              _lastName,
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.always,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 64),
+            _ProfileInputField(
+              autofocus: false,
+              textValue: _firstName,
+              hint: S.of(context).first_name_hint,
+              changedCallback: (newFirstName) => updateUserData(
+                newFirstName,
+                _lastName,
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          _ProfileInputField(
-            textValue: _lastName,
-            hint: S.of(context).last_name_hint,
-            changedCallback: (newLastName) => updateUserData(
-              _firstName,
-              newLastName,
+            const SizedBox(height: 24),
+            _ProfileInputField(
+              textValue: _lastName,
+              hint: S.of(context).last_name_hint,
+              changedCallback: (newLastName) => updateUserData(
+                _firstName,
+                newLastName,
+              ),
+              hasValidator: false,
             ),
-            hasValidator: false,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
