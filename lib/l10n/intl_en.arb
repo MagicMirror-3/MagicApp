@@ -9,6 +9,7 @@
 
     "cancel": "Cancel",
     "save": "Save",
+    "delete": "Delete",
     "saveChanges": "Save changes",
     "deleteUser": "Delete User",
     "defaultString": "Default",
