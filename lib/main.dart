@@ -17,12 +17,9 @@ import 'package:magic_app/util/utility.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'generated/l10n.dart';
+import 'introduction/connect_mirror.dart';
 import 'introduction/introduction_page.dart';
 import 'mirror_page.dart';
-import 'util/connect_mirror.dart';
-
-// TODO: Introduction
-// TODO: spinner
 
 void main() async {
   // debugPrintGestureArenaDiagnostics = true;

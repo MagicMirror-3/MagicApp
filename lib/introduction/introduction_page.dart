@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:magic_app/introduction/connect_mirror.dart';
 import 'package:magic_app/main.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
-import 'package:magic_app/util/connect_mirror.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 
 import '../user/user_edit.dart';
 import '../util/utility.dart';
+import 'face_detection.dart';
 
 class IntroductionPage extends StatefulWidget {
   const IntroductionPage({Key? key}) : super(key: key);
@@ -25,6 +26,8 @@ class _IntroductionPageState extends State<IntroductionPage> {
   bool userCreated = false;
   int currentPage = 0;
 
+  /// This function is called once the user finished all introduction steps and is
+  /// ready to use the app
   void _onDone(BuildContext context) {
     SharedPreferencesHandler.saveValue(
       SettingKeys.firstUse,
@@ -50,12 +53,14 @@ class _IntroductionPageState extends State<IntroductionPage> {
             introKey.currentState!.next();
           }),
         ),
+        // TODO: Beautify
         UserEdit(
           baseUser: const MagicUser(),
           onInputChanged: (valid) => setState(() {
             userCreated = valid;
           }),
         ),
+        FaceRegistrationScreen(),
       ],
       done: const DefaultPlatformText("Done"),
       onDone: () => _onDone(context),

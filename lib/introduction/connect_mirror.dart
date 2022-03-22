@@ -6,7 +6,7 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:network_tools/network_tools.dart';
 
 import '../generated/l10n.dart';
-import 'safe_material_area.dart';
+import '../util/safe_material_area.dart';
 
 /// Lets the user search for MagicMirrors on the network and connect to any of the found mirrors.
 class ConnectMirror extends StatefulWidget {

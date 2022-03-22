@@ -8,7 +8,7 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as img;
 import 'package:learning_input_image/learning_input_image.dart';
 
-import 'util/communication_handler.dart';
+import '../util/communication_handler.dart';
 
 int numberOfImages = 3;
 
