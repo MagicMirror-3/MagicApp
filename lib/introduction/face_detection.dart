@@ -7,8 +7,11 @@ import 'package:google_ml_kit/google_ml_kit.dart' as ml;
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as img;
 import 'package:learning_input_image/learning_input_image.dart';
+import 'package:magic_app/settings/constants.dart';
+import 'package:magic_app/util/utility.dart';
 
 import '../util/communication_handler.dart';
+import 'settings/shared_preferences_handler.dart';
 
 int numberOfImages = 3;
 
@@ -22,11 +25,19 @@ class Start extends StatefulWidget {
 class _StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
-    return FaceRegistrationScreen();
+    return FaceRegistrationScreen(onFinished: () => print("test"));
   }
 }
 
+/// This widget is the main Face Registration Screen, it contains a face
+/// recognition, that consequently saves image that contains a persons face.
+/// This is visualized using an overlay.
 class FaceRegistrationScreen extends StatefulWidget {
+  const FaceRegistrationScreen({required Function this.onFinished, Key? key})
+      : super(key: key);
+
+  final onFinished;
+
   @override
   _FaceRegistrationScreenState createState() => _FaceRegistrationScreenState();
 }
@@ -53,13 +64,23 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
         }
       });
     }
+  }
 
-    print("############################# Finished #######################");
-
+  void validateImages() {
+    /// convert saved images to base64 and crop them
     List<String> base64images = faceDetection.convertAndCrop();
 
-    print(
-        CommunicationHandler.createUser("test", "testest", "no", base64images));
+    /// get "firstname" and "lastname" from shared preferences
+    MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.tempUser);
+
+    /// send reuqest to controller
+    CommunicationHandler.createUser(user.firstName, user.lastName, base64images)
+        .then((value) {
+      print(value);
+
+      /// notify the parent component, if images where accepted or not
+      widget.onFinished(value);
+    });
   }
 
   @override

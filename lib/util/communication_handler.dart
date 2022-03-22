@@ -249,7 +249,6 @@ class CommunicationHandler {
   static Future<bool> createUser(
     String firstname,
     String lastname,
-    String password,
     List<String> images,
   ) async {
     assert(_connected);
