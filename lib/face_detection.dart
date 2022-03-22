@@ -22,16 +22,16 @@ class Start extends StatefulWidget {
 class _StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
-    return CameraApp();
+    return FaceRegistrationScreen();
   }
 }
 
-class CameraApp extends StatefulWidget {
+class FaceRegistrationScreen extends StatefulWidget {
   @override
-  _CameraAppState createState() => _CameraAppState();
+  _FaceRegistrationScreenState createState() => _FaceRegistrationScreenState();
 }
 
-class _CameraAppState extends State<CameraApp> {
+class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   // The camera controller
   CameraController? controller;
   late List<CameraDescription> cameras;
