@@ -32,7 +32,8 @@ class HeaderPlatformText extends StatelessWidget {
         text,
         style: platformThemeData(
           context,
-          material: (data) => data.textTheme.headline4,
+          material: (data) =>
+              data.textTheme.headlineLarge?.apply(color: Colors.white),
           cupertino: (data) => data.textTheme.navLargeTitleTextStyle,
         ),
       ),

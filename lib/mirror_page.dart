@@ -64,7 +64,7 @@ class _MainPageState extends State<MainPage> {
       onRefresh: getLayout,
       childWidget: Column(
         children: [
-          HeaderPlatformText(S.of(context).greetings(userName)),
+          HeaderPlatformText(S.of(context).greetings(userName.trim())),
           MirrorContainer(
             key: Key("MirrorContainer_MirrorPage:$loading"),
             displayLoading: loading,
