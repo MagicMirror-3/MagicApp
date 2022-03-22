@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   onPressed: () => Navigator.pop(context),
                                 ),
                                 PlatformDialogAction(
-                                  child: Text(S.of(context).deleteUser),
+                                  child: Text(S.of(context).delete),
                                   onPressed: () {
                                     // send a request to delete the user
                                     CommunicationHandler.deleteUser()
