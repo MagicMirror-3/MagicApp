@@ -10,8 +10,8 @@ import 'package:learning_input_image/learning_input_image.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/utility.dart';
 
+import '../settings/shared_preferences_handler.dart';
 import '../util/communication_handler.dart';
-import 'settings/shared_preferences_handler.dart';
 
 int numberOfImages = 3;
 

@@ -23,6 +23,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
   final GlobalKey<IntroductionScreenState> introKey =
       GlobalKey(debugLabel: "IntroStateKey");
   bool mirrorConnected = false;
+  bool nameInput = false;
   bool userCreated = false;
   int currentPage = 0;
 
@@ -57,21 +58,26 @@ class _IntroductionPageState extends State<IntroductionPage> {
         UserEdit(
           baseUser: const MagicUser(),
           onInputChanged: (valid) => setState(() {
-            userCreated = valid;
+            nameInput = valid;
           }),
         ),
-        FaceRegistrationScreen(),
+        FaceRegistrationScreen(
+          onFinished: () => setState(() {
+            userCreated = true;
+          }),
+        ),
       ],
       done: const DefaultPlatformText("Done"),
       onDone: () => _onDone(context),
+      showDoneButton: currentPage == 2 && userCreated,
       next: const DefaultPlatformText("Next"),
       onChange: (pageIndex) {
         setState(() {
           currentPage = pageIndex;
         });
       },
-      showNextButton: currentPage == 0 && mirrorConnected ||
-          currentPage == 1 && userCreated,
+      showNextButton:
+          currentPage == 0 && mirrorConnected || currentPage == 1 && nameInput,
       back: const DefaultPlatformText("Back"),
       showBackButton: currentPage == 2,
     );
