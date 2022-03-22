@@ -11,7 +11,6 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
-import 'main.dart';
 
 /// Supplies a widget enabling the user to switch accounts or change their user info
 class ProfilePage extends StatefulWidget {
@@ -23,17 +22,33 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool enableButton = true;
+  late MagicUser baseUser;
 
+  @override
+  void initState() {
+    baseUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+
+    super.initState();
+  }
+
+  /// Opens the introduction screen to enable the user to create a new [MagicUser]
+  /// with pictures, etc.
   void _openUserIntroduction(BuildContext context) {
     Navigator.push(
       context,
       platformPageRoute(
         context: context,
-        builder: (_) => const IntroductionPage(
+        builder: (_) => IntroductionPage(
           showPages: IntroductionPages.user,
+          onDone: () {
+            Navigator.pop(context);
+            setState(() {
+              baseUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+            });
+          },
         ),
       ),
-    ).whenComplete(() => MagicApp.of(context)!.refreshApp());
+    );
   }
 
   @override
@@ -56,7 +71,8 @@ class _ProfilePageState extends State<ProfilePage> {
               // Input for first and last name
               Expanded(
                 child: UserEdit(
-                  baseUser: SharedPreferencesHandler.getValue(SettingKeys.user),
+                  key: Key(baseUser.toString()),
+                  baseUser: baseUser,
                   onInputChanged: (valid) => setState(() {
                     enableButton = valid;
                   }),

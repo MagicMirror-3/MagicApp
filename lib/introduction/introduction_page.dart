@@ -9,7 +9,7 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
 
 import '../main.dart';
-import '../user/user_edit.dart';
+import '../user/user_create.dart';
 import '../util/utility.dart';
 import 'face_detection.dart';
 
@@ -21,14 +21,20 @@ enum IntroductionPages {
   user
 }
 
+/// A step by step walkthrough about either the first experience in the app, or
+/// the user creation process
 class IntroductionPage extends StatefulWidget {
   const IntroductionPage({
     this.showPages = IntroductionPages.all,
+    this.onDone,
     Key? key,
   }) : super(key: key);
 
   /// How many pages to show on the introduction screen
   final IntroductionPages showPages;
+
+  /// Additional method to call once the introduction screen is over
+  final Function()? onDone;
 
   @override
   _IntroductionPageState createState() => _IntroductionPageState();
@@ -52,11 +58,11 @@ class _IntroductionPageState extends State<IntroductionPage> {
       );
     }
 
-    MagicApp.of(context)!.refreshApp();
-
-    if (widget.showPages == IntroductionPages.user) {
-      Navigator.pop(context);
+    if (widget.onDone != null) {
+      widget.onDone!();
     }
+
+    MagicApp.of(context)?.refreshApp();
   }
 
   @override
@@ -72,16 +78,14 @@ class _IntroductionPageState extends State<IntroductionPage> {
       UserSelect(
         onUserSelected: () => _onDone(context),
       ),
-      // TODO: Beautify
-      UserEdit(
-        baseUser: const MagicUser(),
+      UserCreate(
         onInputChanged: (valid) => setState(() {
           nameInput = valid;
         }),
       ),
       FaceRegistrationScreen(
         onFinished: (userID) {
-          print("Backed answered with $userID");
+          // print("Backed answered with $userID");
           if (userID != -1) {
             // Save the new user and set it as active
             MagicUser tempUser = SharedPreferencesHandler.getValue(
@@ -134,11 +138,11 @@ class _IntroductionPageState extends State<IntroductionPage> {
       // Show the next button only on selected pages
       showNextButton: currentPage is ConnectMirror && mirrorConnected ||
           currentPage is UserSelect ||
-          currentPage is UserEdit && nameInput,
+          currentPage is UserCreate && nameInput,
       back: const DefaultPlatformText("Back"),
       // Show the back button only on selected pages
-      showBackButton: currentPage is FaceRegistrationScreen && !userCreated ||
-          currentPage is UserEdit,
+      showBackButton: currentPage is UserCreate ||
+          currentPage is FaceRegistrationScreen && !userCreated,
     );
   }
 }
