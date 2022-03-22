@@ -51,31 +51,47 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: PlatformElevatedButton(
-                  child: DefaultPlatformText(S.of(context).saveChanges),
-                  color: Colors.green,
-                  onPressed: enableButton
-                      ? () {
-                          // Get the data from the input
-                          MagicUser tempUser =
-                              SharedPreferencesHandler.getValue(
-                            SettingKeys.tempUser,
-                          );
+                  padding:
+                      const EdgeInsets.only(bottom: 20, left: 35, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      PlatformElevatedButton(
+                        child: DefaultPlatformText(S.of(context).deleteUser),
+                        color: Colors.red,
+                        onPressed: () async {
+                          // send a request to delete the user
+                          if (await CommunicationHandler.deleteUser()) {
+                            // change to the introduction screen
+                          }
+                        },
+                        padding: const EdgeInsets.all(8),
+                      ),
+                      PlatformElevatedButton(
+                        child: DefaultPlatformText(S.of(context).saveChanges),
+                        color: Colors.green,
+                        onPressed: enableButton
+                            ? () {
+                                // Get the data from the input
+                                MagicUser tempUser =
+                                    SharedPreferencesHandler.getValue(
+                                  SettingKeys.tempUser,
+                                );
 
-                          // Save it locally ...
-                          SharedPreferencesHandler.saveValue(
-                            SettingKeys.user,
-                            tempUser,
-                          );
+                                // Save it locally ...
+                                SharedPreferencesHandler.saveValue(
+                                  SettingKeys.user,
+                                  tempUser,
+                                );
 
-                          // ... and on the backend
-                          CommunicationHandler.updateUserData();
-                        }
-                      : null,
-                  padding: const EdgeInsets.all(8),
-                ),
-              ),
+                                // ... and on the backend
+                                CommunicationHandler.updateUserData();
+                              }
+                            : null,
+                        padding: const EdgeInsets.all(8),
+                      )
+                    ],
+                  )),
             ],
           ),
           // Switch user button

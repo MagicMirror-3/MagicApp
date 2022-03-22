@@ -259,7 +259,9 @@ class CommunicationHandler {
         "lastname": lastname,
         "images": images,
       },
+      timeout: const Duration(seconds: 60),
     );
+
     if (response.statusCode == 201) {
       return int.parse(response.body);
     }
@@ -308,6 +310,28 @@ class CommunicationHandler {
           201;
     } else {
       throw ArgumentError("There is no user logged in at the moment!");
+    }
+  }
+
+  /// Delete the currently logged in user
+  ///
+  static Future<bool> deleteUser() async {
+    assert(_connected);
+
+    // Get the local user
+    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+
+    if (localUser.isRealUser) {
+      return (await _makeRequest(
+            MagicRoutes.deleteUser,
+            payload: {
+              "user_id": localUser.id,
+            },
+          ))
+              .statusCode ==
+          201;
+    } else {
+      throw ArgumentError("User could not be deleted!");
     }
   }
 
@@ -418,6 +442,13 @@ class MagicRoutes {
       "firstname",
       "lastname",
     ],
+  );
+
+  /// Deletes a user
+  static const deleteUser = _MagicRoute(
+    route: "deleteUser",
+    type: _RouteType.POST,
+    params: ["user_id"],
   );
 
   /// Gets the layout of a given user

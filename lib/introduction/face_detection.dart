@@ -13,7 +13,7 @@ import 'package:magic_app/util/utility.dart';
 import '../settings/shared_preferences_handler.dart';
 import '../util/communication_handler.dart';
 
-int numberOfImages = 3;
+int numberOfImages = 7;
 
 class Start extends StatefulWidget {
   const Start({Key? key}) : super(key: key);
@@ -55,7 +55,6 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   void startDetection(int numberOfFaces) async {
     while (faceDetection.numberOfValidFaces() != numberOfFaces) {
       // wait
-      // await Future.delayed(const Duration(milliseconds: 300), () {});
       await controller?.takePicture().then((image) async {
         // returns true when the image was valid
         if (await faceDetection.handleNewImage(image)) {
@@ -64,6 +63,8 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
         }
       });
     }
+
+    await Future.delayed(const Duration(milliseconds: 500), () {});
     validateImages();
   }
 
@@ -187,7 +188,7 @@ class _CameraOverlayState extends State<CameraOverlay> {
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(
                   begin: 0.0, end: widget.counter * 1.0 / widget.maxImages),
-              duration: const Duration(milliseconds: 600),
+              duration: const Duration(milliseconds: 400),
               builder: (context, value, _) => CircularProgressIndicator(
                 value: value,
                 strokeWidth: 10,
