@@ -60,6 +60,9 @@ class SettingKeys {
   /// The logged in user
   static const String user = "user";
 
+  /// A temporary user to allow customization
+  static const String tempUser = "tempUser";
+
   /// Whether a dark theme should be used
   static const String darkMode = "darkMode";
 
@@ -96,6 +99,7 @@ Map<String, dynamic> defaultValues = {
     firstName: "Default",
     lastName: "Simon",
   ),
+  SettingKeys.tempUser: const MagicUser(),
   SettingKeys.darkMode: true,
   SettingKeys.alternativeAppearance: false,
   SettingKeys.language: "en",

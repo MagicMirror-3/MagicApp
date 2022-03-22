@@ -6,14 +6,23 @@ import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_edit.dart';
 import 'package:magic_app/user/user_select.dart';
+import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/safe_material_area.dart';
 import 'package:magic_app/util/text_types.dart';
+import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
 
 /// Supplies a widget enabling the user to switch accounts or change their user info
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool enableButton = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +45,34 @@ class ProfilePage extends StatelessWidget {
               Expanded(
                 child: UserEdit(
                   baseUser: SharedPreferencesHandler.getValue(SettingKeys.user),
-                  hasSaveButton: true,
+                  onInputChanged: (valid) => setState(() {
+                    enableButton = valid;
+                  }),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: PlatformElevatedButton(
+                  child: DefaultPlatformText(S.of(context).saveChanges),
+                  color: Colors.green,
+                  onPressed: enableButton
+                      ? () {
+                          // Get the data from the input
+                          MagicUser tempUser =
+                              SharedPreferencesHandler.getValue(
+                                  SettingKeys.tempUser);
+
+                          // Save it locally ...
+                          SharedPreferencesHandler.saveValue(
+                            SettingKeys.user,
+                            tempUser,
+                          );
+
+                          // ... and on the backend
+                          CommunicationHandler.updateUserData();
+                        }
+                      : null,
+                  padding: const EdgeInsets.all(8),
                 ),
               ),
             ],

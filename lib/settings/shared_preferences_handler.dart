@@ -36,8 +36,8 @@ class SharedPreferencesHandler {
         return (colorFromHex(_preferences.getString(key) ?? "ffffff") ??
             defaultValue) as T;
       } else if (defaultValue is MagicUser) {
-        return MagicUser.fromJSON(
-            jsonDecode(_preferences.getString(SettingKeys.user) ?? "")) as T;
+        return MagicUser.fromJSON(jsonDecode(_preferences.getString(key) ?? ""))
+            as T;
       } else {
         // No special treatment needed
         return _preferences.get(key) as T;

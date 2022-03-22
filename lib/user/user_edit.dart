@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/util/communication_handler.dart';
+import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
 import '../settings/constants.dart';
-import '../settings/shared_preferences_handler.dart';
 
 /// Provides a widget to edit the first and last name of the user
 class UserEdit extends StatefulWidget {
   const UserEdit({
     required this.baseUser,
-    this.hasSaveButton = false,
+    required this.onInputChanged,
     Key? key,
   }) : super(key: key);
 
-  /// The user information to display
+  /// The user information to display.
+  ///
+  /// It will clone this user and create a new temporary user to make changes on.
   final MagicUser baseUser;
 
-  /// Whether a "save" button will be added to the widget
-  final bool hasSaveButton;
+  /// This function is called on every change of the input fields. The bool
+  /// contains the validity of the input fields.
+  final Function(bool) onInputChanged;
 
   @override
   _UserEditState createState() => _UserEditState();
@@ -43,8 +45,6 @@ class _UserEditState extends State<UserEdit> {
         lastName: _lastName,
       );
 
-  FormState? get formState => _formKey.currentState;
-
   @override
   void initState() {
     // Init base values
@@ -54,56 +54,45 @@ class _UserEditState extends State<UserEdit> {
     super.initState();
   }
 
+  /// Persists the changes to storage
+  void updateUserData(String firstName, String lastName) {
+    setState(() {
+      _firstName = firstName;
+      _lastName = lastName;
+    });
+    SharedPreferencesHandler.saveValue(SettingKeys.tempUser, userInfo);
+
+    widget.onInputChanged(_formKey.currentState!.validate());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.always,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(height: 64),
-              _ProfileInputField(
-                autofocus: true,
-                textValue: _firstName,
-                hint: S.of(context).first_name_hint,
-                changedCallback: (newFirstName) => setState(() {
-                  _firstName = newFirstName;
-                }),
-              ),
-              const SizedBox(height: 24),
-              _ProfileInputField(
-                textValue: _lastName,
-                hint: S.of(context).last_name_hint,
-                changedCallback: (newLastName) => setState(() {
-                  _lastName = newLastName;
-                }),
-                hasValidator: false,
-              ),
-            ],
-          ),
-          if (widget.hasSaveButton)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: PlatformElevatedButton(
-                child: DefaultPlatformText(S.of(context).saveChanges),
-                color: Colors.green,
-                onPressed: formState != null && formState!.validate() ||
-                        formState == null
-                    ? () => setState(() {
-                          SharedPreferencesHandler.saveValue(
-                            SettingKeys.user,
-                            userInfo,
-                          );
-                          CommunicationHandler.updateUserData();
-                        })
-                    : null,
-                padding: const EdgeInsets.all(8),
-              ),
+          const SizedBox(height: 64),
+          _ProfileInputField(
+            autofocus: true,
+            textValue: _firstName,
+            hint: S.of(context).first_name_hint,
+            changedCallback: (newFirstName) => updateUserData(
+              newFirstName,
+              _lastName,
             ),
+          ),
+          const SizedBox(height: 24),
+          _ProfileInputField(
+            textValue: _lastName,
+            hint: S.of(context).last_name_hint,
+            changedCallback: (newLastName) => updateUserData(
+              _firstName,
+              newLastName,
+            ),
+            hasValidator: false,
+          ),
         ],
       ),
     );

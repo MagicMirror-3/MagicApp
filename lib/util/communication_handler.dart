@@ -245,7 +245,7 @@ class CommunicationHandler {
   /// [images] should be a list of base64-encoded images.
   static Future<bool> createUser(
     String firstname,
-    String surname,
+    String lastname,
     String password,
     List<String> images,
   ) async {
@@ -255,7 +255,7 @@ class CommunicationHandler {
           MagicRoutes.createUser,
           payload: {
             "firstname": firstname,
-            "surname": surname,
+            "lastname": lastname,
             "password": password,
             "images": images,
           },
@@ -277,7 +277,7 @@ class CommunicationHandler {
               (userMap) => MagicUser(
                 id: userMap["user_id"] ?? -1,
                 firstName: userMap["firstname"] ?? "",
-                lastName: userMap["surname"] ?? "",
+                lastName: userMap["lastname"] ?? "",
               ),
             )
             .toList()
