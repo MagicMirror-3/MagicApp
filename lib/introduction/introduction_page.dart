@@ -62,10 +62,31 @@ class _IntroductionPageState extends State<IntroductionPage> {
           }),
         ),
         FaceRegistrationScreen(
-          onFinished: (valid) => setState(() {
-            print("Backed answered with $valid");
-            userCreated = valid;
-          }),
+          onFinished: (userID) {
+            print("Backed answered with $userID");
+            if (userID != -1) {
+              // Save the new user and set it as active
+              MagicUser tempUser = SharedPreferencesHandler.getValue(
+                SettingKeys.tempUser,
+              );
+
+              SharedPreferencesHandler.saveValue(
+                SettingKeys.user,
+                MagicUser(
+                  id: userID,
+                  firstName: tempUser.firstName,
+                  lastName: tempUser.lastName,
+                ),
+              );
+
+              // Close this
+              _onDone(context);
+            } else {
+              setState(() {
+                userCreated = false;
+              });
+            }
+          },
         ),
       ],
       done: const DefaultPlatformText("Done"),
@@ -80,7 +101,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
       showNextButton:
           currentPage == 0 && mirrorConnected || currentPage == 1 && nameInput,
       back: const DefaultPlatformText("Back"),
-      showBackButton: currentPage == 2,
+      showBackButton: currentPage == 2 && !userCreated,
     );
   }
 }
