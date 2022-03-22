@@ -77,8 +77,6 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     /// send reuqest to controller
     CommunicationHandler.createUser(user.firstName, user.lastName, base64images)
         .then((value) {
-      print(value);
-
       /// notify the parent component, if images where accepted or not
       widget.onFinished(value);
     });
@@ -125,16 +123,11 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     if (controller == null || !controller!.value.isInitialized) {
       return Container();
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Test"),
-      ),
-      body: CameraPreview(
-        controller!,
-        child: CameraOverlay(
-          counter: faceDetection.numberOfValidFaces(),
-          maxImages: numberOfImages,
-        ),
+    return CameraPreview(
+      controller!,
+      child: CameraOverlay(
+        counter: faceDetection.numberOfValidFaces(),
+        maxImages: numberOfImages,
       ),
     );
   }
