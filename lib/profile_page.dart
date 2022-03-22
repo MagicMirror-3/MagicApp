@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/main.dart';
+import 'package:magic_app/introduction/introduction_page.dart';
 import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_edit.dart';
-import 'package:magic_app/user/user_select.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/safe_material_area.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
+import 'main.dart';
 
 /// Supplies a widget enabling the user to switch accounts or change their user info
 class ProfilePage extends StatefulWidget {
@@ -23,6 +23,18 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool enableButton = true;
+
+  void _openUserIntroduction(BuildContext context) {
+    Navigator.push(
+      context,
+      platformPageRoute(
+        context: context,
+        builder: (_) => const IntroductionPage(
+          showPages: IntroductionPages.user,
+        ),
+      ),
+    ).whenComplete(() => MagicApp.of(context)!.refreshApp());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,19 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   CupertinoIcons.arrow_2_squarepath,
                   color: Colors.white,
                 ),
-                onPressed: () => Navigator.push(
-                  context,
-                  platformPageRoute(
-                    context: context,
-                    builder: (_) => UserSelect(
-                      onUserSelected: () {
-                        // Remove the user selection and refresh the entire app
-                        Navigator.pop(context);
-                        MagicApp.of(context)?.refreshApp();
-                      },
-                    ),
-                  ),
-                ),
+                onPressed: () => _openUserIntroduction(context),
               ),
             ),
           ),

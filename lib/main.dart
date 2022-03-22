@@ -72,15 +72,13 @@ class _MagicAppState extends State<MagicApp> {
   @override
   Widget build(BuildContext context) {
     Widget mainWidget = Container();
-
-    if (!CommunicationHandler.isConnected) {
-      // Show the Connect screen, if no mirror is connected
-      mainWidget = ConnectMirror(onSuccessfulConnection: () => refreshApp());
+    if (SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
+      // Show the introduction if it's the first time the user launched the app
+      mainWidget = const IntroductionPage();
     } else {
-      if (SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
-        // Show the introduction is a mirror is connected but this is the first time
-        // the user launched the app
-        mainWidget = const IntroductionPage();
+      if (!CommunicationHandler.isConnected) {
+        // Show the Connect screen, if no mirror is connected
+        mainWidget = ConnectMirror(onSuccessfulConnection: () => refreshApp());
       } else {
         MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
         if (!user.isRealUser) {
