@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connect_mirror":
             MessageLookupByLibrary.simpleMessage("Connect a mirror"),
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
+        "deleteUser": MessageLookupByLibrary.simpleMessage("Delete User"),
         "fillOutField":
             MessageLookupByLibrary.simpleMessage("Please fill out this field"),
         "first_name": MessageLookupByLibrary.simpleMessage("First name"),

@@ -120,6 +120,16 @@ class S {
     );
   }
 
+  /// `Delete User`
+  String get deleteUser {
+    return Intl.message(
+      'Delete User',
+      name: 'deleteUser',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Default`
   String get defaultString {
     return Intl.message(

@@ -10,6 +10,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "saveChanges": "Save changes",
+    "deleteUser": "Delete User",
     "defaultString": "Default",
 
     "fillOutField": "Please fill out this field",

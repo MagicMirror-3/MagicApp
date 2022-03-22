@@ -79,31 +79,73 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: PlatformElevatedButton(
-                  child: DefaultPlatformText(S.of(context).saveChanges),
-                  color: Colors.green,
-                  onPressed: enableButton
-                      ? () {
-                          // Get the data from the input
-                          MagicUser tempUser =
-                              SharedPreferencesHandler.getValue(
-                            SettingKeys.tempUser,
-                          );
+                  padding:
+                      const EdgeInsets.only(bottom: 20, left: 35, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      PlatformElevatedButton(
+                        child: DefaultPlatformText(S.of(context).deleteUser),
+                        color: Colors.red,
+                        onPressed: () async {
+                          // change to the introduction screen
 
-                          // Save it locally ...
-                          SharedPreferencesHandler.saveValue(
-                            SettingKeys.user,
-                            tempUser,
+                          // Display a dialog window to cancel the deletion
+                          showPlatformDialog(
+                            context: context,
+                            builder: (context) => PlatformAlertDialog(
+                              title: const Text("Delete User"),
+                              content: const Text(
+                                  "Do you really want to delete the user?"),
+                              actions: [
+                                PlatformDialogAction(
+                                  child: Text(S.of(context).cancel),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                PlatformDialogAction(
+                                  child: Text(S.of(context).deleteUser),
+                                  onPressed: () {
+                                    // send a request to delete the user
+                                    CommunicationHandler.deleteUser()
+                                        .then((succesful) {
+                                      if (succesful) {
+                                        _openUserIntroduction(context);
+                                      }
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ),
                           );
+                        },
+                        padding: const EdgeInsets.all(8),
+                      ),
+                      PlatformElevatedButton(
+                        child: DefaultPlatformText(S.of(context).saveChanges),
+                        color: Colors.green,
+                        onPressed: enableButton
+                            ? () {
+                                // Get the data from the input
+                                MagicUser tempUser =
+                                    SharedPreferencesHandler.getValue(
+                                  SettingKeys.tempUser,
+                                );
 
-                          // ... and on the backend
-                          CommunicationHandler.updateUserData();
-                        }
-                      : null,
-                  padding: const EdgeInsets.all(8),
-                ),
-              ),
+                                // Save it locally ...
+                                SharedPreferencesHandler.saveValue(
+                                  SettingKeys.user,
+                                  tempUser,
+                                );
+
+                                // ... and on the backend
+                                CommunicationHandler.updateUserData();
+                              }
+                            : null,
+                        padding: const EdgeInsets.all(8),
+                      )
+                    ],
+                  )),
             ],
           ),
           // Switch user button
