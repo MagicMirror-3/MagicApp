@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/main.dart';
-import 'package:magic_app/settings/constants.dart';
-import 'package:magic_app/settings/shared_preferences_handler.dart';
+import 'package:magic_app/user/user_edit.dart';
 import 'package:magic_app/user/user_select.dart';
 import 'package:magic_app/util/safe_material_area.dart';
-import 'package:magic_app/util/text_types.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -19,14 +17,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return SafeMaterialArea(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 15),
-            child: DefaultPlatformText(
-              "Current User: ${SharedPreferencesHandler.getValue(SettingKeys.user)}",
-            ),
+          Icon(
+            PlatformIcons(context).personOutline,
+            size: 150,
+            color: Colors.white,
           ),
+          const UserEdit(),
           PlatformTextButton(
             child: const Text("Open widget"),
             onPressed: () => Navigator.push(
