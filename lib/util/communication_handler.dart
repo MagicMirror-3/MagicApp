@@ -255,7 +255,7 @@ class CommunicationHandler {
           MagicRoutes.createUser,
           payload: {
             "firstname": firstname,
-            "surname": surname,
+            "lastname": surname,
             "password": password,
             "images": images,
           },
@@ -396,10 +396,10 @@ class MagicRoutes {
   /// Registers a new user
   static const createUser = _MagicRoute(
     route: "createUser",
+    type: _RouteType.POST,
     params: [
       "firstname",
       "lastname",
-      "current_layout",
       "images",
     ],
   );

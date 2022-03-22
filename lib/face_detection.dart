@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_ml_kit/google_ml_kit.dart' as ml;
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as img;
-import 'package:learning_face_detection/learning_face_detection.dart';
 import 'package:learning_input_image/learning_input_image.dart';
 
 import 'util/communication_handler.dart';
@@ -43,7 +44,7 @@ class _CameraAppState extends State<CameraApp> {
   void startDetection(int numberOfFaces) async {
     while (faceDetection.numberOfValidFaces() != numberOfFaces) {
       // wait
-      await Future.delayed(const Duration(milliseconds: 300), () {});
+      // await Future.delayed(const Duration(milliseconds: 300), () {});
       await controller?.takePicture().then((image) async {
         // returns true when the image was valid
         if (await faceDetection.handleNewImage(image)) {
@@ -55,11 +56,10 @@ class _CameraAppState extends State<CameraApp> {
 
     print("############################# Finished #######################");
 
-    List<XFile> faces = faceDetection.getSavedImages();
-    String base64String = faceDetection.image2base64(faces[0]);
+    List<String> base64images = faceDetection.convertAndCrop();
 
-    print(CommunicationHandler.createUser(
-        "test", "testest", "no", [base64String]));
+    print(
+        CommunicationHandler.createUser("test", "testest", "no", base64images));
   }
 
   @override
@@ -95,6 +95,7 @@ class _CameraAppState extends State<CameraApp> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+    faceDetection.dispose();
   }
 
   @override
@@ -187,14 +188,15 @@ class _CameraOverlayState extends State<CameraOverlay> {
 }
 
 class FaceDetection {
-  FaceDetector detector = FaceDetector(
-    mode: FaceDetectorMode.fast,
-    detectLandmark: false,
-    detectContour: false,
+  FaceDetector detector =
+      GoogleMlKit.vision.faceDetector(const ml.FaceDetectorOptions(
+    mode: ml.FaceDetectorMode.fast,
+    enableLandmarks: false,
+    enableContours: false,
     enableClassification: false,
     enableTracking: false,
     minFaceSize: 0.15,
-  );
+  ));
 
   List<Face> facePositions = [];
   List<XFile> faceImages = [];
@@ -203,10 +205,10 @@ class FaceDetection {
   Future<List<Face>> detectFaces(XFile image) async {
     // convert the XFile image to an InputImage
     File file = File(image.path);
-    InputImage inputImage = InputImage.fromFile(file);
+    ml.InputImage inputImage = ml.InputImage.fromFile(file);
 
     //the detector needs an InputImage
-    return detector.detect(inputImage);
+    return detector.processImage(inputImage);
   }
 
   /// If exactly one faces is detected in [image], save it.
@@ -227,24 +229,36 @@ class FaceDetection {
     return facePositions.length;
   }
 
-  /// return all saved images of type [XFile]
-  List<XFile> getSavedImages() {
-    return faceImages;
-  }
-
   /// convert XFile to img.Image
   img.Image xFile2Image(XFile image) {
     return img.decodeImage(File(image.path).readAsBytesSync())!;
-  }
-
-  /// crop the face of the image
-  img.Image cropImage(img.Image image, int x, int y, int w, int h) {
-    return img.copyCrop(image, x, y, w, h);
   }
 
   /// convert the XFile to base64
   String image2base64(XFile image) {
     final bytes = File(image.path).readAsBytesSync();
     return base64.encode(bytes);
+  }
+
+  List<String> convertAndCrop() {
+    List<String> base64images = [];
+
+    for (int face_index = 0; face_index < faceImages.length; face_index++) {
+      XFile faceImage = faceImages[face_index];
+      Face facePosition = facePositions[face_index];
+
+      final h = facePosition.boundingBox.bottom.toInt();
+      final w = facePosition.boundingBox.width.toInt();
+      final y = facePosition.boundingBox.top.toInt();
+      final x = facePosition.boundingBox.left.toInt();
+
+      img.Image croppedImage = img.copyCrop(xFile2Image(faceImage), x, y, w, h);
+      base64images.add(base64.encode(img.encodeJpg(croppedImage)));
+    }
+    return base64images;
+  }
+
+  void dispose() {
+    detector.close();
   }
 }
