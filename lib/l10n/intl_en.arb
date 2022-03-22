@@ -20,6 +20,11 @@
 
     "select_user": "Select a user",
     "select_user_or_create":  "Select a user or create a new one",
+    "your_profile": "Your profile",
+    "first_name": "First name",
+    "first_name_hint": "Enter your first name",
+    "last_name": "Last name",
+    "last_name_hint": "Enter your last name",
 
     "greetings": "Hello {name}!",
     "mirror_refresh": "Refreshing layout...",

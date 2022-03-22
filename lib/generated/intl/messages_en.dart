@@ -32,7 +32,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "defaultString": MessageLookupByLibrary.simpleMessage("Default"),
         "fillOutField":
             MessageLookupByLibrary.simpleMessage("Please fill out this field"),
+        "first_name": MessageLookupByLibrary.simpleMessage("First name"),
+        "first_name_hint":
+            MessageLookupByLibrary.simpleMessage("Enter your first name"),
         "greetings": m0,
+        "last_name": MessageLookupByLibrary.simpleMessage("Last name"),
+        "last_name_hint":
+            MessageLookupByLibrary.simpleMessage("Enter your last name"),
         "local_network_refresh": MessageLookupByLibrary.simpleMessage(
             "Pull down to start searching for MagicMirrors on your local network"),
         "magicMirror": MessageLookupByLibrary.simpleMessage("MagicMirror"),
@@ -89,6 +95,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Wall Color"),
         "settings_wallPattern":
             MessageLookupByLibrary.simpleMessage("Wall Pattern"),
-        "settings_whiteWall": MessageLookupByLibrary.simpleMessage("White Wall")
+        "settings_whiteWall":
+            MessageLookupByLibrary.simpleMessage("White Wall"),
+        "your_profile": MessageLookupByLibrary.simpleMessage("Your profile")
       };
 }

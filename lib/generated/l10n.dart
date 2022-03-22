@@ -190,6 +190,56 @@ class S {
     );
   }
 
+  /// `Your profile`
+  String get your_profile {
+    return Intl.message(
+      'Your profile',
+      name: 'your_profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First name`
+  String get first_name {
+    return Intl.message(
+      'First name',
+      name: 'first_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your first name`
+  String get first_name_hint {
+    return Intl.message(
+      'Enter your first name',
+      name: 'first_name_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last name`
+  String get last_name {
+    return Intl.message(
+      'Last name',
+      name: 'last_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your last name`
+  String get last_name_hint {
+    return Intl.message(
+      'Enter your last name',
+      name: 'last_name_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Hello {name}!`
   String greetings(Object name) {
     return Intl.message(
