@@ -4,27 +4,25 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
+import '../settings/constants.dart';
+import '../settings/shared_preferences_handler.dart';
 
 /// Provides a widget to edit the first and last name of the user
 class UserEdit extends StatefulWidget {
   const UserEdit({
     required this.baseUser,
-    required this.saveCallback,
+    this.hasSaveButton = false,
     Key? key,
   }) : super(key: key);
 
   /// The user information to display
   final MagicUser baseUser;
 
-  /// Will be called with a new MagicUser object upon saving
-  final Function(MagicUser) saveCallback;
+  /// Whether a "save" button will be added to the widget
+  final bool hasSaveButton;
 
   @override
   _UserEditState createState() => _UserEditState();
-
-  /// Returns the state of this widget to retrieve the user information
-  static _UserEditState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_UserEditState>();
 }
 
 class _UserEditState extends State<UserEdit> {
@@ -61,11 +59,12 @@ class _UserEditState extends State<UserEdit> {
       key: _formKey,
       autovalidateMode: AutovalidateMode.always,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(height: 64),
           Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const SizedBox(height: 64),
               _ProfileInputField(
                 autofocus: true,
                 textValue: _firstName,
@@ -74,11 +73,7 @@ class _UserEditState extends State<UserEdit> {
                   _firstName = newFirstName;
                 }),
               ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Column(
-            children: [
+              const SizedBox(height: 24),
               _ProfileInputField(
                 textValue: _lastName,
                 hint: S.of(context).last_name_hint,
@@ -89,6 +84,24 @@ class _UserEditState extends State<UserEdit> {
               ),
             ],
           ),
+          if (widget.hasSaveButton)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: PlatformElevatedButton(
+                child: DefaultPlatformText(S.of(context).saveChanges),
+                color: Colors.green,
+                onPressed: formState != null && formState!.validate() ||
+                        formState == null
+                    ? () => setState(() {
+                          SharedPreferencesHandler.saveValue(
+                            SettingKeys.user,
+                            userInfo,
+                          );
+                        })
+                    : null,
+                padding: const EdgeInsets.all(8),
+              ),
+            ),
         ],
       ),
     );

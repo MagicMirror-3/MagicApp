@@ -12,18 +12,11 @@ import 'package:magic_app/util/text_types.dart';
 import 'generated/l10n.dart';
 
 /// Supplies a widget enabling the user to switch accounts or change their user info
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  @override
   Widget build(BuildContext context) {
-    FormState? formState = UserEdit.of(context)?.formState;
-
     return SafeMaterialArea(
       child: Stack(
         children: [
@@ -43,26 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Expanded(
                 child: UserEdit(
                   baseUser: SharedPreferencesHandler.getValue(SettingKeys.user),
-                  saveCallback: (user) => setState(() {
-                    SharedPreferencesHandler.saveValue(SettingKeys.user, user);
-                  }),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: PlatformElevatedButton(
-                  child: DefaultPlatformText(S.of(context).saveChanges),
-                  color: Colors.green,
-                  onPressed: formState != null && formState.validate() ||
-                          formState == null
-                      ? () => setState(() {
-                            SharedPreferencesHandler.saveValue(
-                              SettingKeys.user,
-                              UserEdit.of(context)!.userInfo,
-                            );
-                          })
-                      : null,
-                  padding: const EdgeInsets.all(8),
+                  hasSaveButton: true,
                 ),
               ),
             ],
