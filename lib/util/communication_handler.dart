@@ -242,27 +242,28 @@ class CommunicationHandler {
 
   // ---------- [Implementations for predefined routes] ---------- //
 
-  /// Create a new user in the mirror database and returns whether the creation
-  /// was successful.
-  ///
+  /// Create a new user in the mirror database and returns the new user id or -1
+  /// if failed.
   /// [images] should be a list of base64-encoded images.
-  static Future<bool> createUser(
+  static Future<int> createUser(
     String firstname,
     String lastname,
     List<String> images,
   ) async {
     assert(_connected);
 
-    return (await _makeRequest(
-          MagicRoutes.createUser,
-          payload: {
-            "firstname": firstname,
-            "lastname": lastname,
-            "images": images,
-          },
-        ))
-            .statusCode ==
-        201;
+    final response = await _makeRequest(
+      MagicRoutes.createUser,
+      payload: {
+        "firstname": firstname,
+        "lastname": lastname,
+        "images": images,
+      },
+    );
+    if (response.statusCode == 201) {
+      return int.parse(response.body);
+    }
+    return -1;
   }
 
   /// Gets all registered users
