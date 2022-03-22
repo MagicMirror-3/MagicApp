@@ -1,9 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image/image.dart' as img;
 import 'package:learning_face_detection/learning_face_detection.dart';
 import 'package:learning_input_image/learning_input_image.dart';
+
+import 'util/communication_handler.dart';
+
+int numberOfImages = 3;
 
 class Start extends StatefulWidget {
   const Start({Key? key}) : super(key: key);
@@ -25,51 +31,35 @@ class CameraApp extends StatefulWidget {
 }
 
 class _CameraAppState extends State<CameraApp> {
+  // The camera controller
   CameraController? controller;
   late List<CameraDescription> cameras;
-  FaceDetector detector = FaceDetector(
-    mode: FaceDetectorMode.accurate,
-    detectLandmark: false,
-    detectContour: false,
-    enableClassification: false,
-    enableTracking: false,
-    minFaceSize: 0.15,
-  );
-  int frameCounter = 0;
-  List<Face> validFaces = [];
-  late Image image;
 
-  int numberOfImages = 5;
+  // face detection class
+  FaceDetection faceDetection = FaceDetection();
 
-  Future<List<Face>> detectFaces(XFile image) async {
-    File file = File(image.path);
-    InputImage inputImage = InputImage.fromFile(file);
-
-    //the detector needs a InputImage
-    return detector.detect(inputImage);
-  }
-
+  /// start periodically taking images and detecting faces, until [numberOfFaces]
+  /// valid images are detected.
   void startDetection(int numberOfFaces) async {
-    while (validFaces.length != 5) {
+    while (faceDetection.numberOfValidFaces() != numberOfFaces) {
       // wait
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      controller?.takePicture().then((value) async {
-        List<Face> facelist = await detectFaces(value);
-        if (facelist.length == 1) {
-          print("###################### face ########################");
-          validFaces.add(facelist[0]);
-
+      await Future.delayed(const Duration(milliseconds: 300), () {});
+      await controller?.takePicture().then((image) async {
+        // returns true when the image was valid
+        if (await faceDetection.handleNewImage(image)) {
           // update the overlay
           setState(() {});
-        } else {
-          print("###################### no face ########################");
-          print(facelist);
         }
       });
-
-      print("###################### Found 5 faces ########################");
     }
+
+    print("############################# Finished #######################");
+
+    List<XFile> faces = faceDetection.getSavedImages();
+    String base64String = faceDetection.image2base64(faces[0]);
+
+    print(CommunicationHandler.createUser(
+        "test", "testest", "no", [base64String]));
   }
 
   @override
@@ -84,6 +74,7 @@ class _CameraAppState extends State<CameraApp> {
         if (camera.lensDirection == CameraLensDirection.front) {
           frontFacingCamera = camera;
 
+          // connect to the front facing camera
           controller = CameraController(frontFacingCamera, ResolutionPreset.max,
               enableAudio: false);
           await controller!.initialize();
@@ -93,7 +84,7 @@ class _CameraAppState extends State<CameraApp> {
           setState(() {});
           controller?.lockCaptureOrientation(DeviceOrientation.portraitUp);
 
-          // start detection
+          // start face detection
           startDetection(numberOfImages);
         }
       }
@@ -115,27 +106,32 @@ class _CameraAppState extends State<CameraApp> {
       appBar: AppBar(
         title: const Text("Test"),
       ),
-      body: CameraPreview(controller!,
-          child: Overlay(
-            counter: validFaces.length,
-            maxImages: numberOfImages,
-          )),
+      body: CameraPreview(
+        controller!,
+        child: CameraOverlay(
+          counter: faceDetection.numberOfValidFaces(),
+          maxImages: numberOfImages,
+        ),
+      ),
     );
   }
 }
 
-class Overlay extends StatefulWidget {
-  const Overlay({required this.counter, required this.maxImages, Key? key})
+/// This class defines an overlay with a CircularProgressIndicator, which
+/// shows how many pictures have been taken.
+class CameraOverlay extends StatefulWidget {
+  const CameraOverlay(
+      {required this.counter, required this.maxImages, Key? key})
       : super(key: key);
 
   final int counter;
   final int maxImages;
 
   @override
-  _OverlayState createState() => _OverlayState();
+  _CameraOverlayState createState() => _CameraOverlayState();
 }
 
-class _OverlayState extends State<Overlay> {
+class _CameraOverlayState extends State<CameraOverlay> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -175,7 +171,7 @@ class _OverlayState extends State<Overlay> {
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(
                   begin: 0.0, end: widget.counter * 1.0 / widget.maxImages),
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 600),
               builder: (context, value, _) => CircularProgressIndicator(
                 value: value,
                 strokeWidth: 10,
@@ -187,5 +183,68 @@ class _OverlayState extends State<Overlay> {
         ),
       ],
     );
+  }
+}
+
+class FaceDetection {
+  FaceDetector detector = FaceDetector(
+    mode: FaceDetectorMode.fast,
+    detectLandmark: false,
+    detectContour: false,
+    enableClassification: false,
+    enableTracking: false,
+    minFaceSize: 0.15,
+  );
+
+  List<Face> facePositions = [];
+  List<XFile> faceImages = [];
+
+  /// Detect multiple [Face]s from an [image]
+  Future<List<Face>> detectFaces(XFile image) async {
+    // convert the XFile image to an InputImage
+    File file = File(image.path);
+    InputImage inputImage = InputImage.fromFile(file);
+
+    //the detector needs an InputImage
+    return detector.detect(inputImage);
+  }
+
+  /// If exactly one faces is detected in [image], save it.
+  Future<bool> handleNewImage(XFile image) async {
+    List<Face> faces = await detectFaces(image);
+
+    if (faces.length == 1) {
+      facePositions.add(faces[0]);
+      faceImages.add(image);
+      print("###################### ${image.path} ########################");
+      return true;
+    }
+    return false;
+  }
+
+  /// return the number of already saved images
+  int numberOfValidFaces() {
+    return facePositions.length;
+  }
+
+  /// return all saved images of type [XFile]
+  List<XFile> getSavedImages() {
+    return faceImages;
+  }
+
+  /// convert XFile to img.Image
+  img.Image xFile2Image(XFile image) {
+    return img.decodeImage(File(image.path).readAsBytesSync())!;
+  }
+
+  /// crop the face of the image
+  img.Image cropImage(img.Image image, int x, int y, int w, int h) {
+    return img.copyCrop(image, x, y, w, h);
+  }
+
+  /// convert the XFile to base64
+  String image2base64(XFile image) {
+    final bytes = File(image.path).readAsBytesSync();
+    return base64.encode(bytes);
   }
 }
