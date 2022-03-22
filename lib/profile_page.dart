@@ -60,7 +60,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           // Get the data from the input
                           MagicUser tempUser =
                               SharedPreferencesHandler.getValue(
-                                  SettingKeys.tempUser);
+                            SettingKeys.tempUser,
+                          );
 
                           // Save it locally ...
                           SharedPreferencesHandler.saveValue(
