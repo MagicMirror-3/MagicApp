@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_ml_kit/google_ml_kit.dart' as ml;
@@ -12,7 +13,7 @@ import 'package:magic_app/util/utility.dart';
 import '../settings/shared_preferences_handler.dart';
 import '../util/communication_handler.dart';
 
-int numberOfImages = 7;
+int numberOfImages = 5;
 
 class Start extends StatefulWidget {
   const Start({Key? key}) : super(key: key);
@@ -49,6 +50,9 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   // face detection class
   FaceDetection faceDetection = FaceDetection();
 
+  // If true the loading animation is shown as camera overlay
+  Overlays overlay = Overlays.camera;
+
   /// start periodically taking images and detecting faces, until [numberOfFaces]
   /// valid images are detected.
   void startDetection(int numberOfFaces) async {
@@ -63,26 +67,56 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
       });
     }
 
-    await Future.delayed(const Duration(milliseconds: 500), () {});
-    validateImages();
+    faceDetectionFinished();
   }
 
-  /// When enough face images are taken, this method sends these to the controller.
+  /// When enough face images are taken, this method encodes them and sends these to the controller.
   /// The controller can either accept the images or reject them. This bool is passed
-  /// to the parent widget using the callback "onFinished"
-  void validateImages() {
-    // convert saved images to base64 and crop them
-    List<String> base64images = faceDetection.convertAndCrop();
+  /// to the parent widget using the callback "onFinished".
+  void faceDetectionFinished() async {
+    await Future.delayed(const Duration(milliseconds: 500), () {});
+    // update overlay to show loading animation
+    setState(() => overlay = Overlays.processing);
+    // send images to mirror
 
-    /// get "firstname" and "lastname" from shared preferences
+    /// get current user from shared preferences
     MagicUser user = PreferencesAdapter.tempUser;
 
-    // send request to controller
-    CommunicationHandler.createUser(user.firstName, user.lastName, base64images)
-        .then((value) {
-      // notify the parent component, if images where accepted or not
-      widget.onFinished(value);
+    //
+    compute(computeImages, faceDetection).then((base64images) async {
+      // return user_id if creating user was successful, else -1
+      CommunicationHandler.createUser(
+              user.firstName, user.lastName, base64images)
+          .then((userID) async {
+        // user was not created, show a message and the go back to the last
+        // introduction page
+        if (userID == -1) {
+          // update overlay to failed
+          setState(() {
+            overlay = Overlays.failed;
+          });
+
+          await Future.delayed(const Duration(milliseconds: 1000), () {});
+        } else {
+          setState(() {
+            overlay = Overlays.success;
+          });
+
+          await Future.delayed(const Duration(milliseconds: 1000), () {});
+        }
+
+        // sent userId to parent
+        widget.onFinished(userID);
+      });
     });
+  }
+
+  /// Cropping and converting images to base64 is CPU heavy and should be done
+  /// in a separate isolate to avoid blocking the UI thread. Get an instance
+  /// [detection], that holds the face images
+  static Future<List<String>> computeImages(FaceDetection detection) async {
+    // convert saved images to base64 and crop them
+    return detection.convertAndCrop();
   }
 
   @override
@@ -124,28 +158,35 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     faceDetection.dispose();
   }
 
-  /// Return a CameraPreview Widget inside a Scaffold to see
-  Widget cameraWidget(context) {
-    return Scaffold(
-      body: CameraPreview(
-        controller!,
-        child: CameraOverlay(
-          counter: faceDetection.numberOfValidFaces(),
-          maxImages: numberOfImages,
-        ),
-      ),
-      backgroundColor: Colors.black,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (controller == null || !controller!.value.isInitialized) {
       return Container();
     }
-    return cameraWidget(context);
+
+    return Scaffold(
+      body: CameraPreview(controller!,
+          child: (() {
+            if (overlay == Overlays.camera) {
+              return CameraOverlay(
+                counter: faceDetection.numberOfValidFaces(),
+                maxImages: numberOfImages,
+              );
+            } else if (overlay == Overlays.processing) {
+              return const ProcessingOverlay();
+            } else if (overlay == Overlays.failed) {
+              return const FailedOverlay();
+            } else if (overlay == Overlays.success) {
+              return const SuccessOverlay();
+            }
+          }())),
+      backgroundColor: Colors.black,
+    );
   }
 }
+
+/// Defines the types of possible overlays
+enum Overlays { camera, processing, failed, success }
 
 /// This class defines an overlay with a CircularProgressIndicator, which
 /// shows how many pictures have been taken.
@@ -227,6 +268,80 @@ class _CameraOverlayState extends State<CameraOverlay> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Overlay that shows a progress indicator
+class ProcessingOverlay extends StatelessWidget {
+  const ProcessingOverlay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+/// Overlay that shows a failed screen.
+class FailedOverlay extends StatelessWidget {
+  const FailedOverlay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
+            Icon(
+              Icons.clear,
+              color: Colors.red,
+              size: 50,
+            ),
+            Text(
+              "Failed to create user, try again",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Overlay that shows a success screen
+class SuccessOverlay extends StatelessWidget {
+  const SuccessOverlay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(
+              Icons.done,
+              color: Colors.green,
+              size: 50,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
