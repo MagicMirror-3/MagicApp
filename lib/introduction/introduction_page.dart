@@ -97,6 +97,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
           } else {
             setState(() {
               userCreated = false;
+
+              // return to the last introduction page
+              introKey.currentState!.previous();
             });
           }
         },
