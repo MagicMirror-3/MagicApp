@@ -5,7 +5,6 @@ import 'package:magic_app/generated/l10n.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/mirror/module_widget.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
@@ -113,7 +112,7 @@ class _MirrorEditState extends State<MirrorEdit> {
             MirrorLayoutHandler.saveLayout();
 
             // Automatically quit if the user wants to
-            if (SharedPreferencesHandler.getValue(SettingKeys.quitOnSave)) {
+            if (PreferencesAdapter.quitOnSave) {
               Navigator.pop(context);
             }
           }),

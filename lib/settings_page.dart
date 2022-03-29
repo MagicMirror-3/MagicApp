@@ -24,7 +24,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Color prevColor = SharedPreferencesHandler.getValue(SettingKeys.wallColor);
+  Color prevColor = PreferencesAdapter.wallColor;
 
   // void updateDarkMode(bool sliderValue, BuildContext context) {
   //   SharedPreferencesHandler.saveValue(SettingKeys.darkMode, sliderValue);
@@ -33,10 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   /// Switches the alternative appearance of the app (platform)
   void updateAlternativeAppearance(bool sliderValue, BuildContext context) {
-    SharedPreferencesHandler.saveValue(
-      SettingKeys.alternativeAppearance,
-      sliderValue,
-    );
+    PreferencesAdapter.setAlternativeAppearance(sliderValue);
 
     if (sliderValue) {
       isMaterial(context)
@@ -50,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
   /// Update the language of the app and refresh
   void updateLanguage(String language, BuildContext context) {
     if (S.delegate.supportedLocales.contains(Locale(language))) {
-      SharedPreferencesHandler.saveValue(SettingKeys.language, language);
+      PreferencesAdapter.setLanguage(language);
       S.load(Locale(language));
       MagicApp.of(context)!.refreshApp();
     }
@@ -68,8 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     // Alternative Appearance tile
     SettingsTile alternativeAppearanceTile = SettingsTile.switchTile(
-      initialValue:
-          SharedPreferencesHandler.getValue(SettingKeys.alternativeAppearance),
+      initialValue: PreferencesAdapter.isAltAppearance,
       onToggle: (value) => updateAlternativeAppearance(value, context),
       title: Text(S.of(context).settings_alternativeAppearance),
       leading: Icon(PlatformIcons(context).collections),
@@ -90,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
       settingKey: SettingKeys.wallPattern,
       settingChoices: SettingChoices.wallPatternChoices(context),
       selectCallback: (value) => setState(() {
-        SharedPreferencesHandler.saveValue(SettingKeys.wallPattern, value);
+        PreferencesAdapter.setWallPattern(value);
       }),
     );
 
@@ -112,8 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text(S.of(context).settings_wallColor),
             content: SingleChildScrollView(
               child: MagicRingPicker(
-                pickerColor:
-                    SharedPreferencesHandler.getValue(SettingKeys.wallColor),
+                pickerColor: PreferencesAdapter.wallColor,
                 onColorChanged: (color) {
                   tempColor = color;
                 },
@@ -128,10 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
               PlatformDialogAction(
                 child: Text(S.of(context).save),
                 onPressed: () {
-                  SharedPreferencesHandler.saveValue(
-                    SettingKeys.wallColor,
-                    tempColor,
-                  );
+                  PreferencesAdapter.setWallColor(tempColor);
                   Navigator.pop(context, tempColor);
                 },
               ),
@@ -151,15 +143,15 @@ class _SettingsPageState extends State<SettingsPage> {
       settingKey: SettingKeys.mirrorFrame,
       settingChoices: SettingChoices.mirrorFrameChoices(context),
       selectCallback: (value) => setState(() {
-        SharedPreferencesHandler.saveValue(SettingKeys.mirrorFrame, value);
+        PreferencesAdapter.setMirrorFrame(value);
       }),
     );
 
     // Quit on Save
     SettingsTile quitOnSaveTile = SettingsTile.switchTile(
-      initialValue: SharedPreferencesHandler.getValue(SettingKeys.quitOnSave),
+      initialValue: PreferencesAdapter.quitOnSave,
       onToggle: (value) => setState(
-        () => SharedPreferencesHandler.saveValue(SettingKeys.quitOnSave, value),
+        () => PreferencesAdapter.setQuitOnSave(value),
       ),
       leading: Icon(PlatformIcons(context).checkMarkCircledOutline),
       title: Text(S.of(context).settings_quitOnSave),

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:magic_app/mirror/mirror_container.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
-import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
 
@@ -20,9 +18,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   /// Whether the layout is being retrieved from the backend
-  bool loading = SharedPreferencesHandler.getValue(
-    SettingKeys.mirrorRefresh,
-  );
+  bool loading = PreferencesAdapter.mirrorRefresh;
 
   /// Tries getting the layout from the backend
   Future<bool> getLayout() async {
@@ -55,8 +51,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     // Get the name of the user
-    String userName =
-        SharedPreferencesHandler.getValue<MagicUser>(SettingKeys.user).name;
+    String userName = PreferencesAdapter.activeUser.name;
 
     // Wrap the widget in a drag down refresher
     return MagicRefresher(

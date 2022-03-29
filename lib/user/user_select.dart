@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 
@@ -21,7 +20,7 @@ class UserSelect extends StatelessWidget {
 
   /// Called whenever a user is selected from the list
   void userSelected(MagicUser user) {
-    SharedPreferencesHandler.saveValue(SettingKeys.user, user);
+    PreferencesAdapter.setActiveUser(user);
 
     // Execute the callback, if provided
     if (onUserSelected != null) {

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:magic_app/mirror/module.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -30,15 +29,11 @@ class CommunicationHandler {
   /// Saves the given address both locally and in the SharedPreferences.
   static set address(String address) {
     _address = address;
-    SharedPreferencesHandler.saveValue(
-      SettingKeys.mirrorAddress,
-      address,
-    );
+    PreferencesAdapter.setMirrorAddress(address);
   }
 
   /// Get the currently logged in user
-  static MagicUser get _localUser =>
-      SharedPreferencesHandler.getValue(SettingKeys.user);
+  static MagicUser get _localUser => PreferencesAdapter.activeUser;
 
   /// A (potential) persistent connection to the mirror
   static http.Client? _mirrorClient;
@@ -98,8 +93,7 @@ class CommunicationHandler {
     bool autoConnect = false,
     String? mirrorIP,
   }) async {
-    String mirrorAddress = mirrorIP ??
-        SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
+    String mirrorAddress = mirrorIP ?? PreferencesAdapter.mirrorAddress;
 
     // Try connecting to the saved address
     if (mirrorAddress.isNotEmpty) {
