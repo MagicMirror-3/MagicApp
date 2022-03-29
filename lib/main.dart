@@ -9,7 +9,6 @@ import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/profile_page.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
-import 'package:magic_app/user/user_select.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/themes.dart';
 import 'package:magic_app/util/utility.dart';
@@ -109,8 +108,9 @@ class _MagicAppState extends State<MagicApp> {
         MagicUser user = PreferencesAdapter.activeUser;
         if (!user.isRealUser) {
           // Force the user to select a MagicUser if none is logged in
-          mainWidget = UserSelect(
-            onUserSelected: refreshApp,
+          mainWidget = IntroductionPage(
+            showPages: IntroductionPages.user,
+            onDone: refreshApp,
           );
         } else {
           // Show the main app layout
