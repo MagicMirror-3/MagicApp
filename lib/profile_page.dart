@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           // Display a dialog window to cancel the deletion
                           showPlatformDialog(
                             context: context,
-                            builder: (context) => PlatformAlertDialog(
+                            builder: (_) => PlatformAlertDialog(
                               title: const Text("Delete User"),
                               content: const Text(
                                   "Do you really want to delete the user?"),
