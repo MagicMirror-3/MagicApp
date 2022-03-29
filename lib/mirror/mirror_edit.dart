@@ -317,6 +317,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       } else {
         fullValue[subKey] = value;
       }
+
+      setState(() {
+        moduleConfiguration[key] = fullValue;
+      });
+    } else if (listIndex != null) {
+      fullValue[listIndex] = value;
+
       setState(() {
         moduleConfiguration[key] = fullValue;
       });
@@ -347,16 +354,22 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       throw Exception("Display value can not be null!");
     }
 
-    // If either fullValue or subKey are provided, the other one has to be as well
-    if (fullValue != null && subKey == null ||
-        fullValue == null && subKey != null) {
-      throw Exception(
-          "Both fullValue and subKey have to be specified if one of them is!");
-    }
+    // // If either fullValue or subKey are provided, the other one has to be as well
+    // if (fullValue != null && subKey == null ||
+    //     fullValue == null && subKey != null) {
+    //   throw Exception(
+    //       "Both fullValue and subKey have to be specified if one of them is!");
+    // }
 
     // Ensure that the widgets are never cached wrongly by using a custom key
     Key widgetKey = Key("${widget.selectedModule.name}:$key:$keyUpdateFlag");
 
+    // Cast numbers to string to also make them editable
+    if (displayValue is num) {
+      displayValue = displayValue.toString();
+    }
+
+    // TODO: Input for List of Strings without maps
     // Change the widget depending on the type of value
     if (displayValue is String) {
       // Create a text input tile
@@ -364,7 +377,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         title: Text(subKey ?? key),
         trailing: SizedBox(
           // Make this input field the size of a quarter of the screen
-          // TODO: Fix keyboard overlaying input box -> Maybe insert a new element into the widget tree
           width: MediaQuery.of(context).size.width / 4,
           child: PlatformTextFormField(
             key: widgetKey,
@@ -407,6 +419,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     // Needed to validate the text input fields
     FormState? formState = formKey.currentState;
 
+    // TODO: Remove buttons if keyboard is open
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(S.of(context).module_configuration),
@@ -490,14 +503,24 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
           int listIndex = 0;
 
           // Go through every option of a list item and create a tile
-          for (Map<String, dynamic> listItem in value) {
-            for (MapEntry<String, dynamic> entry in listItem.entries) {
+          for (dynamic listItem in value) {
+            if (listItem is Map<String, dynamic>) {
+              for (MapEntry<String, dynamic> entry in listItem.entries) {
+                tiles.add(createSettingsTile(
+                  key,
+                  entry.value,
+                  context,
+                  fullValue: fullValue,
+                  subKey: entry.key,
+                  listIndex: listIndex,
+                ));
+              }
+            } else {
               tiles.add(createSettingsTile(
                 key,
-                entry.value,
+                listItem,
                 context,
                 fullValue: fullValue,
-                subKey: entry.key,
                 listIndex: listIndex,
               ));
             }
@@ -531,8 +554,9 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
             leading: Icon(PlatformIcons(context).addCircledOutline,
                 color: Colors.green),
             onPressed: (_) => setState(() {
-              Map<String, dynamic> mapClone = Map.from(value[value.length - 1]);
-              value.add(mapClone);
+              // Clone the list by taking a sublist
+              dynamic valueClone = value.sublist(value.length - 1)[0];
+              value.add(valueClone);
             }),
           ));
         } else if (value is Map) {
