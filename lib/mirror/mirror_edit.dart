@@ -407,53 +407,55 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     // Needed to validate the text input fields
     FormState? formState = formKey.currentState;
 
-    return Column(
-      children: [
-        PlatformAppBar(
-          title: Text(S.of(context).module_configuration),
-          automaticallyImplyLeading: false,
-          trailingActions: widget.actions,
-        ),
-        Flexible(
-          child: Form(
-            key: formKey,
-            autovalidateMode: AutovalidateMode.always,
-            child: _buildMainContents(context),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: Text(S.of(context).module_configuration),
+        automaticallyImplyLeading: false,
+        trailingActions: widget.actions,
+      ),
+      body: Column(
+        children: [
+          Flexible(
+            child: Form(
+              key: formKey,
+              autovalidateMode: AutovalidateMode.always,
+              child: _buildMainContents(context),
+            ),
           ),
-        ),
-        if (moduleConfiguration.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isMaterial(context)
-                  ? ThemeData.dark().scaffoldBackgroundColor
-                  : darkCupertinoTheme.barBackgroundColor,
-              border: const Border(
-                top: BorderSide(color: Colors.white12),
+          if (moduleConfiguration.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isMaterial(context)
+                    ? ThemeData.dark().scaffoldBackgroundColor
+                    : darkCupertinoTheme.barBackgroundColor,
+                border: const Border(
+                  top: BorderSide(color: Colors.white12),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  PlatformElevatedButton(
+                    child: DefaultPlatformText(S.of(context).saveChanges),
+                    color: Colors.green,
+                    onPressed: formState != null && formState.validate() ||
+                            formState == null
+                        ? () => widget.saveCallback(moduleConfiguration)
+                        : null,
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  PlatformElevatedButton(
+                    child: DefaultPlatformText(S.of(context).cancel),
+                    color: Colors.red,
+                    onPressed: () => widget.cancelCallback(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                PlatformElevatedButton(
-                  child: DefaultPlatformText(S.of(context).saveChanges),
-                  color: Colors.green,
-                  onPressed: formState != null && formState.validate() ||
-                          formState == null
-                      ? () => widget.saveCallback(moduleConfiguration)
-                      : null,
-                  padding: const EdgeInsets.all(8),
-                ),
-                PlatformElevatedButton(
-                  child: DefaultPlatformText(S.of(context).cancel),
-                  color: Colors.red,
-                  onPressed: () => widget.cancelCallback(),
-                  padding: const EdgeInsets.all(8),
-                ),
-              ],
-            ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
