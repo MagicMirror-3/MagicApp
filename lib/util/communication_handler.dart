@@ -144,7 +144,7 @@ class CommunicationHandler {
     }
 
     Uri targetURI = createRouteURI(route, host: host, getParams: payload);
-    timeout ??= const Duration(seconds: 1);
+    timeout ??= const Duration(seconds: 2);
 
     late http.Response response;
     switch (route.type) {
@@ -401,7 +401,7 @@ class CommunicationHandler {
             payload: {
               "user_id": _localUser.id,
               "module": module.name,
-              "configuration": module.config ?? {},
+              "configuration": json.encode(module.config ?? {}),
             },
           ))
               .statusCode ==

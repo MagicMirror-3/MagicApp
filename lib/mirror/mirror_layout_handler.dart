@@ -23,7 +23,7 @@ class MirrorLayoutHandler {
   /// Every available additional module
   ///
   /// Note: Use [addModule] instead of [add] to add a module to the catalog.
-  static late List<Module> moduleCatalog;
+  static List<Module> moduleCatalog = [];
 
   /// Needed for the temporary moving of modules on hover
   static Module? _tempMovedModule;
@@ -77,8 +77,18 @@ class MirrorLayoutHandler {
   }
 
   /// Refresh the module catalog
+  ///
+  /// Only adds the module to the catalog if they are not contained in the layout
   static Future _refreshCatalog() async {
-    moduleCatalog = await CommunicationHandler.getModules();
+    moduleCatalog = [];
+
+    List<String> moduleNames =
+        _layout.modules.values.map((e) => e.name).toList();
+    for (Module m in await CommunicationHandler.getModules()) {
+      if (!moduleNames.contains(m.name)) {
+        moduleCatalog.add(m);
+      }
+    }
   }
 
   /// Save the current layout to the preferences and backend
