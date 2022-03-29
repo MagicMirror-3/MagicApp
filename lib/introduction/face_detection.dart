@@ -160,6 +160,9 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // remove keyboard focus
+    FocusScope.of(context).unfocus();
+
     if (controller == null || !controller!.value.isInitialized) {
       return Container();
     }
@@ -185,7 +188,7 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   }
 }
 
-/// Defines the types of possible overlays
+/// Defines the types of possible overlays of the camera
 enum Overlays { camera, processing, failed, success }
 
 /// This class defines an overlay with a CircularProgressIndicator, which

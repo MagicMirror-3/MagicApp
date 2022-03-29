@@ -10,6 +10,7 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import 'generated/l10n.dart';
+import 'main.dart';
 
 /// Supplies a widget enabling the user to switch accounts or change their user info
 class ProfilePage extends StatefulWidget {
@@ -44,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
             setState(() {
               baseUser = PreferencesAdapter.activeUser;
             });
+            MagicApp.of(context)?.refreshApp();
           },
         ),
       ),
