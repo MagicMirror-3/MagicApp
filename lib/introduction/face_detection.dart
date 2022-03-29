@@ -30,7 +30,7 @@ class _StartState extends State<Start> {
 }
 
 /// This widget is the main Face Registration Screen, it contains a face
-/// recognition, that consequently saves image that contains a persons face.
+/// recognition service, that consequently saves images that contains a persons face.
 /// This is visualized using an overlay.
 class FaceRegistrationScreen extends StatefulWidget {
   const FaceRegistrationScreen({required Function this.onFinished, Key? key})
@@ -68,17 +68,20 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     validateImages();
   }
 
+  /// When enough face images are taken, this method sends these to the controller.
+  /// The controller can either accept the images or reject them. This bool is passed
+  /// to the parent widget using the callback "onFinished"
   void validateImages() {
-    /// convert saved images to base64 and crop them
+    // convert saved images to base64 and crop them
     List<String> base64images = faceDetection.convertAndCrop();
 
-    /// get "firstname" and "lastname" from shared preferences
+    // get "firstname" and "lastname" from shared preferences
     MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.tempUser);
 
-    /// send reuqest to controller
+    // send request to controller
     CommunicationHandler.createUser(user.firstName, user.lastName, base64images)
         .then((value) {
-      /// notify the parent component, if images where accepted or not
+      // notify the parent component, if images where accepted or not
       widget.onFinished(value);
     });
   }
@@ -86,30 +89,33 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    availableCameras().then((value) async {
-      cameras = value;
+    availableCameras().then(
+      (value) async {
+        cameras = value;
 
-      // select the front facing camera
-      CameraDescription frontFacingCamera;
-      for (CameraDescription camera in cameras) {
-        if (camera.lensDirection == CameraLensDirection.front) {
-          frontFacingCamera = camera;
+        // select the front facing camera
+        CameraDescription frontFacingCamera;
+        for (CameraDescription camera in cameras) {
+          if (camera.lensDirection == CameraLensDirection.front) {
+            frontFacingCamera = camera;
 
-          // connect to the front facing camera
-          controller = CameraController(frontFacingCamera, ResolutionPreset.max,
-              enableAudio: false);
-          await controller!.initialize();
-          if (!mounted) {
-            return;
+            // connect to the front facing camera
+            controller = CameraController(
+                frontFacingCamera, ResolutionPreset.max,
+                enableAudio: false);
+            await controller!.initialize();
+            if (!mounted) {
+              return;
+            }
+            setState(() {});
+            controller?.lockCaptureOrientation(DeviceOrientation.portraitUp);
+
+            // start face detection
+            startDetection(numberOfImages);
           }
-          setState(() {});
-          controller?.lockCaptureOrientation(DeviceOrientation.portraitUp);
-
-          // start face detection
-          startDetection(numberOfImages);
         }
-      }
-    });
+      },
+    );
   }
 
   @override
@@ -119,18 +125,26 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     faceDetection.dispose();
   }
 
+  /// Return a CameraPreview Widget inside a Scaffold to see
+  Widget cameraWidget(context) {
+    return Scaffold(
+      body: CameraPreview(
+        controller!,
+        child: CameraOverlay(
+          counter: faceDetection.numberOfValidFaces(),
+          maxImages: numberOfImages,
+        ),
+      ),
+      backgroundColor: Colors.black,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (controller == null || !controller!.value.isInitialized) {
       return Container();
     }
-    return CameraPreview(
-      controller!,
-      child: CameraOverlay(
-        counter: faceDetection.numberOfValidFaces(),
-        maxImages: numberOfImages,
-      ),
-    );
+    return cameraWidget(context);
   }
 }
 
@@ -182,19 +196,34 @@ class _CameraOverlayState extends State<CameraOverlay> {
           ),
         ),
         Center(
-          child: SizedBox(
-            height: 350,
-            width: 350,
-            child: TweenAnimationBuilder<double>(
-              tween: Tween<double>(
-                  begin: 0.0, end: widget.counter * 1.0 / widget.maxImages),
-              duration: const Duration(milliseconds: 400),
-              builder: (context, value, _) => CircularProgressIndicator(
-                value: value,
-                strokeWidth: 10,
-                backgroundColor: Colors.black,
-                color: Colors.white,
+          child: LayoutBuilder(
+            builder: (_, BoxConstraints constraints) => SizedBox.square(
+              dimension: constraints.maxWidth - 10,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                    begin: 0.0, end: widget.counter * 1.0 / widget.maxImages),
+                duration: const Duration(milliseconds: 400),
+                builder: (context, value, _) => CircularProgressIndicator(
+                  value: value,
+                  strokeWidth: 10,
+                  backgroundColor: Colors.black,
+                  color: Colors.white,
+                ),
               ),
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 510, 0, 0),
+          child: Center(
+            child: Text(
+              "Configuring Face Recognition for the Mirror. "
+              "Please position your head in the center of the circle.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
@@ -256,6 +285,7 @@ class FaceDetection {
     return base64.encode(bytes);
   }
 
+  /// Crop the image based on it´s face position and convert it to base64
   List<String> convertAndCrop() {
     List<String> base64images = [];
 
