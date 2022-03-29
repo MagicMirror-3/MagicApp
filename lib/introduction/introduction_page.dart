@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:magic_app/introduction/connect_mirror.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_select.dart';
 import 'package:magic_app/util/text_types.dart';
@@ -52,10 +51,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
   /// ready to use the app
   void _onDone(BuildContext context) {
     if (widget.showPages == IntroductionPages.all) {
-      SharedPreferencesHandler.saveValue(
-        SettingKeys.firstUse,
-        false,
-      );
+      PreferencesAdapter.setFirstUse(false);
     }
 
     if (widget.onDone != null) {
@@ -88,18 +84,13 @@ class _IntroductionPageState extends State<IntroductionPage> {
           // print("Backed answered with $userID");
           if (userID != -1) {
             // Save the new user and set it as active
-            MagicUser tempUser = SharedPreferencesHandler.getValue(
-              SettingKeys.tempUser,
-            );
+            MagicUser tempUser = PreferencesAdapter.tempUser;
 
-            SharedPreferencesHandler.saveValue(
-              SettingKeys.user,
-              MagicUser(
-                id: userID,
-                firstName: tempUser.firstName,
-                lastName: tempUser.lastName,
-              ),
-            );
+            PreferencesAdapter.setActiveUser(MagicUser(
+              id: userID,
+              firstName: tempUser.firstName,
+              lastName: tempUser.lastName,
+            ));
 
             // Close this
             _onDone(context);

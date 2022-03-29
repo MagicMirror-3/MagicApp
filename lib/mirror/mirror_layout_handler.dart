@@ -21,6 +21,8 @@ class MirrorLayoutHandler {
   }
 
   /// Every available additional module
+  ///
+  /// Note: Use [addModule] instead of [add] to add a module to the catalog.
   static late List<Module> moduleCatalog;
 
   /// Needed for the temporary moving of modules on hover
@@ -31,6 +33,12 @@ class MirrorLayoutHandler {
 
   /// True, if layout and catalog are present
   static bool get isReady => _initialized;
+
+  /// Whether the layout was modified by the user
+  static bool _unsavedChanges = false;
+
+  /// Whether the layout was modified by the user
+  static bool get unsavedChanges => _unsavedChanges;
 
   /// Initialize layout and catalog
   ///
@@ -56,6 +64,7 @@ class MirrorLayoutHandler {
     }
 
     _initialized = tempLayout != null;
+    _unsavedChanges = false;
   }
 
   /// Load the default layout from the [default_layout.json] file
@@ -74,7 +83,9 @@ class MirrorLayoutHandler {
 
   /// Save the current layout to the preferences and backend
   static void saveLayout() {
-    CommunicationHandler.updateLayout(_layout);
+    CommunicationHandler.updateLayout(_layout).then(
+      (value) => _unsavedChanges = !value,
+    );
   }
 
   /// Permanently moves [module] to the given [position] in the layout.
@@ -98,14 +109,14 @@ class MirrorLayoutHandler {
       // Add the current module to the catalog if the new module is from the menu
       if (module.originalPosition == ModulePosition.menu) {
         moduleCatalog.remove(module);
-        moduleCatalog.add(currentModule);
+        moduleCatalog.addModule(currentModule);
       }
     }
 
     // Module is removed from layout
     if (position == ModulePosition.menu) {
       _layout.removeModule(module);
-      moduleCatalog.add(module);
+      moduleCatalog.addModule(module);
     } else {
       // Move the modules in the layout
       // The 'position' field will be changed by this method
@@ -144,6 +155,8 @@ class MirrorLayoutHandler {
   /// Undoes the last temporary move my moving the module back to its position
   static void undoTemporaryMove() {
     assert(_initialized);
+
+    _unsavedChanges = true;
 
     if (_tempMovedModule != null) {
       // Move the module back to it's original position
@@ -238,5 +251,14 @@ class MirrorLayout {
   /// Removes a module from the layout -> Probably to put it into the catalog
   void removeModule(Module module) {
     modules.remove(module.position);
+  }
+}
+
+extension ModuleCatalogExtension on List<Module> {
+  /// Add a module to the catalog and update the configuration in the database
+  /// by calling a route in the [CommunicationHandler]
+  void addModule(Module module) {
+    add(module);
+    CommunicationHandler.updateModuleConfiguration(module);
   }
 }

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:magic_app/mirror/module.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -30,11 +29,11 @@ class CommunicationHandler {
   /// Saves the given address both locally and in the SharedPreferences.
   static set address(String address) {
     _address = address;
-    SharedPreferencesHandler.saveValue(
-      SettingKeys.mirrorAddress,
-      address,
-    );
+    PreferencesAdapter.setMirrorAddress(address);
   }
+
+  /// Get the currently logged in user
+  static MagicUser get _localUser => PreferencesAdapter.activeUser;
 
   /// A (potential) persistent connection to the mirror
   static http.Client? _mirrorClient;
@@ -94,8 +93,7 @@ class CommunicationHandler {
     bool autoConnect = false,
     String? mirrorIP,
   }) async {
-    String mirrorAddress = mirrorIP ??
-        SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
+    String mirrorAddress = mirrorIP ?? PreferencesAdapter.mirrorAddress;
 
     // Try connecting to the saved address
     if (mirrorAddress.isNotEmpty) {
@@ -294,16 +292,13 @@ class CommunicationHandler {
   static Future<bool> updateUserData() async {
     assert(_connected);
 
-    // Get the local user
-    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
-
-    if (localUser.isRealUser) {
+    if (_localUser.isRealUser) {
       return (await _makeRequest(
             MagicRoutes.updateUser,
             payload: {
-              "user_id": localUser.id,
-              "firstname": localUser.firstName,
-              "lastname": localUser.lastName,
+              "user_id": _localUser.id,
+              "firstname": _localUser.firstName,
+              "lastname": _localUser.lastName,
             },
           ))
               .statusCode ==
@@ -318,14 +313,11 @@ class CommunicationHandler {
   static Future<bool> deleteUser() async {
     assert(_connected);
 
-    // Get the local user
-    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
-
-    if (localUser.isRealUser) {
+    if (_localUser.isRealUser) {
       return (await _makeRequest(
             MagicRoutes.deleteUser,
             payload: {
-              "user_id": localUser.id,
+              "user_id": _localUser.id,
             },
           ))
               .statusCode ==
@@ -341,14 +333,11 @@ class CommunicationHandler {
   static Future<MirrorLayout?> getMirrorLayout() async {
     assert(_connected);
 
-    // Get the local user
-    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
-
-    if (localUser.isRealUser) {
+    if (_localUser.isRealUser) {
       http.Response response = await _makeRequest(
         MagicRoutes.getLayout,
         payload: {
-          "user_id": localUser.id,
+          "user_id": _localUser.id,
         },
       );
 
@@ -373,13 +362,10 @@ class CommunicationHandler {
   static Future<bool> updateLayout(MirrorLayout layout) async {
     assert(_connected);
 
-    // Get the local user
-    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
-
-    if (localUser.isRealUser) {
+    if (_localUser.isRealUser) {
       return (await _makeRequest(
             MagicRoutes.setLayout,
-            payload: {"user_id": localUser.id, "layout": layout.toString()},
+            payload: {"user_id": _localUser.id, "layout": layout.toString()},
           ))
               .statusCode ==
           201;
@@ -392,14 +378,11 @@ class CommunicationHandler {
   static Future<List<Module>> getModules() async {
     assert(_connected);
 
-    // Get the local user
-    MagicUser localUser = SharedPreferencesHandler.getValue(SettingKeys.user);
-
     List<Module> modules = [];
-    if (localUser.isRealUser) {
+    if (_localUser.isRealUser) {
       String moduleString = (await _makeRequest(
         MagicRoutes.getModules,
-        payload: {"user_id": localUser.id},
+        payload: {"user_id": _localUser.id},
         timeout: const Duration(seconds: 1),
       ))
           .body;
@@ -408,6 +391,24 @@ class CommunicationHandler {
     }
 
     return modules;
+  }
+
+  /// Updates the configuration of a given module in the catalog
+  static Future<bool> updateModuleConfiguration(Module module) async {
+    if (_localUser.isRealUser) {
+      return (await _makeRequest(
+            MagicRoutes.updateModuleConfiguration,
+            payload: {
+              "user_id": _localUser.id,
+              "module": module.name,
+              "configuration": module.config ?? {},
+            },
+          ))
+              .statusCode ==
+          201;
+    } else {
+      throw ArgumentError("There is no user logged in at the moment!");
+    }
   }
 }
 
@@ -465,6 +466,13 @@ class MagicRoutes {
   static const getModules = _MagicRoute(
     route: "getModules",
     params: ["user_id"],
+  );
+
+  /// Updates the configuration of a module in the catalog
+  static const updateModuleConfiguration = _MagicRoute(
+    route: "updateModuleConfiguration",
+    type: _RouteType.POST,
+    params: ["user_id", "module", "configuration"],
   );
 }
 

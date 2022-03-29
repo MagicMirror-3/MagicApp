@@ -83,3 +83,114 @@ class SharedPreferencesHandler {
     _preferences.remove(key);
   }
 }
+
+class PreferencesAdapter {
+  const PreferencesAdapter._();
+
+  /// Whether the application is used for the first time and should show an
+  /// [IntroductionScreen]
+  static bool get isFirstUse =>
+      SharedPreferencesHandler.getValue(SettingKeys.firstUse);
+
+  /// Update the firstUse value. Typically called after the introduction is over
+  static void setFirstUse(bool value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.firstUse, value);
+
+  /// Whether the layout should be fetched again from the database
+  static bool get mirrorRefresh =>
+      SharedPreferencesHandler.getValue(SettingKeys.mirrorRefresh);
+
+  /// Sets whether the layout should be fetched again from the database
+  static void setMirrorRefresh(bool value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, value);
+
+  /// The IP address of the MagicMirror
+  static String get mirrorAddress =>
+      SharedPreferencesHandler.getValue(SettingKeys.mirrorAddress);
+
+  /// Sets the IP address of the MagicMirror. Usually called after a successful
+  /// connection
+  static void setMirrorAddress(String value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.mirrorAddress, value);
+
+  /// The currently logged in user
+  static MagicUser get activeUser =>
+      SharedPreferencesHandler.getValue(SettingKeys.user);
+
+  /// Updates the logged in user. Usually called after a new user was created or
+  /// selected from the list.
+  ///
+  /// This also marks a layout refresh for the next time the mirror page is opened.
+  static void setActiveUser(MagicUser value) {
+    SharedPreferencesHandler.saveValue(SettingKeys.user, value);
+    SharedPreferencesHandler.saveValue(SettingKeys.tempUser, value);
+
+    // Also refresh the layout
+    PreferencesAdapter.setMirrorRefresh(true);
+  }
+
+  /// A temporary [MagicUser] object to make changes to
+  static MagicUser get tempUser =>
+      SharedPreferencesHandler.getValue(SettingKeys.tempUser);
+
+  /// Updates the temporary user. Usually called after the profile was edited
+  /// and not yet saved
+  static void setTempUser(MagicUser value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.tempUser, value);
+
+  /// Whether the app is in dark mode. This is always [true] (for now)
+  static bool get isDarkMode =>
+      SharedPreferencesHandler.getValue(SettingKeys.darkMode);
+
+  /// Whether to display the app in iOS layout on Android or vice versa
+  static bool get isAltAppearance =>
+      SharedPreferencesHandler.getValue(SettingKeys.alternativeAppearance);
+
+  /// Update the alternativeAppearance. [true] means that the other design is
+  /// used
+  static void setAlternativeAppearance(bool value) =>
+      SharedPreferencesHandler.saveValue(
+        SettingKeys.alternativeAppearance,
+        value,
+      );
+
+  /// The language code to display the app in. Only "de" and "en" are supported
+  static String get language =>
+      SharedPreferencesHandler.getValue(SettingKeys.language);
+
+  /// Updates the language of the application. Only "de" and "en" are accepted
+  static void setLanguage(String value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.language, value);
+
+  /// The name of the image to use as a background pattern.
+  static String get wallPattern =>
+      SharedPreferencesHandler.getValue(SettingKeys.wallPattern);
+
+  /// Sets the name of the image to use as a background pattern.
+  static void setWallPattern(String value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.wallPattern, value);
+
+  /// The color of the wall behind the mirror
+  static Color get wallColor =>
+      SharedPreferencesHandler.getValue(SettingKeys.wallColor);
+
+  /// Sets the color of the wall behind the mirror
+  static void setWallColor(Color value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.wallColor, value);
+
+  /// The name of the image to use as a frame around the mirror.
+  static String get mirrorFrame =>
+      SharedPreferencesHandler.getValue(SettingKeys.mirrorFrame);
+
+  /// Sets the name of the image to use as a frame around the mirror.
+  static void setMirrorFrame(String value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.mirrorFrame, value);
+
+  /// Whether [MirrorEdit] is quit automatically once the user saves the layout
+  static bool get quitOnSave =>
+      SharedPreferencesHandler.getValue(SettingKeys.quitOnSave);
+
+  /// Sets whether [MirrorEdit] is quit automatically once the user saves the layout
+  static void setQuitOnSave(bool value) =>
+      SharedPreferencesHandler.saveValue(SettingKeys.quitOnSave, value);
+}

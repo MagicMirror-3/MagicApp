@@ -104,9 +104,8 @@ class MagicSettingsList extends StatelessWidget {
       lightTheme: isMaterial(context)
           ? lightMaterialSettingsTheme
           : lightCupertinoSettingsTheme,
-      brightness: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
-          ? Brightness.dark
-          : Brightness.light,
+      brightness:
+          PreferencesAdapter.isDarkMode ? Brightness.dark : Brightness.light,
       // iOS and Android
       applicationType: ApplicationType.both,
       sections: sections,

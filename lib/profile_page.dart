@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/introduction/introduction_page.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/user/user_edit.dart';
 import 'package:magic_app/util/communication_handler.dart';
@@ -26,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    baseUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+    baseUser = PreferencesAdapter.activeUser;
 
     super.initState();
   }
@@ -43,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
           onDone: () {
             Navigator.pop(context);
             setState(() {
-              baseUser = SharedPreferencesHandler.getValue(SettingKeys.user);
+              baseUser = PreferencesAdapter.activeUser;
             });
           },
         ),
@@ -91,32 +90,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           // change to the introduction screen
 
                           // Display a dialog window to cancel the deletion
-                          showPlatformDialog(
-                            context: context,
-                            builder: (_) => PlatformAlertDialog(
-                              title: const Text("Delete User"),
-                              content: const Text(
-                                  "Do you really want to delete the user?"),
-                              actions: [
-                                PlatformDialogAction(
-                                  child: Text(S.of(context).cancel),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                PlatformDialogAction(
-                                  child: Text(S.of(context).delete),
-                                  onPressed: () {
-                                    // send a request to delete the user
-                                    CommunicationHandler.deleteUser()
-                                        .then((succesful) {
-                                      if (succesful) {
-                                        _openUserIntroduction(context);
-                                      }
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ),
+                          showYesNoPrompt(
+                            context,
+                            title: S.of(context).deleteUser,
+                            description: S.of(context).prompt_deleteUser,
+                            confirmationText: S.of(context).delete,
+                            successCallback: () {
+                              // send a request to delete the user
+                              CommunicationHandler.deleteUser().then((success) {
+                                if (success) {
+                                  _openUserIntroduction(context);
+                                }
+                              });
+                            },
                           );
                         },
                         padding: const EdgeInsets.all(8),
@@ -126,16 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         color: Colors.green,
                         onPressed: enableButton
                             ? () {
-                                // Get the data from the input
-                                MagicUser tempUser =
-                                    SharedPreferencesHandler.getValue(
-                                  SettingKeys.tempUser,
-                                );
-
-                                // Save it locally ...
-                                SharedPreferencesHandler.saveValue(
-                                  SettingKeys.user,
-                                  tempUser,
+                                // Get the data from the input and save it locally ...
+                                PreferencesAdapter.setActiveUser(
+                                  PreferencesAdapter.tempUser,
                                 );
 
                                 // ... and on the backend

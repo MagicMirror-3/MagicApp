@@ -55,6 +55,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_mirror_found": MessageLookupByLibrary.simpleMessage(
             "No MagicMirror found! Please make sure it is turned on and connected to your network!"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
+        "prompt_deleteUser": MessageLookupByLibrary.simpleMessage(
+            "Do you really want to delete the user?"),
+        "prompt_sure": MessageLookupByLibrary.simpleMessage("Are you sure?"),
+        "prompt_unsavedChanges": MessageLookupByLibrary.simpleMessage(
+            "You have unsaved changes. Are you sure you want to exit?"),
         "removeListItem": MessageLookupByLibrary.simpleMessage("Remove item"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "saveChanges": MessageLookupByLibrary.simpleMessage("Save changes"),
@@ -99,6 +104,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Wall Pattern"),
         "settings_whiteWall":
             MessageLookupByLibrary.simpleMessage("White Wall"),
+        "title_unsavedChanges":
+            MessageLookupByLibrary.simpleMessage("Unsaved Changes"),
+        "yes": MessageLookupByLibrary.simpleMessage("Yes"),
         "your_profile": MessageLookupByLibrary.simpleMessage("Your profile")
       };
 }

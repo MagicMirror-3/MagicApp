@@ -5,7 +5,6 @@ import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../generated/l10n.dart';
-import '../settings/constants.dart';
 
 /// Provides a widget to edit the first and last name of the user
 class UserEdit extends StatefulWidget {
@@ -60,7 +59,7 @@ class _UserEditState extends State<UserEdit> {
       _firstName = firstName;
       _lastName = lastName;
     });
-    SharedPreferencesHandler.saveValue(SettingKeys.tempUser, userInfo);
+    PreferencesAdapter.setTempUser(userInfo);
 
     widget.onInputChanged(_formKey.currentState!.validate());
   }

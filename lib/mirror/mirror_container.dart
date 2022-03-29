@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 
 import 'mirror_view.dart';
@@ -84,7 +83,7 @@ class MirrorBackground extends StatelessWidget {
     // Wall texture from: https://www.freepik.com/free-photo/white-plaster-texture_1034065.htm
     // Retrieve the image from the value in the local storage
     AssetImage backgroundImage = AssetImage(
-      "assets/patterns/wall/${SharedPreferencesHandler.getValue(SettingKeys.wallPattern)}",
+      "assets/patterns/wall/${PreferencesAdapter.wallPattern}",
     );
 
     return Container(
@@ -92,7 +91,7 @@ class MirrorBackground extends StatelessWidget {
       alignment: Alignment.center,
       // Decorate the container with a color and image
       decoration: BoxDecoration(
-        color: SharedPreferencesHandler.getValue(SettingKeys.wallColor),
+        color: PreferencesAdapter.wallColor,
         image: DecorationImage(
           image: backgroundImage,
           // The texture should fill the entire screen by repeating itself
@@ -117,7 +116,7 @@ class MirrorFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     // Texture from: https://www.ikea.com/de/de/p/dalskaerr-rahmen-holzeffekt-hellbraun-80374217/
     AssetImage borderImage = AssetImage(
-      "assets/patterns/mirror_frame/${SharedPreferencesHandler.getValue(SettingKeys.mirrorFrame)}",
+      "assets/patterns/mirror_frame/${PreferencesAdapter.mirrorFrame}",
     );
 
     return Container(

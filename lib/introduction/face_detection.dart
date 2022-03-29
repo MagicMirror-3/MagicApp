@@ -7,7 +7,6 @@ import 'package:google_ml_kit/google_ml_kit.dart' as ml;
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as img;
 import 'package:learning_input_image/learning_input_image.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/util/utility.dart';
 
 import '../settings/shared_preferences_handler.dart';
@@ -75,8 +74,8 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     // convert saved images to base64 and crop them
     List<String> base64images = faceDetection.convertAndCrop();
 
-    // get "firstname" and "lastname" from shared preferences
-    MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.tempUser);
+    /// get "firstname" and "lastname" from shared preferences
+    MagicUser user = PreferencesAdapter.tempUser;
 
     // send request to controller
     CommunicationHandler.createUser(user.firstName, user.lastName, base64images)

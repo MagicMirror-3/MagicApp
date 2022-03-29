@@ -7,7 +7,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/mirror/mirror_layout_handler.dart';
 import 'package:magic_app/profile_page.dart';
-import 'package:magic_app/settings/constants.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/settings_page.dart';
 import 'package:magic_app/user/user_select.dart';
@@ -32,7 +31,7 @@ void main() async {
   await SharedPreferencesHandler.init();
 
   // Refresh the mirror layout on startup
-  SharedPreferencesHandler.saveValue(SettingKeys.mirrorRefresh, true);
+  PreferencesAdapter.setMirrorRefresh(true);
 
   // Try connecting to the mirror
   await CommunicationHandler.connectToMirror();
@@ -59,7 +58,34 @@ class MagicApp extends StatefulWidget {
 class _MagicAppState extends State<MagicApp> {
   /// Triggers a rebuild by calling [setState]
   void refreshApp() {
+    _checkUserValidity();
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserValidity();
+  }
+
+  /// Checks whether the logged in user still exists
+  void _checkUserValidity() async {
+    if (CommunicationHandler.isConnected) {
+      List<MagicUser> users = await CommunicationHandler.getUsers();
+      MagicUser activeUser = PreferencesAdapter.activeUser;
+
+      // Check whether the user is still known to the backend
+      for (MagicUser knownUser in users) {
+        if (activeUser.id == knownUser.id) {
+          return;
+        }
+      }
+
+      // Otherwise, reset the user -> Take the user to the select page
+      PreferencesAdapter.setActiveUser(const MagicUser());
+
+      setState(() {});
+    }
   }
 
   @override
@@ -72,7 +98,7 @@ class _MagicAppState extends State<MagicApp> {
   @override
   Widget build(BuildContext context) {
     Widget mainWidget = Container();
-    if (SharedPreferencesHandler.getValue(SettingKeys.firstUse)) {
+    if (PreferencesAdapter.isFirstUse) {
       // Show the introduction if it's the first time the user launched the app
       mainWidget = const IntroductionPage();
     } else {
@@ -80,7 +106,7 @@ class _MagicAppState extends State<MagicApp> {
         // Show the Connect screen, if no mirror is connected
         mainWidget = ConnectMirror(onSuccessfulConnection: () => refreshApp());
       } else {
-        MagicUser user = SharedPreferencesHandler.getValue(SettingKeys.user);
+        MagicUser user = PreferencesAdapter.activeUser;
         if (!user.isRealUser) {
           // Force the user to select a MagicUser if none is logged in
           mainWidget = UserSelect(
@@ -113,9 +139,7 @@ class _MagicAppState extends State<MagicApp> {
           // Only support the translated languages
           supportedLocales: S.delegate.supportedLocales,
           // Set the language by retrieving the value from the local storage
-          locale: Locale(
-            SharedPreferencesHandler.getValue(SettingKeys.language),
-          ),
+          locale: Locale(PreferencesAdapter.language),
           title: "Magic App",
           // Material wrapper is needed for some widgets to work
           home: Material(type: MaterialType.transparency, child: mainWidget),
@@ -123,23 +147,22 @@ class _MagicAppState extends State<MagicApp> {
           material: (_, __) => MaterialAppData(
             theme: lightMaterialTheme,
             darkTheme: darkMaterialTheme,
-            themeMode: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
+            themeMode: PreferencesAdapter.isDarkMode
                 ? ThemeMode.dark
                 : ThemeMode.light,
           ),
           // Load the cupertino themes
           cupertino: (_, __) => CupertinoAppData(
-            theme: SharedPreferencesHandler.getValue(SettingKeys.darkMode)
+            theme: PreferencesAdapter.isDarkMode
                 ? darkCupertinoTheme
                 : lightCupertinoTheme,
           ),
         ),
         // Selected the correct platform
-        initialPlatform: SharedPreferencesHandler.getValue(
-                    SettingKeys.alternativeAppearance) ||
-                !isMaterial(context)
-            ? TargetPlatform.iOS
-            : TargetPlatform.android,
+        initialPlatform:
+            PreferencesAdapter.isAltAppearance || !isMaterial(context)
+                ? TargetPlatform.iOS
+                : TargetPlatform.android,
       ),
     );
   }

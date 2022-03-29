@@ -140,11 +140,41 @@ class S {
     );
   }
 
+  /// `Do you really want to delete the user?`
+  String get prompt_deleteUser {
+    return Intl.message(
+      'Do you really want to delete the user?',
+      name: 'prompt_deleteUser',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Default`
   String get defaultString {
     return Intl.message(
       'Default',
       name: 'defaultString',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure?`
+  String get prompt_sure {
+    return Intl.message(
+      'Are you sure?',
+      name: 'prompt_sure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message(
+      'Yes',
+      name: 'yes',
       desc: '',
       args: [],
     );
@@ -325,6 +355,26 @@ class S {
     return Intl.message(
       'Add item',
       name: 'addListItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsaved Changes`
+  String get title_unsavedChanges {
+    return Intl.message(
+      'Unsaved Changes',
+      name: 'title_unsavedChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have unsaved changes. Are you sure you want to exit?`
+  String get prompt_unsavedChanges {
+    return Intl.message(
+      'You have unsaved changes. Are you sure you want to exit?',
+      name: 'prompt_unsavedChanges',
       desc: '',
       args: [],
     );
