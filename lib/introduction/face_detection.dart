@@ -231,6 +231,7 @@ class _CameraOverlayState extends State<CameraOverlay> {
   }
 }
 
+/// Class that wraps the GoogleMLKit Face Detector and saves Face Images.
 class FaceDetection {
   FaceDetector detector =
       GoogleMlKit.vision.faceDetector(const ml.FaceDetectorOptions(
