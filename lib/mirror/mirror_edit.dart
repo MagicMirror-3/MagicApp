@@ -413,7 +413,16 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       );
     } else {
       // Create an empty tile. This shouldn't happen tho
-      return SettingsTile(title: Text(key));
+      return SettingsTile(
+        title: Text(
+          // Display every available information about the available keys
+          "$key${subKey != null ? '.$subKey' : ''}.$displayValue",
+        ),
+        trailing: Icon(
+          PlatformIcons(context).error,
+          color: Colors.redAccent,
+        ),
+      );
     }
   }
 
