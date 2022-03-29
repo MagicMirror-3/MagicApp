@@ -288,6 +288,10 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
   /// Triggers a refresh of the Flutter widget cache
   bool keyUpdateFlag = false;
 
+  /// Checks the bottom view insets of the [MediaQuery] to determine whether the
+  /// keyboard is open
+  bool get isKeyboardOpen => !(MediaQuery.of(context).viewInsets.bottom == 0.0);
+
   /// Saves a change in the mirror configuration to the local configuration map.
   ///
   /// The module configuration can have multiple layers of maps and lists.
@@ -369,7 +373,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
       displayValue = displayValue.toString();
     }
 
-    // TODO: Input for List of Strings without maps
     // Change the widget depending on the type of value
     if (displayValue is String) {
       // Create a text input tile
@@ -419,7 +422,6 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
     // Needed to validate the text input fields
     FormState? formState = formKey.currentState;
 
-    // TODO: Remove buttons if keyboard is open
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(S.of(context).module_configuration),
@@ -435,7 +437,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
               child: _buildMainContents(context),
             ),
           ),
-          if (moduleConfiguration.isNotEmpty)
+          if (moduleConfiguration.isNotEmpty && !isKeyboardOpen)
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
