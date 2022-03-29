@@ -21,6 +21,8 @@ class MirrorLayoutHandler {
   }
 
   /// Every available additional module
+  ///
+  /// Note: Use [addModule] instead of [add] to add a module to the catalog.
   static late List<Module> moduleCatalog;
 
   /// Needed for the temporary moving of modules on hover
@@ -98,14 +100,14 @@ class MirrorLayoutHandler {
       // Add the current module to the catalog if the new module is from the menu
       if (module.originalPosition == ModulePosition.menu) {
         moduleCatalog.remove(module);
-        moduleCatalog.add(currentModule);
+        moduleCatalog.addModule(currentModule);
       }
     }
 
     // Module is removed from layout
     if (position == ModulePosition.menu) {
       _layout.removeModule(module);
-      moduleCatalog.add(module);
+      moduleCatalog.addModule(module);
     } else {
       // Move the modules in the layout
       // The 'position' field will be changed by this method
@@ -238,5 +240,14 @@ class MirrorLayout {
   /// Removes a module from the layout -> Probably to put it into the catalog
   void removeModule(Module module) {
     modules.remove(module.position);
+  }
+}
+
+extension ModuleCatalogExtension on List<Module> {
+  /// Add a module to the catalog and update the configuration in the database
+  /// by calling a route in the [CommunicationHandler]
+  void addModule(Module module) {
+    add(module);
+    CommunicationHandler.updateModuleConfiguration(module);
   }
 }
