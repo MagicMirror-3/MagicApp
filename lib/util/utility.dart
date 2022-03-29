@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:magic_app/generated/l10n.dart';
 
 import '../mirror/module.dart';
 
@@ -9,11 +11,12 @@ import '../mirror/module.dart';
 ///
 /// [onIndexSelected] will be called once the selected index changes or the picker
 /// was closed.
-showCupertinoDropdownPopup(
-    {required BuildContext context,
-    required List<Widget> items,
-    required ValueChanged<int> onIndexSelected,
-    int initialItem = 0}) {
+showCupertinoDropdownPopup({
+  required BuildContext context,
+  required List<Widget> items,
+  required ValueChanged<int> onIndexSelected,
+  int initialItem = 0,
+}) {
   int tempIndex = initialItem;
 
   showCupertinoModalPopup(
@@ -32,6 +35,49 @@ showCupertinoDropdownPopup(
     ),
     semanticsDismissible: true,
   ).then((_) => onIndexSelected(tempIndex));
+}
+
+showYesNoPrompt(
+  BuildContext context, {
+  required String title,
+  String? description,
+  String? confirmationText,
+  String? cancelText,
+  Function()? successCallback,
+  Function()? cancelCallback,
+}) {
+  description ??= S.of(context).prompt_sure;
+  confirmationText ??= S.of(context).yes;
+  cancelText ??= S.of(context).cancel;
+
+  showPlatformDialog(
+    context: context,
+    builder: (_) => PlatformAlertDialog(
+      title: Text(title),
+      content: Text(description!),
+      actions: [
+        PlatformDialogAction(
+          child: Text(cancelText!),
+          onPressed: () {
+            Navigator.pop(context);
+
+            if (cancelCallback != null) {
+              cancelCallback();
+            }
+          },
+        ),
+        PlatformDialogAction(
+          child: Text(confirmationText!),
+          onPressed: () {
+            if (successCallback != null) {
+              successCallback();
+            }
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    ),
+  );
 }
 
 /// Loads a list of modules from a given String in JSON format.

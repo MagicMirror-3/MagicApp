@@ -34,6 +34,12 @@ class MirrorLayoutHandler {
   /// True, if layout and catalog are present
   static bool get isReady => _initialized;
 
+  /// Whether the layout was modified by the user
+  static bool _unsavedChanges = false;
+
+  /// Whether the layout was modified by the user
+  static bool get unsavedChanges => _unsavedChanges;
+
   /// Initialize layout and catalog
   ///
   /// Returns true, if the layout was retrieved and this handler is ready to use
@@ -58,6 +64,7 @@ class MirrorLayoutHandler {
     }
 
     _initialized = tempLayout != null;
+    _unsavedChanges = false;
   }
 
   /// Load the default layout from the [default_layout.json] file
@@ -76,7 +83,9 @@ class MirrorLayoutHandler {
 
   /// Save the current layout to the preferences and backend
   static void saveLayout() {
-    CommunicationHandler.updateLayout(_layout);
+    CommunicationHandler.updateLayout(_layout).then(
+      (value) => _unsavedChanges = !value,
+    );
   }
 
   /// Permanently moves [module] to the given [position] in the layout.
@@ -146,6 +155,8 @@ class MirrorLayoutHandler {
   /// Undoes the last temporary move my moving the module back to its position
   static void undoTemporaryMove() {
     assert(_initialized);
+
+    _unsavedChanges = true;
 
     if (_tempMovedModule != null) {
       // Move the module back to it's original position

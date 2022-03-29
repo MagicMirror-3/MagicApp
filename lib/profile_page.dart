@@ -90,32 +90,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           // change to the introduction screen
 
                           // Display a dialog window to cancel the deletion
-                          showPlatformDialog(
-                            context: context,
-                            builder: (_) => PlatformAlertDialog(
-                              title: const Text("Delete User"),
-                              content: const Text(
-                                  "Do you really want to delete the user?"),
-                              actions: [
-                                PlatformDialogAction(
-                                  child: Text(S.of(context).cancel),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                PlatformDialogAction(
-                                  child: Text(S.of(context).delete),
-                                  onPressed: () {
-                                    // send a request to delete the user
-                                    CommunicationHandler.deleteUser()
-                                        .then((succesful) {
-                                      if (succesful) {
-                                        _openUserIntroduction(context);
-                                      }
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            ),
+                          showYesNoPrompt(
+                            context,
+                            title: S.of(context).deleteUser,
+                            description: S.of(context).prompt_deleteUser,
+                            confirmationText: S.of(context).delete,
+                            successCallback: () {
+                              // send a request to delete the user
+                              CommunicationHandler.deleteUser().then((success) {
+                                if (success) {
+                                  _openUserIntroduction(context);
+                                }
+                              });
+                            },
                           );
                         },
                         padding: const EdgeInsets.all(8),

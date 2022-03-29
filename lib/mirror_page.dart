@@ -32,6 +32,8 @@ class _MainPageState extends State<MainPage> {
       await MirrorLayoutHandler.refresh();
 
       if (MirrorLayoutHandler.isReady) {
+        PreferencesAdapter.setMirrorRefresh(false);
+
         // Wait for cosmetic purposes
         Future.delayed(const Duration(seconds: 1)).then(
           (_) {

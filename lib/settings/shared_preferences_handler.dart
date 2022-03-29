@@ -118,10 +118,15 @@ class PreferencesAdapter {
       SharedPreferencesHandler.getValue(SettingKeys.user);
 
   /// Updates the logged in user. Usually called after a new user was created or
-  /// selected from the list
+  /// selected from the list.
+  ///
+  /// This also marks a layout refresh for the next time the mirror page is opened.
   static void setActiveUser(MagicUser value) {
     SharedPreferencesHandler.saveValue(SettingKeys.user, value);
     SharedPreferencesHandler.saveValue(SettingKeys.tempUser, value);
+
+    // Also refresh the layout
+    PreferencesAdapter.setMirrorRefresh(true);
   }
 
   /// A temporary [MagicUser] object to make changes to

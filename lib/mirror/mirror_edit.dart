@@ -8,6 +8,7 @@ import 'package:magic_app/mirror/module_widget.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/text_types.dart';
 import 'package:magic_app/util/themes.dart';
+import 'package:magic_app/util/utility.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../util/magic_widgets.dart';
@@ -86,18 +87,13 @@ class _MirrorEditState extends State<MirrorEdit> {
     }
   }
 
+  void _quit(BuildContext context) {
+    MirrorLayoutHandler.refresh();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // The layout of the mirror with the frame and wall
-    MirrorContainer mirrorContainer = MirrorContainer(
-      mirrorSize: 88,
-      enableClick: false,
-      displayLoading: false,
-      selectedModule: selectedModule,
-      onModuleChanged: setSelectedModule,
-      mirrorViewKey: mirrorViewKey,
-    );
-
     // The icons displayed in the top right corner to save the layout or quit the editor
     List<PlatformIconButton> controlIcons = [
       // This checkmark saves the layout
@@ -113,23 +109,29 @@ class _MirrorEditState extends State<MirrorEdit> {
 
             // Automatically quit if the user wants to
             if (PreferencesAdapter.quitOnSave) {
-              Navigator.pop(context);
+              _quit(context);
             }
           }),
       // This checkmark exists the layout editor without saving
       PlatformIconButton(
-        icon: Icon(
-          PlatformIcons(context).clearThickCircled,
-          color: Colors.red,
-          semanticLabel: S.of(context).cancel,
-        ),
-        padding: const EdgeInsets.all(0),
-        // TODO: Prompt unsaved changes
-        onPressed: () {
-          MirrorLayoutHandler.refresh();
-          Navigator.pop(context);
-        },
-      ),
+          icon: Icon(
+            PlatformIcons(context).clearThickCircled,
+            color: Colors.red,
+            semanticLabel: S.of(context).cancel,
+          ),
+          padding: const EdgeInsets.all(0),
+          onPressed: () {
+            if (MirrorLayoutHandler.unsavedChanges) {
+              showYesNoPrompt(
+                context,
+                title: S.of(context).title_unsavedChanges,
+                description: S.of(context).prompt_unsavedChanges,
+                successCallback: () => _quit(context),
+              );
+            } else {
+              _quit(context);
+            }
+          }),
     ];
 
     // The key of the second widget (right hand side of the layout) has to contain
@@ -139,8 +141,15 @@ class _MirrorEditState extends State<MirrorEdit> {
     // The layout of the entire editor
     Row finalWidget = Row(
       children: [
-        // Container on the left
-        mirrorContainer,
+        // The layout of the mirror with the frame and wall
+        MirrorContainer(
+          mirrorSize: 88,
+          enableClick: false,
+          displayLoading: false,
+          selectedModule: selectedModule,
+          onModuleChanged: setSelectedModule,
+          mirrorViewKey: mirrorViewKey,
+        ),
         // Other widget on the right with button overlay
         Flexible(
           child: selectedModule == null

@@ -12,7 +12,11 @@
     "delete": "Delete",
     "saveChanges": "Save changes",
     "deleteUser": "Delete User",
+    "prompt_deleteUser": "Do you really want to delete the user?",
     "defaultString": "Default",
+
+    "prompt_sure": "Are you sure?",
+    "yes": "Yes",
 
     "fillOutField": "Please fill out this field",
 
@@ -36,6 +40,8 @@
     "noModuleConfiguration": "No configuration available for this module!",
     "removeListItem": "Remove item",
     "addListItem": "Add item",
+    "title_unsavedChanges": "Unsaved Changes",
+    "prompt_unsavedChanges": "You have unsaved changes. Are you sure you want to exit?",
 
     "settings_appAppearance": "App Appearance",
     "settings_darkMode": "Dark Mode",
