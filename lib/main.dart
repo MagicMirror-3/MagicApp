@@ -58,7 +58,34 @@ class MagicApp extends StatefulWidget {
 class _MagicAppState extends State<MagicApp> {
   /// Triggers a rebuild by calling [setState]
   void refreshApp() {
+    _checkUserValidity();
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserValidity();
+  }
+
+  /// Checks whether the logged in user still exists
+  void _checkUserValidity() async {
+    if (CommunicationHandler.isConnected) {
+      List<MagicUser> users = await CommunicationHandler.getUsers();
+      MagicUser activeUser = PreferencesAdapter.activeUser;
+
+      // Check whether the user is still known to the backend
+      for (MagicUser knownUser in users) {
+        if (activeUser.id == knownUser.id) {
+          return;
+        }
+      }
+
+      // Otherwise, reset the user -> Take the user to the select page
+      PreferencesAdapter.setActiveUser(const MagicUser());
+
+      setState(() {});
+    }
   }
 
   @override
