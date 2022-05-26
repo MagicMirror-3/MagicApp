@@ -352,8 +352,8 @@ class SuccessOverlay extends StatelessWidget {
 /// Class that wraps the GoogleMLKit Face Detector and saves Face Images.
 class FaceDetection {
   FaceDetector detector =
-      GoogleMlKit.vision.faceDetector(const ml.FaceDetectorOptions(
-    mode: ml.FaceDetectorMode.fast,
+      GoogleMlKit.vision.faceDetector(ml.FaceDetectorOptions(
+    performanceMode: ml.FaceDetectorMode.fast,
     enableLandmarks: false,
     enableContours: false,
     enableClassification: false,

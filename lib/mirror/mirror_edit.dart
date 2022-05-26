@@ -408,8 +408,13 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         title: Text(subKey ?? key),
         key: widgetKey,
         initialValue: displayValue,
-        onToggle: (value) =>
-            saveConfigurationChange(key, value, fullValue, subKey, listIndex),
+        onToggle: (value) => saveConfigurationChange(
+          key,
+          value,
+          fullValue,
+          subKey,
+          listIndex,
+        ),
       );
     } else {
       // Create an empty tile. This shouldn't happen tho
