@@ -395,9 +395,11 @@ packages:
   learning_input_image:
     dependency: "direct main"
     description:
-      name: learning_input_image
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "packages/learning_input_image"
+      ref: HEAD
+      resolved-ref: "8c404bc947dc4910056fcd55598ed079b8b7917d"
+      url: "https://github.com/Stausssi/learning_input_image"
+    source: git
     version: "0.0.6+2"
   lint:
     dependency: transitive

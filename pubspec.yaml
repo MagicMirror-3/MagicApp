@@ -56,6 +56,10 @@ dependency_overrides:
   pull_to_refresh:
     git:
       url: https://github.com/miquelbeltran/flutter_pulltorefresh
+  learning_input_image:
+    git:
+      url: https://github.com/Stausssi/learning_input_image
+      path: packages/learning_input_image
 
 dev_dependencies:
   flutter_test:
