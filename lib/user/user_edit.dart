@@ -150,7 +150,7 @@ class _ProfileInputField extends StatelessWidget {
           prefix: Padding(
             padding: const EdgeInsets.only(right: 16),
             child: DefaultPlatformText(
-              autofocus ? S.of(context).first_name : S.of(context).last_name,
+              autofocus || hasValidator ? S.of(context).first_name : S.of(context).last_name,
             ),
           ),
           decoration: BoxDecoration(
