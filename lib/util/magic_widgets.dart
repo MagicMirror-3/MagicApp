@@ -78,11 +78,11 @@ class MagicRefresher extends StatelessWidget {
     return SmartRefresher(
       controller: _controller,
       header: const ClassicHeader(),
-      child: childWidget,
       enablePullDown: pullDown,
       enablePullUp: pullUp,
       onLoading: _loadingCallback,
       onRefresh: _refreshCallback,
+      child: childWidget,
     );
   }
 }

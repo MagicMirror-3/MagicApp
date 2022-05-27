@@ -87,7 +87,6 @@ class MirrorBackground extends StatelessWidget {
     );
 
     return Container(
-      child: mirrorBorder,
       alignment: Alignment.center,
       // Decorate the container with a color and image
       decoration: BoxDecoration(
@@ -98,6 +97,7 @@ class MirrorBackground extends StatelessWidget {
           repeat: ImageRepeat.repeat,
         ),
       ),
+      child: mirrorBorder,
     );
   }
 }

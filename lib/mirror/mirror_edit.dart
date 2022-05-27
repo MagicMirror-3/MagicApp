@@ -185,9 +185,9 @@ class _MirrorEditState extends State<MirrorEdit> {
     // icons on Android
     return isMaterial(context)
         ? Material(
-            child: finalWidget,
             borderOnForeground: false,
             type: MaterialType.transparency,
+            child: finalWidget,
           )
         : finalWidget;
   }
@@ -466,19 +466,19 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   PlatformElevatedButton(
-                    child: DefaultPlatformText(S.of(context).saveChanges),
                     color: Colors.green,
                     onPressed: formState != null && formState.validate() ||
                             formState == null
                         ? () => widget.saveCallback(moduleConfiguration)
                         : null,
                     padding: const EdgeInsets.all(8),
+                    child: DefaultPlatformText(S.of(context).saveChanges),
                   ),
                   PlatformElevatedButton(
-                    child: DefaultPlatformText(S.of(context).cancel),
                     color: Colors.red,
                     onPressed: () => widget.cancelCallback(),
                     padding: const EdgeInsets.all(8),
+                    child: DefaultPlatformText(S.of(context).cancel),
                   ),
                 ],
               ),

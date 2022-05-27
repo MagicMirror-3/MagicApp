@@ -37,11 +37,11 @@ class _APIPageState extends State<APIPage> {
 
       print("Retrieving users...");
       List<MagicUser> users = await CommunicationHandler.getUsers();
-      _addToMirrorFound("\nUsers:\n" + users.join("\n") + "\n");
+      _addToMirrorFound("\nUsers:\n${users.join("\n")}\n");
 
       print("Retrieving modules...");
       List<Module> modules = await CommunicationHandler.getModules();
-      _addToMirrorFound("\nModules:\n" + modules.join("\n"));
+      _addToMirrorFound("\nModules:\n${modules.join("\n")}");
     }
   }
 

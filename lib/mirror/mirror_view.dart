@@ -150,8 +150,8 @@ class MirrorViewState extends State<MirrorView> {
           targetChild = Draggable(
             data: m,
             maxSimultaneousDrags: widget.enableClick ? 0 : 1,
-            child: moduleWidget,
             feedback: moduleWidget,
+            child: moduleWidget,
           );
         }
       }
@@ -198,6 +198,9 @@ class MirrorViewState extends State<MirrorView> {
         maxHeight: widget.height,
         maxWidth: widget.height * mirrorRatio,
       ),
+      decoration: const BoxDecoration(
+        color: Colors.black,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,9 +238,6 @@ class MirrorViewState extends State<MirrorView> {
           // bottom_bar
           modulesWidgets[10],
         ],
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.black,
       ),
     );
   }

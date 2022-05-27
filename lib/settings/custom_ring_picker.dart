@@ -145,16 +145,8 @@ class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
   @override
   Widget build(BuildContext context) {
     if (inputColor != widget.color.value) {
-      textEditingController.text = '#' +
-          widget.color.red.toRadixString(16).toUpperCase().padLeft(2, '0') +
-          widget.color.green.toRadixString(16).toUpperCase().padLeft(2, '0') +
-          widget.color.blue.toRadixString(16).toUpperCase().padLeft(2, '0') +
-          (widget.enableAlpha
-              ? widget.color.alpha
-                  .toRadixString(16)
-                  .toUpperCase()
-                  .padLeft(2, '0')
-              : '');
+      textEditingController.text =
+          '#${widget.color.red.toRadixString(16).toUpperCase().padLeft(2, '0')}${widget.color.green.toRadixString(16).toUpperCase().padLeft(2, '0')}${widget.color.blue.toRadixString(16).toUpperCase().padLeft(2, '0')}${widget.enableAlpha ? widget.color.alpha.toRadixString(16).toUpperCase().padLeft(2, '0') : ''}';
     }
     return Padding(
       padding: const EdgeInsets.only(top: 5.0),

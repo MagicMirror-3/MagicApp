@@ -407,9 +407,9 @@ class FaceDetection {
   List<String> convertAndCrop() {
     List<String> base64images = [];
 
-    for (int face_index = 0; face_index < faceImages.length; face_index++) {
-      XFile faceImage = faceImages[face_index];
-      Face facePosition = facePositions[face_index];
+    for (int faceIndex = 0; faceIndex < faceImages.length; faceIndex++) {
+      XFile faceImage = faceImages[faceIndex];
+      Face facePosition = facePositions[faceIndex];
 
       final h = facePosition.boundingBox.bottom.toInt();
       final w = facePosition.boundingBox.width.toInt();

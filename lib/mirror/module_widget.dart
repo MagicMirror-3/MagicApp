@@ -64,9 +64,9 @@ class ModuleCatalogWidget extends StatelessWidget {
     return LongPressDraggable(
       data: module,
       maxSimultaneousDrags: 1,
-      child: DefaultPlatformText(module.name),
       feedback: DefaultPlatformText(module.name),
       onDragCompleted: () => onDragCompleted(module),
+      child: DefaultPlatformText(module.name),
     );
   }
 }

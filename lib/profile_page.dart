@@ -86,7 +86,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       PlatformElevatedButton(
-                        child: DefaultPlatformText(S.of(context).deleteUser),
                         color: Colors.red,
                         onPressed: () async {
                           // change to the introduction screen
@@ -108,9 +107,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         },
                         padding: const EdgeInsets.all(8),
+                        child: DefaultPlatformText(S.of(context).deleteUser),
                       ),
                       PlatformElevatedButton(
-                        child: DefaultPlatformText(S.of(context).saveChanges),
                         color: Colors.green,
                         onPressed: enableButton
                             ? () {
@@ -124,6 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               }
                             : null,
                         padding: const EdgeInsets.all(8),
+                        child: DefaultPlatformText(S.of(context).saveChanges),
                       )
                     ],
                   )),
