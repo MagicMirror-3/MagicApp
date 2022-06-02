@@ -44,22 +44,18 @@ dependencies:
   http: ^0.13.4
   network_info_plus: ^2.1.3
   network_tools: ^1.0.8
-  flutter_native_splash: ^2.1.0
+  flutter_native_splash: ^2.2.2
   convex_bottom_bar: ^3.0.0
   introduction_screen: ^3.0.2
   pull_to_refresh: ^2.0.0
-  learning_face_detection: ^0.0.3
-  learning_input_image: ^0.0.6+2
-  google_ml_kit: ^0.11.0
+  google_mlkit_face_detection: ^0.3.0
+  camera: ^0.9.7+1
+  image: ^3.2.0
 
 dependency_overrides:
   pull_to_refresh:
     git:
       url: https://github.com/miquelbeltran/flutter_pulltorefresh
-  learning_input_image:
-    git:
-      url: https://github.com/Stausssi/learning_input_image
-      path: packages/learning_input_image
 
 dev_dependencies:
   flutter_test:

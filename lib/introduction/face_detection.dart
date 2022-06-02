@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_ml_kit/google_ml_kit.dart' as ml;
-import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
-import 'package:learning_input_image/learning_input_image.dart';
 import 'package:magic_app/util/utility.dart';
-
 import '../settings/shared_preferences_handler.dart';
 import '../util/communication_handler.dart';
 
@@ -351,15 +349,16 @@ class SuccessOverlay extends StatelessWidget {
 
 /// Class that wraps the GoogleMLKit Face Detector and saves Face Images.
 class FaceDetection {
-  FaceDetector detector =
-      GoogleMlKit.vision.faceDetector(ml.FaceDetectorOptions(
-    performanceMode: ml.FaceDetectorMode.fast,
-    enableLandmarks: false,
-    enableContours: false,
-    enableClassification: false,
-    enableTracking: false,
-    minFaceSize: 0.15,
-  ));
+  FaceDetector detector = FaceDetector(
+    options: FaceDetectorOptions(
+      performanceMode: FaceDetectorMode.fast,
+      enableLandmarks: false,
+      enableContours: false,
+      enableClassification: false,
+      enableTracking: false,
+      minFaceSize: 0.15,
+    ),
+  );
 
   List<Face> facePositions = [];
   List<XFile> faceImages = [];
@@ -368,7 +367,7 @@ class FaceDetection {
   Future<List<Face>> detectFaces(XFile image) async {
     // convert the XFile image to an InputImage
     File file = File(image.path);
-    ml.InputImage inputImage = ml.InputImage.fromFile(file);
+    InputImage inputImage = InputImage.fromFile(file);
 
     //the detector needs an InputImage
     return detector.processImage(inputImage);
@@ -381,7 +380,7 @@ class FaceDetection {
     if (faces.length == 1) {
       facePositions.add(faces[0]);
       faceImages.add(image);
-      print("###################### ${image.path} ########################");
+      // print("###################### ${image.path} ########################");
       return true;
     }
     return false;

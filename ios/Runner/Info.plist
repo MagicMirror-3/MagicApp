@@ -48,5 +48,9 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+        <string>Needed to register a user</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Needed to register a user</string>
 	</dict>
 </plist>
