@@ -3,7 +3,6 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:magic_app/util/communication_handler.dart';
 import 'package:magic_app/util/magic_widgets.dart';
 import 'package:magic_app/util/text_types.dart';
-import 'package:network_tools/network_tools.dart';
 
 import '../generated/l10n.dart';
 import '../util/safe_material_area.dart';
@@ -39,25 +38,25 @@ class _ConnectMirrorState extends State<ConnectMirror> {
     }
 
     // Scan the network
-    List<ActiveHost> mirrors = await CommunicationHandler.findLocalMirrors();
+    List<String> mirrors = await CommunicationHandler.findLocalMirrors();
 
     if (mirrors.isNotEmpty) {
       // Only keep the header
       _refreshChildren = _refreshChildren.take(1).toList();
 
       // Create a clickable tile for every found MagicMirror
-      for (ActiveHost host in mirrors) {
+      for (String host in mirrors) {
         _refreshChildren.add(
           MagicListViewItem(
             leading: const Icon(Icons.crop_portrait),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DefaultPlatformText(host.make),
-                DefaultPlatformText("IP: ${host.ip}"),
+                const DefaultPlatformText("Magic Mirror"),
+                DefaultPlatformText("IP: $host"),
               ],
             ),
-            onTap: () => _onMirrorSelected(host.ip),
+            onTap: () => _onMirrorSelected(host),
           ),
         );
       }
