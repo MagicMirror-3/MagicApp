@@ -1,4 +1,5 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +26,9 @@ void main() async {
   // Preserve the splash screen until init is finished
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // Init ping on iOS for mirror connection
+  DartPingIOS.register();
 
   // Init settings first
   await SharedPreferencesHandler.init();

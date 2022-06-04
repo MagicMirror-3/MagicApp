@@ -1,12 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 
+import 'package:dart_ping_ios/dart_ping_ios.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:http/http.dart' as http;
+import 'package:isolate_handler/isolate_handler.dart';
 import 'package:magic_app/mirror/module.dart';
 import 'package:magic_app/settings/shared_preferences_handler.dart';
 import 'package:magic_app/util/utility.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
+import 'package:dart_ping/dart_ping.dart';
 
 import '../mirror/mirror_layout_handler.dart';
 
@@ -38,38 +45,111 @@ class CommunicationHandler {
   /// A (potential) persistent connection to the mirror
   static http.Client? _mirrorClient;
 
+  static _mirrorSearchIsolate(Map<String, dynamic> context) {
+    final messenger = HandledIsolate.initialize(context);
+    messenger.listen((wifiIP) async {
+      // Init ping on iOS for mirror connection
+      DartPingIOS.register();
+
+      List<String> mirrorList = [];
+
+
+      if (wifiIP != null) {
+        final String subnet = wifiIP!.substring(0, wifiIP!.lastIndexOf("."));
+        print("Searching on subnet $subnet...");
+
+        int maxHosts = HostScanner.getMaxHost(subnet);
+        int hostPortion = (maxHosts / 4).round();
+
+        for (int i = 1; i < 256; i++) {
+          var port = await PortScanner.isOpen("$subnet.$i", _port, timeout: const Duration(milliseconds: 100));
+
+          if (port.isOpen) {
+            bool isMirror = await isMagicMirror(port.ip);
+
+            if (isMirror) {
+              print("This is indeed a mirror!");
+              mirrorList.add(port.ip);
+            }
+          }
+        }
+
+        /*
+        // Split the search into 4 consecutive searches to prevent too many open files error
+        for (int i = 1; i < maxHosts; i += hostPortion) {
+          print("Searching range from $i to ${i + hostPortion - 1}");
+
+          final portStream = HostScanner.discoverPort(
+              subnet, _port, firstSubnet: i, lastSubnet: i + hostPortion - 1, timeout: const Duration(milliseconds: 200));
+
+          await for (OpenPort port in portStream) {
+            print("device found at ${port.ip}. Checking routes...");
+            try {
+              bool isMirror = await isMagicMirror(port.ip);
+
+              if (isMirror) {
+                print("This is indeed a mirror!");
+                mirrorList.add(ActiveHost(port.ip, 0, "MagicMirror", PingData()));
+              }
+            } catch (e) {
+              print(e);
+            }
+          }
+        }
+
+        final hostStream = HostScanner.discover(subnet, resultsInIpAscendingOrder: false);
+
+        await for (ActiveHost host in hostStream) {
+          print("requesting ${host.ip}");
+          // Check if the desired port is open
+          if ((await PortScanner.isOpen(host.ip, _port, timeout: const Duration(milliseconds: 500))).isOpen) {
+            // Check if the device has magic mirror routes
+            print("device found at ${host.ip}. Checking routes...");
+            bool isMirror = await isMagicMirror(host.ip);
+
+            if (isMirror) {
+              print("This is indeed a mirror!");
+              mirrorList.add(host);
+            }
+          }
+        }
+        */
+      } else {
+        // TODO: Handle error
+        print("failed to retrieve IP");
+      }
+
+      print("done with searchig!");
+      messenger.send(mirrorList);
+    });
+  }
+
   /// Discovers devices on the local network and returns the IP-addresses of MagicMirrors
   static Future<List<ActiveHost>> findLocalMirrors() {
     // Get the IP of the current device
-    return NetworkInfo().getWifiIP().then((wifiIP) async {
+    return NetworkInfo().getWifiIP().then((ip) async {
+      List<ActiveHost> foundMirrors = [];
+
       // Do the computation in a separate isolate to stop the UI freezing
-      return await compute((String? wifiIP) async {
-        List<ActiveHost> mirrorList = [];
+      final isolateHandler = IsolateHandler();
 
-        if (wifiIP != null) {
-          final String subnet = wifiIP.substring(0, wifiIP.lastIndexOf("."));
-          // print("Searching on subnet $subnet...");
-          final hostStream = HostScanner.discover(subnet);
-
-          await for (ActiveHost host in hostStream) {
-            // Check if the desired port is open
-            if ((await PortScanner.isOpen(host.ip, _port)).isOpen) {
-              // Check if the device has magic mirror routes
-              // print("device found at ${host.ip}. Checking routes...");
-              bool isMirror = await isMagicMirror(host.ip);
-
-              if (isMirror) {
-                // print("This is indeed a mirror!");
-                mirrorList.add(host);
-              }
-            }
-          }
-        } else {
-          // TODO: Handle error
-          print("failed to retrieve IP");
+      final receiverPort = ReceivePort();
+      isolateHandler.spawn(_mirrorSearchIsolate, onReceive: (List<String> mirrorList) {
+        for (String s in mirrorList) {
+          print("Mirror at $s");
+          // Create an ActiveHost element
+          foundMirrors.add(ActiveHost(s, 0, "MagicMirror", PingData(response: PingResponse(time: const Duration()))));
         }
-        return mirrorList;
-      }, wifiIP);
+
+        receiverPort.sendPort.send("exit");
+
+        isolateHandler.kill("MirrorSearch", priority: Isolate.immediate);
+      }, name: "MirrorSearch", onInitialized: () => isolateHandler.send(ip, to: "MirrorSearch"));
+
+      await receiverPort.first;
+
+      print("mirror list is: $foundMirrors");
+      return foundMirrors;
     });
   }
 
@@ -80,6 +160,7 @@ class CommunicationHandler {
     http.Response response = await _makeRequest(
       MagicRoutes.isMagicMirror,
       host: host,
+      timeout: const Duration(milliseconds: 500),
     );
 
     return response.statusCode == 200;
@@ -189,7 +270,6 @@ class CommunicationHandler {
         }
         break;
     }
-
     return response;
   }
 
