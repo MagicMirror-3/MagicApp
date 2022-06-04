@@ -133,7 +133,7 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
             // connect to the front facing camera
             controller = CameraController(
                 frontFacingCamera, ResolutionPreset.max,
-                enableAudio: false);
+                enableAudio: false, imageFormatGroup: ImageFormatGroup.yuv420);
             await controller!.initialize();
             if (!mounted) {
               return;
