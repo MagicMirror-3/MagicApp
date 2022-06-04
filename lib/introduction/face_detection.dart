@@ -375,6 +375,8 @@ class FaceDetection {
     File file = File(image.path);
     InputImage inputImage = InputImage.fromFile(file);
 
+    // iOS image rotation is wonky, therefore load, rotate and convert the image
+    // see https://github.com/bharat-biradar/Google-Ml-Kit-plugin/issues/265 for further information
     if (Platform.isIOS) {
       final capturedImage =
           img.decodeImage(await File(inputImage.filePath!).readAsBytes())!;
@@ -385,11 +387,6 @@ class FaceDetection {
       inputImage = InputImage.fromFilePath(imageToBeProcessed.path);
     }
 
-    print(
-        "Trying to detect faces on the image (${image.name}) at ${image.path}");
-
-    print("InputImage: ${inputImage.toJson()}");
-
     //the detector needs an InputImage
     return detector.processImage(inputImage);
   }
@@ -398,7 +395,6 @@ class FaceDetection {
   Future<bool> handleNewImage(XFile image) async {
     List<Face> faces = await detectFaces(image);
 
-    print("Faces found: $faces");
     if (faces.length == 1) {
       facePositions.add(faces[0]);
       faceImages.add(image);
