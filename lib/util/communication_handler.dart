@@ -54,7 +54,7 @@ class CommunicationHandler {
 
       if (wifiIP != null) {
         final String subnet = wifiIP!.substring(0, wifiIP!.lastIndexOf("."));
-        print("Searching on subnet $subnet...");
+        // print("Searching on subnet $subnet...");
 
         for (int i = 1; i < 256; i++) {
           var port = await PortScanner.isOpen(
@@ -67,7 +67,7 @@ class CommunicationHandler {
             bool isMirror = await isMagicMirror(port.ip);
 
             if (isMirror) {
-              print("This is indeed a mirror!");
+              // print("This is indeed a mirror!");
               mirrorList.add(port.ip);
             }
           }
