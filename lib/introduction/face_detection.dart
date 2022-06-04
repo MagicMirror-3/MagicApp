@@ -132,12 +132,16 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
 
             // connect to the front facing camera
             controller = CameraController(
-                frontFacingCamera, ResolutionPreset.max,
-                enableAudio: false, imageFormatGroup: ImageFormatGroup.yuv420);
+              frontFacingCamera,
+              ResolutionPreset.max,
+              enableAudio: false,
+              imageFormatGroup: ImageFormatGroup.yuv420,
+            );
             await controller!.initialize();
             if (!mounted) {
               return;
             }
+
             setState(() {});
             controller?.lockCaptureOrientation(DeviceOrientation.portraitUp);
 
@@ -369,7 +373,10 @@ class FaceDetection {
     File file = File(image.path);
     InputImage inputImage = InputImage.fromFile(file);
 
-    print("Trying to detect faces on the image (${image.name}) at ${image.path}");
+    print(
+        "Trying to detect faces on the image (${image.name}) at ${image.path}");
+
+    print("InputImage: ${inputImage.toJson()}");
 
     //the detector needs an InputImage
     return detector.processImage(inputImage);
