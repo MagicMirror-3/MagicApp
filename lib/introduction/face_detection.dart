@@ -58,6 +58,8 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
       // wait
       await controller?.takePicture().then((image) async {
         // returns true when the image was valid
+        final imageRotation = InputImageRotationValue.fromRawValue(controller!.description.sensorOrientation) ?? InputImageRotation.rotation0deg;
+        print('orientation: ${imageRotation.rawValue}');
         if (await faceDetection.handleNewImage(image)) {
           // update the overlay
           setState(() {});
