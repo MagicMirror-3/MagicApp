@@ -31,6 +31,10 @@
 	<string>Needed to register a user</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Needed to register a user</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Needed to register a user</string>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
 	<key>NSBonjourServices</key>
 	<array>
         <string>_dartobservatory._tcp</string>

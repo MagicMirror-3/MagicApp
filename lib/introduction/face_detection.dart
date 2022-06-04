@@ -369,6 +369,8 @@ class FaceDetection {
     File file = File(image.path);
     InputImage inputImage = InputImage.fromFile(file);
 
+    print("Trying to detect faces on the image (${image.name}) at ${image.path}");
+
     //the detector needs an InputImage
     return detector.processImage(inputImage);
   }
@@ -377,6 +379,7 @@ class FaceDetection {
   Future<bool> handleNewImage(XFile image) async {
     List<Face> faces = await detectFaces(image);
 
+    print("Faces found: $faces");
     if (faces.length == 1) {
       facePositions.add(faces[0]);
       faceImages.add(image);
