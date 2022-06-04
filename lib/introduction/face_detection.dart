@@ -58,8 +58,6 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
       // wait
       await controller?.takePicture().then((image) async {
         // returns true when the image was valid
-        final imageRotation = InputImageRotationValue.fromRawValue(controller!.description.sensorOrientation) ?? InputImageRotation.rotation0deg;
-        print('orientation: ${imageRotation.rawValue}');
         if (await faceDetection.handleNewImage(image)) {
           // update the overlay
           setState(() {});
@@ -86,8 +84,10 @@ class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
     compute(computeImages, faceDetection).then((base64images) async {
       // return user_id if creating user was successful, else -1
       CommunicationHandler.createUser(
-              user.firstName, user.lastName, base64images)
-          .then((userID) async {
+        user.firstName,
+        user.lastName,
+        base64images,
+      ).then((userID) async {
         // user was not created, show a message and the go back to the last
         // introduction page
         if (userID == -1) {
@@ -374,6 +374,16 @@ class FaceDetection {
     // convert the XFile image to an InputImage
     File file = File(image.path);
     InputImage inputImage = InputImage.fromFile(file);
+
+    if (Platform.isIOS) {
+      final capturedImage =
+          img.decodeImage(await File(inputImage.filePath!).readAsBytes())!;
+      final orientedImage = img.bakeOrientation(capturedImage);
+      final imageToBeProcessed =
+          await File(image.path).writeAsBytes(img.encodeJpg(orientedImage));
+
+      inputImage = InputImage.fromFilePath(imageToBeProcessed.path);
+    }
 
     print(
         "Trying to detect faces on the image (${image.name}) at ${image.path}");
