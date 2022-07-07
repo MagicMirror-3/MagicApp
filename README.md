@@ -20,5 +20,4 @@ Currently, the app can only be installed manually by cloning this repository and
 The documentation currently only consists of code comments, but we plan to extend this via GitHub wikis or other 3rd party tools.
 
 ## How to contribute
-tbd.
-
+Check out our [Contribution guidelines](https://github.com/MagicMirror-3/.github/blob/main/docs/CONTRIBUTING.md) if you want to contribute to the project
