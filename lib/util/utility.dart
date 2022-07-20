@@ -149,7 +149,7 @@ class MagicUser {
 
   /// Parses user information from a given map.
   ///
-  /// The map has to contain the keys ["id", "firstName", "lastName", "password"]
+  /// The map has to contain the keys `"id", "firstName", "lastName", "password"`
   MagicUser.fromJSON(Map<String, dynamic> userMap)
       : id = userMap["id"],
         firstName = userMap["firstName"],

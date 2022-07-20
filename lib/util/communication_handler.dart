@@ -328,7 +328,7 @@ class CommunicationHandler {
 
   /// Updates the data of the currently logged in user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<bool> updateUserData() async {
     assert(_connected);
 
@@ -369,7 +369,7 @@ class CommunicationHandler {
 
   /// Retrieve the mirror layout of the current user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<MirrorLayout?> getMirrorLayout() async {
     assert(_connected);
 
@@ -398,7 +398,7 @@ class CommunicationHandler {
 
   /// Updates the layout of the current user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<bool> updateLayout(MirrorLayout layout) async {
     assert(_connected);
 
