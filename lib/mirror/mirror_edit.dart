@@ -18,20 +18,20 @@ import 'module.dart';
 /// This widget support the configuration of the [MirrorLayout] and [Module.config].
 ///
 /// If a [selectedModule] is provided, the configuration options ([_ModuleConfiguration]) are shown,
-/// if [selectedModule] is [null], the [_ModuleCatalog] is shown on the right hand side.
+/// if [selectedModule] is `null`, the [_ModuleCatalog] is shown on the right hand side.
 class MirrorEdit extends StatefulWidget {
   const MirrorEdit({this.selectedModule, Key? key}) : super(key: key);
 
   /// The currently selectedModule.
   ///
-  /// [null] means that no module is selected
+  /// `null` means that no module is selected
   final Module? selectedModule;
 
   @override
-  _MirrorEditState createState() => _MirrorEditState();
+  MirrorEditState createState() => MirrorEditState();
 }
 
-class _MirrorEditState extends State<MirrorEdit> {
+class MirrorEditState extends State<MirrorEdit> {
   /// The selected module
   Module? selectedModule;
 

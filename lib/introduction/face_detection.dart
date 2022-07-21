@@ -17,10 +17,10 @@ class Start extends StatefulWidget {
   const Start({Key? key}) : super(key: key);
 
   @override
-  _StartState createState() => _StartState();
+  StartState createState() => StartState();
 }
 
-class _StartState extends State<Start> {
+class StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
     return FaceRegistrationScreen(onFinished: () => print("test"));
@@ -37,10 +37,10 @@ class FaceRegistrationScreen extends StatefulWidget {
   final onFinished;
 
   @override
-  _FaceRegistrationScreenState createState() => _FaceRegistrationScreenState();
+  FaceRegistrationScreenState createState() => FaceRegistrationScreenState();
 }
 
-class _FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
+class FaceRegistrationScreenState extends State<FaceRegistrationScreen> {
   // The camera controller
   CameraController? controller;
   late List<CameraDescription> cameras;

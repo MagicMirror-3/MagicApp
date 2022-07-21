@@ -20,7 +20,7 @@ class ModuleLayoutWidget extends StatelessWidget {
 
   /// Whether this module is selected.
   ///
-  /// Setting it to [true] displays a different border around the widget
+  /// Setting it to `true` displays a different border around the widget
   final bool isSelected;
 
   @override
@@ -44,7 +44,7 @@ class ModuleLayoutWidget extends StatelessWidget {
   }
 }
 
-/// This widget represents a [Module] in the [ModuleCatalog] in [MirrorEdit].
+/// This widget represents a [Module] in the `ModuleCatalog` in [MirrorEdit].
 class ModuleCatalogWidget extends StatelessWidget {
   const ModuleCatalogWidget({
     required this.module,

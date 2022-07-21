@@ -16,10 +16,10 @@ class ConnectMirror extends StatefulWidget {
   final void Function() onSuccessfulConnection;
 
   @override
-  _ConnectMirrorState createState() => _ConnectMirrorState();
+  ConnectMirrorState createState() => ConnectMirrorState();
 }
 
-class _ConnectMirrorState extends State<ConnectMirror> {
+class ConnectMirrorState extends State<ConnectMirror> {
   /// A list of widgets being displayed under one another and containing Text and MagicMirrors
   List<Widget> _refreshChildren = [];
 

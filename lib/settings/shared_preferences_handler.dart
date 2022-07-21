@@ -138,7 +138,7 @@ class PreferencesAdapter {
   static void setTempUser(MagicUser value) =>
       SharedPreferencesHandler.saveValue(SettingKeys.tempUser, value);
 
-  /// Whether the app is in dark mode. This is always [true] (for now)
+  /// Whether the app is in dark mode. This is always `true` (for now)
   static bool get isDarkMode =>
       SharedPreferencesHandler.getValue(SettingKeys.darkMode);
 
@@ -146,7 +146,7 @@ class PreferencesAdapter {
   static bool get isAltAppearance =>
       SharedPreferencesHandler.getValue(SettingKeys.alternativeAppearance);
 
-  /// Update the alternativeAppearance. [true] means that the other design is
+  /// Update the alternativeAppearance. `true` means that the other design is
   /// used
   static void setAlternativeAppearance(bool value) =>
       SharedPreferencesHandler.saveValue(

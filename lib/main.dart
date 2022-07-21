@@ -51,14 +51,14 @@ class MagicApp extends StatefulWidget {
   const MagicApp({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _MagicAppState();
+  State<StatefulWidget> createState() => MagicAppState();
 
   /// Returns the state to trigger a refresh
-  static _MagicAppState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_MagicAppState>();
+  static MagicAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<MagicAppState>();
 }
 
-class _MagicAppState extends State<MagicApp> {
+class MagicAppState extends State<MagicApp> {
   /// Triggers a rebuild by calling [setState]
   void refreshApp() {
     _checkUserValidity();
@@ -220,7 +220,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
   @override
   Widget build(BuildContext context) {
     // Create the navigation items
-    final List<TabItem> _bottomNavigationList = [
+    final List<TabItem> bottomNavigationList = [
       TabItem(
         title: S.of(context).profile,
         icon: Icon(PlatformIcons(context).accountCircle),
@@ -272,7 +272,7 @@ class _MagicHomePageState extends State<MagicHomePage> {
                   ? Theme.of(context).bottomAppBarColor
                   : darkCupertinoTheme.barBackgroundColor,
               activeColor: Colors.white,
-              items: _bottomNavigationList,
+              items: bottomNavigationList,
               initialActiveIndex: _selectedNavigationIndex,
               onTap: _onMenuItemTapped,
             ),

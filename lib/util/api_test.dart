@@ -13,10 +13,10 @@ class APIPage extends StatefulWidget {
   const APIPage({Key? key}) : super(key: key);
 
   @override
-  _APIPageState createState() => _APIPageState();
+  APIPageState createState() => APIPageState();
 }
 
-class _APIPageState extends State<APIPage> {
+class APIPageState extends State<APIPage> {
   String mirrorFound = "";
 
   void _refreshNetworkDevices() async {

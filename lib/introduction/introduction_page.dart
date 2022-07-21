@@ -36,10 +36,10 @@ class IntroductionPage extends StatefulWidget {
   final Function()? onDone;
 
   @override
-  _IntroductionPageState createState() => _IntroductionPageState();
+  IntroductionPageState createState() => IntroductionPageState();
 }
 
-class _IntroductionPageState extends State<IntroductionPage> {
+class IntroductionPageState extends State<IntroductionPage> {
   final GlobalKey<IntroductionScreenState> introKey =
       GlobalKey(debugLabel: "IntroStateKey");
   bool mirrorConnected = false;

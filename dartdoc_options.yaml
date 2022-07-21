@@ -1,0 +1,3 @@
+dartdoc:
+  # No documentation for automatically generated files
+  nodoc: ['lib/generated/*.dart', 'lib/generated/intl/*.dart']

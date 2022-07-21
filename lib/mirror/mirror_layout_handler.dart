@@ -22,7 +22,7 @@ class MirrorLayoutHandler {
 
   /// Every available additional module
   ///
-  /// Note: Use [addModule] instead of [add] to add a module to the catalog.
+  /// Note: Use `addModule()` from the [ModuleCatalogExtension] instead of `List.add()` to add a module to the catalog.
   static List<Module> moduleCatalog = [];
 
   /// Needed for the temporary moving of modules on hover
@@ -67,7 +67,7 @@ class MirrorLayoutHandler {
     _unsavedChanges = false;
   }
 
-  /// Load the default layout from the [default_layout.json] file
+  /// Load the default layout from the `default_layout.json` file
   static void loadDefaultLayout() async {
     _layout = MirrorLayout.fromString(
       await rootBundle.loadString("assets/default_layout.json"),

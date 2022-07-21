@@ -44,7 +44,7 @@ class MirrorViewState extends State<MirrorView> {
   // TODO: Convert this to a setting
   static const double mirrorRatio = 50 / 70;
 
-  /// Every position a module can have except [ModulePositions.menu]
+  /// Every position a module can have except [ModulePosition.menu]
   static final Iterable<ModulePosition> validModulePositions =
       ModulePosition.values.getRange(0, ModulePosition.values.length - 2);
 

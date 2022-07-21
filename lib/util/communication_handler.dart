@@ -174,7 +174,7 @@ class CommunicationHandler {
   /// The response is of the class [_MagicResponse], which contains a JSON-formatted
   /// body by default.
   static Future<http.Response> _makeRequest(
-    _MagicRoute route, {
+    MagicRoute route, {
     dynamic payload,
     String? host,
     Duration? timeout,
@@ -189,7 +189,7 @@ class CommunicationHandler {
 
     late http.Response response;
     switch (route.type) {
-      case _RouteType.GET:
+      case RouteType.GET:
         if (host != null) {
           response = await http.get(targetURI).timeout(
                 timeout,
@@ -203,7 +203,7 @@ class CommunicationHandler {
         }
 
         break;
-      case _RouteType.POST:
+      case RouteType.POST:
         // Convert every value of the payload to a string to prevent errors
         payload = payload.map((key, value) => MapEntry(key, value.toString()));
 
@@ -241,18 +241,19 @@ class CommunicationHandler {
   /// this class.
   /// [getParams] are needed for a GET request with query params in the URI.
   static Uri createRouteURI(
-    _MagicRoute route, {
+    MagicRoute route, {
     String? host,
     Map<String, dynamic>? getParams,
   }) {
     host ??= _address;
     getParams ??= {};
 
+    // Currently, the MM² is not using HTTPS and therefore has to be accessed via HTTP
     String uriString = "http://$host:$_port/${route.route}";
 
     // Check whether GET params are necessary and provided
     // POST routes don't need special treatment
-    if (route.type == _RouteType.GET) {
+    if (route.type == RouteType.GET) {
       if (route.params != null && route.params!.isNotEmpty) {
         if (getParams.isNotEmpty) {
           // Construct the param string
@@ -328,7 +329,7 @@ class CommunicationHandler {
 
   /// Updates the data of the currently logged in user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<bool> updateUserData() async {
     assert(_connected);
 
@@ -369,7 +370,7 @@ class CommunicationHandler {
 
   /// Retrieve the mirror layout of the current user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<MirrorLayout?> getMirrorLayout() async {
     assert(_connected);
 
@@ -398,7 +399,7 @@ class CommunicationHandler {
 
   /// Updates the layout of the current user
   ///
-  /// Throws [AttributeError], if no user is logged in
+  /// Throws [ArgumentError], if no user is logged in
   static Future<bool> updateLayout(MirrorLayout layout) async {
     assert(_connected);
 
@@ -458,12 +459,12 @@ class MagicRoutes {
   const MagicRoutes._();
 
   /// Needed to check whether a device is a MagicMirror
-  static const isMagicMirror = _MagicRoute(route: "isMagicMirror");
+  static const isMagicMirror = MagicRoute(route: "isMagicMirror");
 
   /// Registers a new user
-  static const createUser = _MagicRoute(
+  static const createUser = MagicRoute(
     route: "createUser",
-    type: _RouteType.POST,
+    type: RouteType.POST,
     params: [
       "firstname",
       "lastname",
@@ -472,12 +473,12 @@ class MagicRoutes {
   );
 
   /// Gets all registered users
-  static const getUsers = _MagicRoute(route: "getUsers");
+  static const getUsers = MagicRoute(route: "getUsers");
 
   /// Updates the data of a user
-  static const updateUser = _MagicRoute(
+  static const updateUser = MagicRoute(
     route: "updateUser",
-    type: _RouteType.POST,
+    type: RouteType.POST,
     params: [
       "user_id",
       "firstname",
@@ -486,41 +487,41 @@ class MagicRoutes {
   );
 
   /// Deletes a user
-  static const deleteUser = _MagicRoute(
+  static const deleteUser = MagicRoute(
     route: "deleteUser",
-    type: _RouteType.POST,
+    type: RouteType.POST,
     params: ["user_id"],
   );
 
   /// Gets the layout of a given user
-  static const getLayout = _MagicRoute(route: "getLayout", params: ["user_id"]);
+  static const getLayout = MagicRoute(route: "getLayout", params: ["user_id"]);
 
   /// Updates the layout of a user
-  static const setLayout = _MagicRoute(
+  static const setLayout = MagicRoute(
     route: "setLayout",
-    type: _RouteType.POST,
+    type: RouteType.POST,
     params: ["user_id", "layout"],
   );
 
   /// Gets all available modules
-  static const getModules = _MagicRoute(
+  static const getModules = MagicRoute(
     route: "getModules",
     params: ["user_id"],
   );
 
   /// Updates the configuration of a module in the catalog
-  static const updateModuleConfiguration = _MagicRoute(
+  static const updateModuleConfiguration = MagicRoute(
     route: "updateModuleConfiguration",
-    type: _RouteType.POST,
+    type: RouteType.POST,
     params: ["user_id", "module", "configuration"],
   );
 }
 
 /// Contains information about a route
-class _MagicRoute {
-  const _MagicRoute({
+class MagicRoute {
+  const MagicRoute({
     required this.route,
-    this.type = _RouteType.GET,
+    this.type = RouteType.GET,
     this.params,
   });
 
@@ -528,7 +529,7 @@ class _MagicRoute {
   final String route;
 
   /// The type of the route. Either GET or POST
-  final _RouteType type;
+  final RouteType type;
 
   /// Every parameter the request has to contain
   final List<String>? params;
@@ -536,7 +537,7 @@ class _MagicRoute {
 
 /// Contains all valid types of mirror routes
 // ignore: constant_identifier_names
-enum _RouteType { GET, POST }
+enum RouteType { GET, POST }
 
 /// Automatically parses the JSON in the body of the response.
 /// A extension for {http.Response} with additional functionality.
