@@ -30,10 +30,10 @@ class MagicRingPicker extends StatefulWidget {
   final BorderRadius pickerAreaBorderRadius;
 
   @override
-  _MagicRingPickerState createState() => _MagicRingPickerState();
+  MagicRingPickerState createState() => MagicRingPickerState();
 }
 
-class _MagicRingPickerState extends State<MagicRingPicker> {
+class MagicRingPickerState extends State<MagicRingPicker> {
   HSVColor currentHsvColor = const HSVColor.fromAHSV(0.0, 0.0, 0.0, 0.0);
 
   @override
@@ -129,10 +129,10 @@ class CustomColorPickerInput extends StatefulWidget {
   final bool disable;
 
   @override
-  _CustomColorPickerInputState createState() => _CustomColorPickerInputState();
+  CustomColorPickerInputState createState() => CustomColorPickerInputState();
 }
 
-class _CustomColorPickerInputState extends State<CustomColorPickerInput> {
+class CustomColorPickerInputState extends State<CustomColorPickerInput> {
   TextEditingController textEditingController = TextEditingController();
   int inputColor = 0;
 

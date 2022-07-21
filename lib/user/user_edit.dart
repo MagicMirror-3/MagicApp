@@ -24,10 +24,10 @@ class UserEdit extends StatefulWidget {
   final Function(bool) onInputChanged;
 
   @override
-  _UserEditState createState() => _UserEditState();
+  UserEditState createState() => UserEditState();
 }
 
-class _UserEditState extends State<UserEdit> {
+class UserEditState extends State<UserEdit> {
   /// Needed to validate all inputs in the form
   final GlobalKey<FormState> _formKey = GlobalKey(debugLabel: "FormKey");
 

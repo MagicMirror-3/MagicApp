@@ -28,10 +28,10 @@ class MirrorEdit extends StatefulWidget {
   final Module? selectedModule;
 
   @override
-  _MirrorEditState createState() => _MirrorEditState();
+  MirrorEditState createState() => MirrorEditState();
 }
 
-class _MirrorEditState extends State<MirrorEdit> {
+class MirrorEditState extends State<MirrorEdit> {
   /// The selected module
   Module? selectedModule;
 
