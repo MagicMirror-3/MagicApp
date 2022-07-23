@@ -24,8 +24,8 @@ void main() {
     UtilTest()
   ];
 
-  // Run the widget tests
+  // Run the unit tests
   for (MagicTest t in tests) {
-    t.runWidgetTests();
+    t.runUnitTests();
   }
 }
