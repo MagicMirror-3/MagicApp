@@ -8,7 +8,7 @@ class UserTest extends MagicTest {
 
   @override
   void unitTestImplementation() {
-    test("placeholder test", () {
+    test("No unit tests here. See widget tests for testing!", () {
       expect(true, true);
     });
   }

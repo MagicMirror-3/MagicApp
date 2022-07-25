@@ -43,12 +43,16 @@ class Module {
   ModulePosition position;
 
   /// An optional header to display on top of this module
+  ///
+  /// THIS IS CURRENTLY NOT IN USE. Changing it won't have any effect
   final String? header;
 
   /// An optional description of this module
   final String? description;
 
-  /// A path to an image of the module in action
+  /// A path to an image of the module in action.
+  ///
+  /// THIS IS CURRENTLY NOT IN USE. Changing it won't have any effect
   final String image;
 
   /// The configuration options of the module
