@@ -113,11 +113,11 @@ List<Module> modulesFromJSON(String jsonString) {
           ),
         );
       } else {
-        print("WTF is this entry: $listEntry");
+        debugPrint("WTF is this entry: $listEntry");
       }
     }
   } else {
-    print("String contains no list ffs");
+    debugPrint("String contains no list ffs");
   }
 
   return modules;

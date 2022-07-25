@@ -31,15 +31,15 @@ class APIPageState extends State<APIPage> {
         });
       }
 
-      print("Retrieving layout...");
+      debugPrint("Retrieving layout...");
       MirrorLayout? layout = await CommunicationHandler.getMirrorLayout();
       _addToMirrorFound("\nThe layout is: $layout\n");
 
-      print("Retrieving users...");
+      debugPrint("Retrieving users...");
       List<MagicUser> users = await CommunicationHandler.getUsers();
       _addToMirrorFound("\nUsers:\n${users.join("\n")}\n");
 
-      print("Retrieving modules...");
+      debugPrint("Retrieving modules...");
       List<Module> modules = await CommunicationHandler.getModules();
       _addToMirrorFound("\nModules:\n${modules.join("\n")}");
     }

@@ -332,7 +332,7 @@ class _ModuleConfigurationState extends State<_ModuleConfiguration> {
         moduleConfiguration[key] = fullValue;
       });
     } else {
-      print("cant save this: $key, $value, $fullValue, $subKey");
+      debugPrint("cant save this: $key, $value, $fullValue, $subKey");
     }
   }
 

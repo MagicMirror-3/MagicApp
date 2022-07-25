@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dart_ping_ios/dart_ping_ios.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:isolate_handler/isolate_handler.dart';
 import 'package:magic_app/mirror/module.dart';
@@ -387,7 +388,7 @@ class CommunicationHandler {
         case 200:
           return MirrorLayout.fromString(response.body);
         default:
-          print(
+          debugPrint(
               "Invalid response: '${response.body}' (${response.statusCode})");
       }
     } else {

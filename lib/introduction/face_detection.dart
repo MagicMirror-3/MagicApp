@@ -23,7 +23,7 @@ class Start extends StatefulWidget {
 class StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
-    return FaceRegistrationScreen(onFinished: () => print("test"));
+    return FaceRegistrationScreen(onFinished: () {});
   }
 }
 
@@ -31,10 +31,10 @@ class StartState extends State<Start> {
 /// recognition service, that consequently saves images that contains a persons face.
 /// This is visualized using an overlay.
 class FaceRegistrationScreen extends StatefulWidget {
-  const FaceRegistrationScreen({required Function this.onFinished, Key? key})
+  const FaceRegistrationScreen({required this.onFinished, Key? key})
       : super(key: key);
 
-  final onFinished;
+  final Function onFinished;
 
   @override
   FaceRegistrationScreenState createState() => FaceRegistrationScreenState();
@@ -206,10 +206,10 @@ class CameraOverlay extends StatefulWidget {
   final int maxImages;
 
   @override
-  _CameraOverlayState createState() => _CameraOverlayState();
+  CameraOverlayState createState() => CameraOverlayState();
 }
 
-class _CameraOverlayState extends State<CameraOverlay> {
+class CameraOverlayState extends State<CameraOverlay> {
   @override
   Widget build(BuildContext context) {
     return Stack(
