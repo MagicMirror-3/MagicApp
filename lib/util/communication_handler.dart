@@ -57,19 +57,18 @@ class CommunicationHandler {
         final String subnet = wifiIP!.substring(0, wifiIP!.lastIndexOf("."));
         // print("Searching on subnet $subnet...");
 
-        for (int i = 1; i < 256; i++) {
-          var port = await PortScanner.isOpen(
-            "$subnet.$i",
-            _port,
-            timeout: const Duration(milliseconds: 100),
-          );
+        // TODO: Maybe display the progress as some sort of bar or whatever
+        final mirrorHostStream = HostScanner.discoverPort(subnet, _port);
 
-          if (port.isOpen) {
-            bool isMirror = await isMagicMirror(port.ip);
+        await for (ActiveHost mirrorHost in mirrorHostStream) {
+          final devicePort = mirrorHost.openPort[0];
+
+          if (devicePort.isOpen) {
+            bool isMirror = await isMagicMirror(mirrorHost.ip);
 
             if (isMirror) {
               // print("This is indeed a mirror!");
-              mirrorList.add(port.ip);
+              mirrorList.add(mirrorHost.ip);
             }
           }
         }
