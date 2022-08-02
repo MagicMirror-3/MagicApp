@@ -47,6 +47,8 @@ class SettingChoices {
 }
 
 /// Contains every key of every value saved in the shared preferences
+///
+/// TODO: Maybe convert this to an enum
 class SettingKeys {
   // No instantiation wanted
   const SettingKeys._();
