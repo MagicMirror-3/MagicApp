@@ -251,7 +251,7 @@ packages:
       name: google_mlkit_face_detection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.3.0"
   http:
     dependency: "direct main"
     description:
