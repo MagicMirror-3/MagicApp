@@ -8,7 +8,10 @@ class SettingsTest extends MagicTest {
 
   @override
   void unitTestImplementation() {
-    test("placeholder test", () {
+    // Testing 'constants.dart' is useless since it's just constants
+    test("SharedPreferencesHandler and PreferenceAdapter", () {
+      // TODO: Test the functionality by saving, updating and deleting some values.
+      //  Especially in edge-cases and wrong types, contents, etc.
       expect(true, true);
     });
   }
