@@ -126,14 +126,14 @@ packages:
       name: dart_ping
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.2"
+    version: "7.0.1"
   dart_ping_ios:
     dependency: "direct main"
     description:
       name: dart_ping_ios
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "2.0.0"
   dbus:
     dependency: transitive
     description:
@@ -213,7 +213,7 @@ packages:
       name: flutter_native_splash
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.5"
+    version: "2.2.7"
   flutter_platform_widgets:
     dependency: "direct main"
     description:
@@ -251,7 +251,7 @@ packages:
       name: google_mlkit_face_detection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0"
   http:
     dependency: "direct main"
     description:
@@ -343,6 +343,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  multicast_dns:
+    dependency: transitive
+    description:
+      name: multicast_dns
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.2+1"
   network_info_plus:
     dependency: "direct main"
     description:
@@ -391,7 +398,7 @@ packages:
       name: network_tools
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.8"
+    version: "2.1.0"
   nm:
     dependency: transitive
     description:
@@ -455,6 +462,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
+  process_run:
+    dependency: transitive
+    description:
+      name: process_run
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.3+2"
+  pub_semver:
+    dependency: transitive
+    description:
+      name: pub_semver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   pull_to_refresh:
     dependency: "direct main"
     description:
@@ -574,6 +595,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0+2"
   term_glyph:
     dependency: transitive
     description:
