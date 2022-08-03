@@ -59,6 +59,11 @@ dependency_overrides:
     git:
       url: https://github.com/miquelbeltran/flutter_pulltorefresh
 
+  network_tools:
+    git:
+      url: https://github.com/Stausssi/network_tools
+      path: network_tools
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
