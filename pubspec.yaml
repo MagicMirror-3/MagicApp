@@ -63,6 +63,7 @@ dependency_overrides:
     git:
       url: https://github.com/Stausssi/network_tools
       path: network_tools
+      ref: merged
 
 dev_dependencies:
   flutter_test:
