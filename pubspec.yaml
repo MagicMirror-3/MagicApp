@@ -48,7 +48,7 @@ dependencies:
   convex_bottom_bar: ^3.0.0
   introduction_screen: ^3.0.2
   pull_to_refresh: ^2.0.0
-  google_mlkit_face_detection: ^0.4.0
+  google_mlkit_face_detection: ^0.3.0
   camera: ^0.10.0
   image: ^3.2.0
   dart_ping_ios: ^2.0.0
