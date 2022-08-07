@@ -395,12 +395,10 @@ packages:
   network_tools:
     dependency: "direct main"
     description:
-      path: network_tools
-      ref: merged
-      resolved-ref: "5dd7b033daff478514ec4e148c9a5c16f15e6771"
-      url: "https://github.com/Stausssi/network_tools"
-    source: git
-    version: "3.0.0"
+      name: network_tools
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0+2"
   nm:
     dependency: transitive
     description:
