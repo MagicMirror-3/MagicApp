@@ -58,17 +58,18 @@ class CommunicationHandler {
         // print("Searching on subnet $subnet...");
 
         // TODO: Maybe display the progress as some sort of bar or whatever
-        final mirrorHostStream = HostScanner.discoverPort(subnet, _port);
+        final mirrorHostStream =
+            HostScanner.scanDevicesForSinglePort(subnet, _port);
 
         await for (ActiveHost mirrorHost in mirrorHostStream) {
           final devicePort = mirrorHost.openPort[0];
 
           if (devicePort.isOpen) {
-            bool isMirror = await isMagicMirror(mirrorHost.ip);
+            bool isMirror = await isMagicMirror(mirrorHost.address);
 
             if (isMirror) {
               // print("This is indeed a mirror!");
-              mirrorList.add(mirrorHost.ip);
+              mirrorList.add(mirrorHost.address);
             }
           }
         }
