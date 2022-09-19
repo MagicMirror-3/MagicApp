@@ -168,6 +168,7 @@ class MagicAppState extends State<MagicApp> {
                 ? darkCupertinoTheme
                 : lightCupertinoTheme,
           ),
+          useInheritedMediaQuery: true, // Needed because of DevicePreview
         ),
         // Selected the correct platform
         initialPlatform:
