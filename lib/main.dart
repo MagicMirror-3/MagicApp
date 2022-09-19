@@ -1,6 +1,8 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -43,7 +45,12 @@ void main() async {
   FlutterNativeSplash.remove();
 
   // Start the app
-  runApp(const MagicApp());
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (_) => const MagicApp(),
+    ),
+  );
 }
 
 /// The main widget of this application
@@ -295,7 +302,7 @@ class _NavBarStyle extends StyleHook {
   double? get iconSize => 25;
 
   @override
-  TextStyle textStyle(Color color) {
+  TextStyle textStyle(Color color, String? fontFamily) {
     return magicTextTheme.bodyText2!;
   }
 }
