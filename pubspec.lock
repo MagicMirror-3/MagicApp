@@ -98,7 +98,7 @@ packages:
       name: convex_bottom_bar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.0+1"
   cross_file:
     dependency: transitive
     description:
@@ -210,11 +210,13 @@ packages:
     source: hosted
     version: "3.1.0"
   flutter_isolate:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: flutter_isolate
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "2980755e80cd2f0f0615bd5c9da89567db897cb5"
+      url: "https://github.com/rmawatson/flutter_isolate"
+    source: git
     version: "2.0.2"
   flutter_lints:
     dependency: "direct dev"

@@ -45,7 +45,7 @@ dependencies:
   network_info_plus: ^2.1.4+1
   network_tools: ^3.0.0+2
   flutter_native_splash: ^2.2.9
-  convex_bottom_bar: ^3.1.0
+  convex_bottom_bar: ^3.1.0+1
   introduction_screen: ^3.0.2
   pull_to_refresh: ^2.0.0
   google_mlkit_face_detection: ^0.4.0
@@ -59,6 +59,9 @@ dependency_overrides:
   pull_to_refresh:
     git:
       url: https://github.com/miquelbeltran/flutter_pulltorefresh
+  flutter_isolate:
+    git:
+      url: https://github.com/rmawatson/flutter_isolate
 
 dev_dependencies:
   flutter_test:
