@@ -43,6 +43,7 @@ class CommunicationHandler {
   static http.Client? _mirrorClient;
 
   /// Executes the network discovery
+  @pragma('vm:entry-point')
   static _mirrorSearchIsolate(Map<String, dynamic> context) {
     final messenger = HandledIsolate.initialize(context);
 
